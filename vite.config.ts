@@ -7,7 +7,7 @@ import { fileURLToPath, URL } from "url"
 const viteConfig: UserConfigExport = {
   plugins: [react()],
   server: {
-    port: 3010,
+    port: 3103,
   },
   resolve: {
     alias: {
