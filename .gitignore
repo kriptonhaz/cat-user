@@ -12,6 +12,8 @@ dist
 coverage
 dist-ssr
 *.local
+.env
+.eslintrc.json
 
 # Editor directories and files
 .vscode/*
@@ -23,3 +25,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.eslintrc.json

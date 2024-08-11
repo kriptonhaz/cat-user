@@ -1,0 +1,37 @@
+import { Button, Card } from "@mui/material"
+import { SubmitHandler, useForm } from "react-hook-form"
+import InputGroup from "@/ui/components/InputGroup"
+import { useLoginMutation } from "@/mutations/auth.mutation"
+
+interface LoginForm {
+  username: string
+  password: string
+}
+
+const LoginForm = () => {
+  const { handleSubmit, register } = useForm<LoginForm>()
+
+  const loginMutation = useLoginMutation()
+
+  const onSubmit: SubmitHandler<LoginForm> = (data) => {
+    loginMutation.mutate(data)
+  }
+
+  return (
+    <Card>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <InputGroup label="Username" placeholder="masukan username anda disini" {...register("username")} required />
+        <InputGroup
+          label="Password"
+          type="password"
+          placeholder="masukan password anda disini"
+          {...register("password")}
+          required
+        />
+        <Button type="submit">Login</Button>
+      </form>
+    </Card>
+  )
+}
+
+export default LoginForm

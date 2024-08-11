@@ -30,6 +30,7 @@
     "apexcharts": "^3.37.3",
     "axios": "^1.3.5",
     "dayjs": "^1.11.7",
+    "dotenv": "^16.4.5",
     "filepond": "^4.30.4",
     "filepond-plugin-image-exif-orientation": "^1.0.11",
     "filepond-plugin-image-preview": "^4.6.11",
@@ -43,6 +44,8 @@
     "react-dom": "^18.2.0",
     "react-filepond": "^7.1.2",
     "react-hook-form": "^7.44.1",
+    "react-hot-toast": "^2.4.1",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.8.1",
     "react-simple-maps": "^3.0.0",
     "react-syntax-highlighter": "^15.5.0"
