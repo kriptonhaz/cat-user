@@ -7,6 +7,7 @@ import LoadingPage from "./ui/views/LoadingPage"
 import LoginPage from "./pages/auth"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { Toaster } from "react-hot-toast"
+import HomePage from "./pages/home"
 
 function App() {
   const queryClient = new QueryClient()
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path={"/"} element={<WelcomePage />} />
           <Route path={"/login"} element={<LoginPage />} />
+          <Route path={"/home"} element={<HomePage />} />
         </Routes>
         <Toaster position="top-right" />
       </QueryClientProvider>
