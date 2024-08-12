@@ -1,8 +1,10 @@
 import { AppBar, Box, Button, Container, Toolbar, Typography } from "@mui/material"
 import "@splidejs/react-splide/css"
 import Logo from "@/assets/logo-kemenhan.png"
+import { useNavigate } from "react-router-dom"
 
 const Navbar = () => {
+  const navigate = useNavigate()
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -35,7 +37,13 @@ const Navbar = () => {
           >
             Luthfi Fitra Musyaffa ( 123123123123, Laki-laki )
           </Typography>
-          <Button color="error" sx={{ ml: 3 }}>
+          <Button
+            color="error"
+            sx={{ ml: 3 }}
+            onClick={() => {
+              navigate("/login")
+            }}
+          >
             Keluar
           </Button>
         </Toolbar>
