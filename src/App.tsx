@@ -8,16 +8,20 @@ import LoginPage from "./pages/auth"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { Toaster } from "react-hot-toast"
 import HomePage from "./pages/home"
+import ListSoal from "./pages/list-soal"
+import Navbar from "./components/navbar"
 
 function App() {
   const queryClient = new QueryClient()
   return (
     <div className="App">
+      <Navbar />
       <QueryClientProvider client={queryClient}>
         <Routes>
           <Route path={"/"} element={<WelcomePage />} />
           <Route path={"/login"} element={<LoginPage />} />
           <Route path={"/home"} element={<HomePage />} />
+          <Route path={"/list-soal/:examId"} element={<ListSoal />} />
         </Routes>
         <Toaster position="top-right" />
       </QueryClientProvider>

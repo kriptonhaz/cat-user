@@ -22,7 +22,6 @@ export function useLoginMutation() {
         id: toastId,
       })
       navigate("/home")
-      //todo : redirect ke home
     },
     onError() {
       toast.error("Username atau password salah", {

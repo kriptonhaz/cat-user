@@ -28,24 +28,23 @@ const Navbar = () => {
             CAT
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Typography
-            variant="body1"
-            sx={{
-              color: "inherit",
-              display: { xs: "none", md: "flex" },
-            }}
-          >
-            Luthfi Fitra Musyaffa ( 123123123123, Laki-laki )
-          </Typography>
-          <Button
-            color="error"
-            sx={{ ml: 3 }}
-            onClick={() => {
-              navigate("/login")
-            }}
-          >
-            Keluar
-          </Button>
+          {localStorage.getItem("name") && (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="body1" sx={{ color: "inherit", mr: 2 }}>
+                {localStorage.getItem("name")} ( 123123123123, Laki-laki )
+              </Typography>
+              <Button
+                color="error"
+                sx={{ ml: 3 }}
+                onClick={() => {
+                  localStorage.removeItem("name")
+                  navigate("/login")
+                }}
+              >
+                Keluar
+              </Button>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

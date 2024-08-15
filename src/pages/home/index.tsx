@@ -1,8 +1,10 @@
-import Navbar from "@/components/navbar"
 import { Grid, Typography } from "@mui/material"
 import TestCard from "./component/TestCard"
+import { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 const HomePage: React.FC = () => {
+  const navigate = useNavigate()
   const listSoal = [
     {
       id: 1,
@@ -30,10 +32,15 @@ const HomePage: React.FC = () => {
     },
   ]
 
+  useEffect(() => {
+    if (!localStorage.getItem("name")) {
+      navigate("/login")
+    }
+  })
+
   return (
     <>
-      <Navbar />
-      <Grid container sx={{ mt: 5, ml: 5, width: "100%", boxSizing: "border-box" }} spacing={5}>
+      <Grid container sx={{ mt: 5, pl: 5 }} spacing={5}>
         <Grid item xs={12}>
           <Typography sx={{ fontWeight: "bold", fontSize: 30 }}>Daftar Ujian</Typography>
         </Grid>
@@ -44,7 +51,7 @@ const HomePage: React.FC = () => {
         </Grid>
         {listSoal.map((soal) => {
           return (
-            <Grid item xs={3.5} key={soal.id}>
+            <Grid item xs={3} key={soal.id}>
               <TestCard soal={soal} />
             </Grid>
           )

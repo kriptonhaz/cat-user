@@ -18,7 +18,17 @@ const LoginForm = () => {
   }
 
   return (
-    <Card>
+    <Card
+      sx={{
+        border: "0.5px solid #ccc",
+        boxShadow: 3,
+        borderRadius: 2,
+        transition: "0.3s",
+        "&:hover": {
+          boxShadow: 6,
+        },
+      }}
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
         <InputGroup label="Username" placeholder="masukan username anda disini" {...register("username")} required />
         <InputGroup
