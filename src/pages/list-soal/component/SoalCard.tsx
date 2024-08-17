@@ -1,4 +1,5 @@
 import { Button, Card, CardActions, CardContent, Typography } from "@mui/material"
+import { useNavigate } from "react-router-dom"
 
 interface ujianSchema {
   id: number
@@ -6,6 +7,8 @@ interface ujianSchema {
 }
 
 const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
+  const navigate = useNavigate()
+
   return (
     <>
       <Card
@@ -25,7 +28,7 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
           <Typography variant="h6">{ujian.nama}</Typography>
         </CardContent>
         <CardActions>
-          <Button>Mulai</Button>
+          <Button onClick={() => navigate(`/lembar-ujian/${ujian.id}`)}>Mulai</Button>
         </CardActions>
       </Card>
     </>

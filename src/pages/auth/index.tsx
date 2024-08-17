@@ -29,7 +29,6 @@ const LoginPage: React.FC = () => {
             </SplideSlide>
           </Splide>
         </Grid>
-
         <Grid item>
           <LoginForm />
         </Grid>

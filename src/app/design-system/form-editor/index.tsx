@@ -17,12 +17,13 @@ const FormEditorGuide: React.FC = () => {
             <a
               href="https://ckeditor.com/docs/ckeditor5/latest/installation/frameworks/react.html"
               className="link"
-              target="_blank" rel="noreferrer"
+              target="_blank"
+              rel="noreferrer"
             >
               CK Editor
             </a>
           </Typography>
-          <CKEditor editor={ClassicEditor} data="<p>Hello from CKEditor 5!</p>" />
+          <CKEditor editor={ClassicEditor as any} data="<p>Hello from CKEditor 5!</p>" />
         </Card>
       </Box>
     </Box>

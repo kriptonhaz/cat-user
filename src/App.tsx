@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast"
 import HomePage from "./pages/home"
 import ListSoal from "./pages/list-soal"
 import Navbar from "./components/navbar"
+import LembarUjian from "./pages/lembar-ujian/page"
 
 function App() {
   const queryClient = new QueryClient()
@@ -22,6 +23,7 @@ function App() {
           <Route path={"/login"} element={<LoginPage />} />
           <Route path={"/home"} element={<HomePage />} />
           <Route path={"/list-soal/:examId"} element={<ListSoal />} />
+          <Route path={"/lembar-ujian/:examId"} element={<LembarUjian />} />
         </Routes>
         <Toaster position="top-right" />
       </QueryClientProvider>
