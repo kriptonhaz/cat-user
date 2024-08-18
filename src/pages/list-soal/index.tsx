@@ -20,7 +20,7 @@ const ListSoal = () => {
     <>
       <Grid container sx={{ mt: 5, pl: 5 }} spacing={5}>
         <Grid item xs={12}>
-          <Typography sx={{ fontWeight: "bold", fontSize: 30 }}>Daftar Soal</Typography>
+          <Typography sx={{ fontWeight: "bold", fontSize: 30 }}>Ujian Chuan</Typography>
         </Grid>
         <Grid item xs={12}>
           <Typography sx={{ fontWeight: "medium", fontSize: 25 }}>

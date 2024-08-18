@@ -33,6 +33,7 @@ const HomePage: React.FC = () => {
   ]
 
   useEffect(() => {
+    console.log(localStorage.getItem("name"))
     if (!localStorage.getItem("name")) {
       navigate("/login")
     }
