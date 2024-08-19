@@ -30,15 +30,22 @@ const LoginForm = () => {
       }}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <InputGroup label="Username" placeholder="masukan username anda disini" {...register("username")} required />
         <InputGroup
-          label="Password"
+          label="Nama Pengguna"
+          placeholder="masukan nama pengguna anda disini"
+          {...register("username")}
+          required
+        />
+        <InputGroup
+          label="Kata Sandi"
           type="password"
-          placeholder="masukan password anda disini"
+          placeholder="masukan kata sandi anda disini"
           {...register("password")}
           required
         />
-        <Button type="submit">Login</Button>
+        <Button type="submit" sx={{ mt: 2 }}>
+          Masuk
+        </Button>
       </form>
     </Card>
   )

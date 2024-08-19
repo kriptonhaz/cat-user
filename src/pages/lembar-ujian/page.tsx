@@ -129,10 +129,20 @@ const LembarUjian = () => {
                   mb: 5,
                 }}
               >
+                <CardContent sx={{ display: "flex", flexDirection: "row" }}>
+                  <Typography variant="subtitle2" sx={{ fontSize: "0.8rem" }}>
+                    Keterangan:
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 0, fontSize: "0.75rem" }}>
+                    Soal belum dikerjakan : <Button variant="outlined">1</Button>
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+                    Soal sudah dikerjakan : <Button variant="contained">1</Button>
+                  </Typography>
+                </CardContent>
                 <CardContent
                   sx={{
                     maxHeight: 200,
-                    overflowY: "auto",
                     width: "100%",
                   }}
                 >
@@ -161,15 +171,6 @@ const LembarUjian = () => {
                       )
                     })}
                   </Grid>
-                </CardContent>
-                <CardContent>
-                  <Typography variant="subtitle1">Keterangan :</Typography>
-                  <Typography variant="body1" sx={{ mb: 2 }}>
-                    Soal belum dikerjakan : <Button variant="outlined">1</Button>
-                  </Typography>
-                  <Typography variant="body1">
-                    Soal sudah dikerjakan : <Button variant="contained">1</Button>
-                  </Typography>
                 </CardContent>
               </Card>
             </Grid>

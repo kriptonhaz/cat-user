@@ -2,11 +2,12 @@ import { AppBar, Box, Button, Container, Toolbar, Typography } from "@mui/materi
 import "@splidejs/react-splide/css"
 import Logo from "@/assets/logo-kemenhan.png"
 import { useNavigate } from "react-router-dom"
+import { primary } from "@/theme/ts/colors"
 
 const Navbar = () => {
   const navigate = useNavigate()
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: primary["25"] }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <img src={Logo} alt="cat kemenhan" style={{ width: "5%" }} />
@@ -31,7 +32,7 @@ const Navbar = () => {
           {localStorage.getItem("name") && (
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography variant="body1" sx={{ color: "inherit", mr: 2 }}>
-                {localStorage.getItem("name")} ( 123123123123, Laki-laki )
+                {localStorage.getItem("name")} ( {localStorage.getItem("nip")}, {localStorage.getItem("gender")} )
               </Typography>
               <Button
                 color="error"
