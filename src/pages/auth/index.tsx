@@ -2,7 +2,6 @@ import LoginForm from "./component/LoginForm"
 import "@splidejs/react-splide/css"
 import { Splide, SplideSlide } from "@splidejs/react-splide"
 import Logo from "@/assets/logo-kemenhan.png"
-import Navbar from "@/components/navbar"
 import { Box, Container, Grid, Stack, Typography } from "@mui/material"
 import { primary } from "@/theme/ts/colors"
 

@@ -7,7 +7,7 @@ import { primary } from "@/theme/ts/colors"
 const Navbar = () => {
   const navigate = useNavigate()
   return (
-    <AppBar position="static" sx={{ backgroundColor: primary["25"] }}>
+    <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <img src={Logo} alt="cat kemenhan" style={{ width: "5%" }} />

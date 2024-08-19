@@ -90,7 +90,7 @@ const LembarUjian = () => {
                     <Button color="warning">Instruksi</Button>
                     <Button color="info">Simpan dan Lanjutkan</Button>
                   </Box>
-                  <Box sx={{ display: "flex", mt: 5, justifyContent: "center", border: "0.5px solid #ccc" }}>
+                  <Box sx={{ display: "flex", mt: 5, justifyContent: "center" }}>
                     <Box
                       sx={{
                         animation: `${vibrate} 1s infinite ease-in-out`,
@@ -129,20 +129,45 @@ const LembarUjian = () => {
                   mb: 5,
                 }}
               >
-                <CardContent sx={{ display: "flex", flexDirection: "row" }}>
+                <CardContent>
                   <Typography variant="subtitle2" sx={{ fontSize: "0.8rem" }}>
                     Keterangan:
                   </Typography>
-                  <Typography variant="body2" sx={{ mb: 0, fontSize: "0.75rem" }}>
-                    Soal belum dikerjakan : <Button variant="outlined">1</Button>
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
-                    Soal sudah dikerjakan : <Button variant="contained">1</Button>
-                  </Typography>
+                  <Box sx={{ display: "flex", flexDirection: "row" }}>
+                    <Typography variant="body2" sx={{ mb: 0, fontSize: "0.75rem" }}>
+                      Soal belum dikerjakan :{" "}
+                      <Button
+                        variant="outlined"
+                        size="sm"
+                        sx={{
+                          width: "1%",
+                          minWidth: 5,
+                          borderRadius: 0,
+                          fontSize: "0.875rem",
+                        }}
+                      >
+                        1
+                      </Button>
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+                      Soal sudah dikerjakan :{" "}
+                      <Button
+                        variant="contained"
+                        size="sm"
+                        sx={{
+                          width: "1%",
+                          minWidth: 5,
+                          borderRadius: 0,
+                          fontSize: "0.875rem",
+                        }}
+                      >
+                        1
+                      </Button>
+                    </Typography>
+                  </Box>
                 </CardContent>
                 <CardContent
                   sx={{
-                    maxHeight: 200,
                     width: "100%",
                   }}
                 >
