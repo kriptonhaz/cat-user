@@ -1,16 +1,19 @@
 import { AppBar, Box, Button, Container, Toolbar, Typography } from "@mui/material"
 import "@splidejs/react-splide/css"
 import Logo from "@/assets/logo-kemenhan.png"
-import { useNavigate } from "react-router-dom"
-import { primary } from "@/theme/ts/colors"
+import { useLocation, useNavigate } from "react-router-dom"
 
 const Navbar = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const isMatchingRoute = (pathname: string, pattern: RegExp) => pattern.test(pathname)
+
   return (
     <AppBar position="static">
-      <Container maxWidth="2xl">
+      <Container maxWidth={false} sx={{ maxWidth: "1900px" }}>
         <Toolbar disableGutters>
-          <img src={Logo} alt="cat kemenhan" style={{ width: "5%" }} />
+          <img src={Logo} alt="cat kemenhan" style={{ width: "4%" }} />
           <Typography
             variant="h6"
             noWrap
@@ -28,6 +31,14 @@ const Navbar = () => {
           >
             CAT
           </Typography>
+          {/* Navigation Menu */}
+          {localStorage.getItem("name") && !isMatchingRoute(location.pathname, /^\/lembar-ujian\/\d+$/) && (
+            <Box sx={{ display: "flex", ml: 4 }}>
+              <Button sx={{ color: "white", mr: 2 }}>Jadwal Ujian</Button>
+              <Button sx={{ color: "white", mr: 2 }}>Profil Peserta</Button>
+              <Button sx={{ color: "white", mr: 2 }}>Riwayat Ujian</Button>
+            </Box>
+          )}
           <Box sx={{ flexGrow: 1 }} />
           {localStorage.getItem("name") && (
             <Box sx={{ display: "flex", alignItems: "center" }}>

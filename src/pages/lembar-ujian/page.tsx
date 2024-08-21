@@ -93,23 +93,48 @@ const LembarUjian = () => {
                   <Box sx={{ display: "flex", mt: 5, justifyContent: "center" }}>
                     <Box
                       sx={{
-                        animation: `${vibrate} 1s infinite ease-in-out`,
-                        color: "red",
-                        fontSize: 40,
                         display: "flex",
-                        alignItems: "center",
+                        mt: 5,
                         justifyContent: "center",
+                        position: "relative",
+                        width: 320,
+                        height: 170,
                       }}
                     >
-                      <FiberManualRecord />
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          width: "100%",
+                          height: "100%",
+                          zIndex: 1,
+                          pointerEvents: "none",
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          animation: "vibrate 1s infinite ease-in-out",
+                          color: "red",
+                          fontSize: 20,
+                          position: "absolute",
+                          top: 5,
+                          left: 5,
+                          zIndex: 2,
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <FiberManualRecord />
+                        Recording
+                      </Box>
+                      <Webcam
+                        audio={false}
+                        height={170}
+                        screenshotFormat="image/jpeg"
+                        width={400}
+                        videoConstraints={videoConstraints}
+                        style={{ position: "absolute", zIndex: 0, borderRadius: "15px" }}
+                      />
                     </Box>
-                    <Webcam
-                      audio={false}
-                      height={150}
-                      screenshotFormat="image/jpeg"
-                      width={300}
-                      videoConstraints={videoConstraints}
-                    />
                   </Box>
                   <Box sx={{ display: "flex", mt: 5, justifyContent: "right" }}>
                     <Typography variant="subtitle1">Waktu yang digunakan : 00:00:00</Typography>

@@ -1670,7 +1670,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^17.0.0 || ^18.0.0", "@types/react@^18.0.27":
+"@types/react@*", "@types/react@^17.0.0 || ^18.0.0", "@types/react@^18.0.27", "@types/react@>=16.8":
   "integrity" "sha512-RD0ivG1kEztNBdoAK7lekI9M+azSnitIn85h4iOiaLjaTrMjzslhaqCGaI4IyCJ1RljWiLCEu4jyrLLgqxBTew=="
   "resolved" "https://registry.npmjs.org/@types/react/-/react-18.0.28.tgz"
   "version" "18.0.28"
@@ -5357,6 +5357,11 @@
     "querystringify" "^2.1.1"
     "requires-port" "^1.0.0"
 
+"use-sync-external-store@1.2.2":
+  "integrity" "sha512-PElTlVMwpblvbNqQ82d2n6RjStvdSoNe9FG28kNfz3WiXilJm4DdNkEzRhCZuIDwY8U08WVihhGR5iRqAwfDiw=="
+  "resolved" "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.2.2.tgz"
+  "version" "1.2.2"
+
 "v8-to-istanbul@^9.0.0":
   "integrity" "sha512-6z3GW9x8G1gd+JIIgQQQxXuiJtCXeAjp6RaPEPLv62mH3iPHPxV6W3robxtCzNErRo6ZwTmzWhsbNvjyEBKzKA=="
   "resolved" "https://registry.npmjs.org/v8-to-istanbul/-/v8-to-istanbul-9.1.0.tgz"
@@ -5611,3 +5616,10 @@
   "integrity" "sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g=="
   "resolved" "https://registry.npmjs.org/yocto-queue/-/yocto-queue-1.0.0.tgz"
   "version" "1.0.0"
+
+"zustand@^4.5.5":
+  "integrity" "sha512-+0PALYNJNgK6hldkgDq2vLrw5f6g/jCInz52n9RTpropGgeAf/ioFUCdtsjCqu4gNhW9D01rUQBROoRjdzyn2Q=="
+  "resolved" "https://registry.npmjs.org/zustand/-/zustand-4.5.5.tgz"
+  "version" "4.5.5"
+  dependencies:
+    "use-sync-external-store" "1.2.2"
