@@ -8,7 +8,7 @@ const Navbar = () => {
   const navigate = useNavigate()
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
+      <Container maxWidth="2xl">
         <Toolbar disableGutters>
           <img src={Logo} alt="cat kemenhan" style={{ width: "5%" }} />
           <Typography
