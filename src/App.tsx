@@ -15,7 +15,7 @@ function App() {
     const token = useTokenStore((state) => state.accessToken)
     const isLogin = useTokenStore((state) => state.isLogin)
 
-    if (!token && !isLogin) return <Navigate to="/home" />
+    if (!token && !isLogin) return <Navigate to="/login" />
 
     return <Outlet />
   }
@@ -25,9 +25,9 @@ function App() {
       <Navbar />
       <QueryClientProvider client={queryClient}>
         <Routes>
+          <Route path={"/login"} element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
-            <Route path={"/"} element={<LoginPage />} />
-            <Route path={"/login"} element={<LoginPage />} />
+            <Route path={"/"} element={<HomePage />} />
             <Route path={"/home"} element={<HomePage />} />
             <Route path={"/list-soal/:examId"} element={<ListSoal />} />
             <Route path={"/lembar-ujian/:examId"} element={<LembarUjian />} />
