@@ -11,10 +11,11 @@ interface LoginForm {
 const LoginForm = () => {
   const { handleSubmit, register } = useForm<LoginForm>()
 
-  const loginMutation = useLoginMutation()
+  const { loginMutation } = useLoginMutation()
+  const mutation = loginMutation()
 
   const onSubmit: SubmitHandler<LoginForm> = (data) => {
-    loginMutation.mutate(data)
+    mutation.mutate(data)
   }
 
   return (
