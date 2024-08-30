@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 import { mergeConfig, UserConfigExport } from "vite"
 import { defineConfig } from "vitest/config"
-import react from "@vitejs/plugin-react-swc"
+import react from "@vitejs/plugin-react"
 import { fileURLToPath, URL } from "url"
 
 const viteConfig: UserConfigExport = {
