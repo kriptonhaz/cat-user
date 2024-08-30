@@ -61,7 +61,7 @@ const LembarUjian = () => {
         >
           <Box>
             <SoalPertanyaanPilgan />
-            <SoalPertanyaanEssay />
+            {/* <SoalPertanyaanEssay /> */}
           </Box>
         </Grid>
         <Grid item xs={12} md={3}>

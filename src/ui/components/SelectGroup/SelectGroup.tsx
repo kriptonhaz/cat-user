@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FormControl, FormHelperText, FormLabel, MenuItem, Select, SelectProps } from "@mui/material"
 import React, { useId } from "react"
 

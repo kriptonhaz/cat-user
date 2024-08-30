@@ -1,17 +1,5 @@
-import React, { useEffect, useState } from "react"
-import {
-  Grid,
-  Box,
-  Card,
-  CardHeader,
-  Button,
-  CardContent,
-  Typography,
-  ToggleButtonGroup,
-  ToggleButton,
-} from "@mui/material"
-import Webcam from "react-webcam"
-import { warning } from "@/theme/ts/colors"
+import React, { useState } from "react"
+import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio } from "@mui/material"
 
 const SoalPertanyaanPilgan = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -34,9 +22,51 @@ const SoalPertanyaanPilgan = () => {
       }}
     >
       <CardContent>
-        <Typography variant="h6">1. Apa hasil dari 1 + 1 ?</Typography>
+        <Typography variant="h6">
+          1. Saya menggagas perubahan sistem di tempat kerja saya, walaupun menghadapi banyak penolakan dari rekan
+          kerja?
+        </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", mt: 4 }}>
-          <ToggleButtonGroup
+          <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
+            <FormControlLabel
+              value="sts"
+              control={<Radio size="small" />}
+              label="Sangat Tidak Setuju"
+              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+            />
+            <FormControlLabel
+              value="ts"
+              control={<Radio size="small" />}
+              label="Tidak Setuju"
+              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+            />
+            <FormControlLabel
+              value="ats"
+              control={<Radio size="small" />}
+              label="Agak Tidak Setuju"
+              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+            />
+            <FormControlLabel
+              value="as"
+              control={<Radio size="small" />}
+              label="Agak Setuju"
+              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+            />
+            <FormControlLabel
+              value="s"
+              control={<Radio size="small" />}
+              label="Setuju"
+              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+            />
+            <FormControlLabel
+              value="ss"
+              control={<Radio size="small" />}
+              label="Sangat Setuju"
+              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+            />
+          </RadioGroup>
+          {/* TODO: will show it later for different test tools */}
+          {/* <ToggleButtonGroup
             value={selectedOption}
             exclusive
             onChange={handleOptionChange}
@@ -64,7 +94,7 @@ const SoalPertanyaanPilgan = () => {
                 </Card>
               </ToggleButton>
             ))}
-          </ToggleButtonGroup>
+          </ToggleButtonGroup> */}
         </Box>
       </CardContent>
     </Card>

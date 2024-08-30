@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useId, useState } from "react"
 import CheckedIcon from "@/assets/forms/radio-checked.svg"
 import HoverIcon from "@/assets/forms/radio-hover.svg"

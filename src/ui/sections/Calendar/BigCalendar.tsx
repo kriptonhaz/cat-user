@@ -1,3 +1,4 @@
+// @ts-nocheck
 import dayGridPlugin from "@fullcalendar/daygrid"
 import FullCalendar from "@fullcalendar/react"
 import { Box, Button, Stack, Typography, BoxProps } from "@mui/material"

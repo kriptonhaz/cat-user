@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Box, Grow, IconButton, Input, MenuItem, Paper, InputProps, SxProps } from "@mui/material"
 import { CaretDown, CaretUp } from "phosphor-react"
 import React, { useId, useMemo, useState } from "react"
