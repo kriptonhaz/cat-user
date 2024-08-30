@@ -2,8 +2,10 @@ import { Button, Card, CardActions, CardContent, Typography } from "@mui/materia
 import { useNavigate } from "react-router-dom"
 
 interface ujianSchema {
-  id: number
-  nama: string
+  Uuid: string
+  module_data: {
+    module_name: string
+  }
 }
 
 const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
@@ -25,10 +27,10 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
         }}
       >
         <CardContent sx={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="h6">{ujian.nama}</Typography>
+          <Typography variant="h6">{ujian.module_data.module_name}</Typography>
         </CardContent>
         <CardActions>
-          <Button onClick={() => navigate(`/lembar-ujian/${ujian.id}`)}>Mulai</Button>
+          <Button onClick={() => navigate(`/lembar-ujian/${ujian.Uuid}`)}>Mulai</Button>
         </CardActions>
       </Card>
     </>

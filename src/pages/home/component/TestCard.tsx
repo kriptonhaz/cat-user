@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 interface soalSchema {
   id: number
+  uuid: string
   title: string
   tanggalMulai: string
   tanggalSelesai: string
@@ -36,7 +37,7 @@ const TestCard = ({ soal }: { soal: soalSchema }) => {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button onClick={() => navigate(`/list-soal/${soal.id}`)}>Kerjakan</Button>
+          <Button onClick={() => navigate(`/list-soal/${soal.uuid}`)}>Kerjakan</Button>
         </CardActions>
       </Card>
     </>

@@ -8,5 +8,17 @@ export const useExamHooks = () => {
       queryFn: () => ExamService.getExamAvailable(),
     })
 
-  return { queryExamAvailable }
+  const queryModuleExamAvailable = (uuid?: string) =>
+    useQuery({
+      queryKey: ["moduleExam", "available"],
+      queryFn: () => ExamService.getModuleExamAvailable(uuid),
+    })
+
+  const queryGetExam = (uuid?: string) =>
+    useQuery({
+      queryKey: ["exam", "getExam"],
+      queryFn: () => ExamService.getExamByUuid(uuid),
+    })
+
+  return { queryExamAvailable, queryModuleExamAvailable, queryGetExam }
 }

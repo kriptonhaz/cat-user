@@ -37,6 +37,7 @@ const HomePage: React.FC = () => {
               <TestCard
                 soal={{
                   id: exam.ID,
+                  uuid: exam.exam_uuid,
                   title: exam.exam_data.name,
                   tanggalMulai: dayjs(exam.exam_data.start_time).locale("id").format("dddd, DD MMMM YYYY"),
                   tanggalSelesai: dayjs(exam.exam_data.end_time).locale("id").format("dddd, DD MMMM YYYY"),
