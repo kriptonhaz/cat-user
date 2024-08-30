@@ -9,6 +9,10 @@ const Navbar = () => {
 
   const isMatchingRoute = (pathname: string, pattern: RegExp) => pattern.test(pathname)
 
+  if (location.pathname === "/login") {
+    return <></>
+  }
+
   return (
     <AppBar position="static">
       <Container maxWidth={false} sx={{ maxWidth: "1900px" }}>

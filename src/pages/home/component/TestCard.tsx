@@ -22,13 +22,21 @@ const TestCard = ({ soal }: { soal: soalSchema }) => {
           boxShadow: 3,
           borderRadius: 2,
           transition: "0.3s",
+          height: "350px",
           "&:hover": {
             boxShadow: 6,
           },
         }}
       >
         <CardHeader title={soal.title}></CardHeader>
-        <CardContent>
+        <CardContent
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
           <Typography variant="body1" color="text.secondary">
             Tanggal : {soal.tanggalMulai} - {soal.tanggalSelesai}
           </Typography>

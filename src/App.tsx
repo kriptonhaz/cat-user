@@ -22,8 +22,8 @@ function App() {
 
   return (
     <div className="App">
-      <Navbar />
       <QueryClientProvider client={queryClient}>
+        <Navbar />
         <Routes>
           <Route path={"/login"} element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
