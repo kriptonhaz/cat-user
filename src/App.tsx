@@ -30,7 +30,7 @@ function App() {
             <Route path={"/"} element={<HomePage />} />
             <Route path={"/home"} element={<HomePage />} />
             <Route path={"/list-soal/:examId"} element={<ListSoal />} />
-            <Route path={"/lembar-ujian/:examId"} element={<LembarUjian />} />
+            <Route path={"/lembar-ujian/:examId/module/:moduleId/activity/:activityId"} element={<LembarUjian />} />
           </Route>
         </Routes>
         <Toaster position="top-right" />

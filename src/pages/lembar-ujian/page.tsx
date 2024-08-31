@@ -5,9 +5,15 @@ import { warning } from "@/theme/ts/colors"
 import SoalPertanyaanPilgan from "./component/soalPertanyaanPilgan"
 import SoalPertanyaanEssay from "./component/soalPertanyaanEssay"
 import { FiberManualRecord, Mic } from "@mui/icons-material"
+import { useExamHooks } from "@/hooks/useExamHooks"
+import { useParams } from "react-router-dom"
+import { useStartExamMutation } from "@/mutations/exam.mutation"
+import { ISoalExam, ISoalExamByModuleResponse, SoalExam } from "@/interfaces/exam.interface"
 
 const LembarUjian = () => {
-  const [remainingTime, setRemainingTime] = useState<number>(120 * 60)
+  const [soal, setSoal] = useState<SoalExam | null>(null)
+
+  const params = useParams()
   const videoConstraints = {
     width: 1280,
     height: 720,
@@ -19,33 +25,37 @@ const LembarUjian = () => {
     questionNo: index + 1,
   }))
 
+  const { leftExamBeforeFinishMutation } = useStartExamMutation()
+  const examMutation = leftExamBeforeFinishMutation()
+
+  const { queryGetSoalExamByModule } = useExamHooks()
+  const { data: soalExamAvailable } = queryGetSoalExamByModule(params.moduleId)
+
   useEffect(() => {
-    const timerId = setInterval(() => {
-      setRemainingTime((prevTime) => (prevTime > 0 ? prevTime - 1 : 0))
-    }, 1000)
+    if (soalExamAvailable?.data && soalExamAvailable.data.length > 0) {
+      setSoal(soalExamAvailable.data[0])
+    }
 
-    return () => clearInterval(timerId)
-  }, [])
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (params.activityId) {
+        examMutation.mutate({ activityUuid: params.activityId })
+      }
 
-  const formatTime = (totalSeconds: number): string => {
-    const hours = Math.floor(totalSeconds / 3600)
-    const minutes = Math.floor((totalSeconds % 3600) / 60)
-    const seconds = totalSeconds % 60
+      event.preventDefault()
+    }
 
-    return [
-      hours > 0 ? String(hours).padStart(2, "0") : null,
-      String(minutes).padStart(2, "0"),
-      String(seconds).padStart(2, "0"),
-    ]
-      .filter(Boolean)
-      .join(":")
-  }
+    window.addEventListener("beforeunload", handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload)
+    }
+  }, [soalExamAvailable])
 
   const vibrate = keyframes`
   0% { transform: scale(1); }
   50% { transform: scale(1.2); }
   100% { transform: scale(1); }
-`
+  `
 
   return (
     <>
@@ -59,10 +69,7 @@ const LembarUjian = () => {
             pl: 8,
           }}
         >
-          <Box>
-            <SoalPertanyaanPilgan />
-            {/* <SoalPertanyaanEssay /> */}
-          </Box>
+          <Box>{soal && <SoalPertanyaanPilgan soal={soal} />}</Box>
         </Grid>
         <Grid item xs={12} md={3}>
           <Box>
@@ -197,12 +204,12 @@ const LembarUjian = () => {
                   }}
                 >
                   <Grid container spacing={3}>
-                    {questionList.map((question) => {
+                    {soalExamAvailable?.data.map((question) => {
                       return (
-                        <Grid item key={question.id} xs={2} sm={1} sx={{ ml: 2 }}>
+                        <Grid item key={question.Uuid} xs={2} sm={1} sx={{ ml: 2 }}>
                           <Button
                             variant="outlined"
-                            key={question.id}
+                            key={question.Uuid}
                             sx={{
                               width: "100%",
                               minWidth: 30,
@@ -214,8 +221,9 @@ const LembarUjian = () => {
                               alignItems: "center",
                               justifyContent: "center",
                             }}
+                            onClick={() => setSoal(soalExamAvailable.data[question.question_order - 1])}
                           >
-                            {question.questionNo}
+                            {question.question_order}
                           </Button>
                         </Grid>
                       )

@@ -4,13 +4,13 @@ import * as ExamService from "@/service/exam.service"
 export const useExamHooks = () => {
   const queryExamAvailable = () =>
     useQuery({
-      queryKey: ["exam", "available"],
+      queryKey: ["exam", "examAvailable"],
       queryFn: () => ExamService.getExamAvailable(),
     })
 
   const queryModuleExamAvailable = (uuid?: string) =>
     useQuery({
-      queryKey: ["moduleExam", "available"],
+      queryKey: ["exam", "moduleAvailable"],
       queryFn: () => ExamService.getModuleExamAvailable(uuid),
     })
 
@@ -20,5 +20,30 @@ export const useExamHooks = () => {
       queryFn: () => ExamService.getExamByUuid(uuid),
     })
 
-  return { queryExamAvailable, queryModuleExamAvailable, queryGetExam }
+  const queryActivityExam = (uuidExam?: string, uuidModule?: string) =>
+    useQuery({
+      queryKey: ["exam", "activityExamByModule"],
+      queryFn: () => ExamService.getExamActivityByModule(uuidExam, uuidModule),
+    })
+
+  const queryStartExam = (uuidExam?: string, uuidModule?: string) =>
+    useQuery({
+      queryKey: ["exam", "startExam"],
+      queryFn: () => ExamService.startExam(uuidExam, uuidModule),
+    })
+
+  const queryGetSoalExamByModule = (uuidModule?: string) =>
+    useQuery({
+      queryKey: ["exam", "soalExam"],
+      queryFn: () => ExamService.getSoalExamByModule(uuidModule),
+    })
+
+  return {
+    queryExamAvailable,
+    queryModuleExamAvailable,
+    queryGetExam,
+    queryActivityExam,
+    queryStartExam,
+    queryGetSoalExamByModule,
+  }
 }

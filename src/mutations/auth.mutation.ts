@@ -35,27 +35,4 @@ export function useLoginMutation() {
   }
 
   return { loginMutation }
-
-  // TODO: REMOVE THIS
-  // return useMutation({
-  //   async mutationFn(loginData: { username: string; password: string }) {
-  //     return await login(loginData)
-  //   },
-  //   onMutate() {
-  //     toast.loading("Mencoba masuk...", {
-  //       id: toastId,
-  //     })
-  //   },
-  //   onSuccess() {
-  //     toast.success("Berhasil masuk", {
-  //       id: toastId,
-  //     })
-  //     navigate("/home")
-  //   },
-  //   onError() {
-  //     toast.error("Username atau password salah", {
-  //       id: toastId,
-  //     })
-  //   },
-  // })
 }

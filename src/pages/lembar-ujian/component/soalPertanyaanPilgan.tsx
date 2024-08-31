@@ -1,7 +1,22 @@
 import React, { useState } from "react"
 import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio } from "@mui/material"
+import { SoalExam } from "@/interfaces/exam.interface"
 
-const SoalPertanyaanPilgan = () => {
+interface soalSchema {
+  Uuid: string
+  question_content: string
+  question_order: number
+  answer_data: {
+    question_uuid: string
+    answer_mapping: string
+    answer_mapping_reader: {
+      content: string
+      value: number
+    }[]
+  }
+}
+
+const SoalPertanyaanPilgan = ({ soal }: { soal: SoalExam }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
 
   const handleOptionChange = (_event: React.MouseEvent<HTMLElement>, newOption: string | null) => {
@@ -22,48 +37,17 @@ const SoalPertanyaanPilgan = () => {
       }}
     >
       <CardContent>
-        <Typography variant="h6">
-          1. Saya menggagas perubahan sistem di tempat kerja saya, walaupun menghadapi banyak penolakan dari rekan
-          kerja?
-        </Typography>
+        <Typography variant="h6">{soal.question_content}</Typography>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", mt: 4 }}>
           <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
-            <FormControlLabel
-              value="sts"
-              control={<Radio size="small" />}
-              label="Sangat Tidak Setuju"
-              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
-            />
-            <FormControlLabel
-              value="ts"
-              control={<Radio size="small" />}
-              label="Tidak Setuju"
-              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
-            />
-            <FormControlLabel
-              value="ats"
-              control={<Radio size="small" />}
-              label="Agak Tidak Setuju"
-              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
-            />
-            <FormControlLabel
-              value="as"
-              control={<Radio size="small" />}
-              label="Agak Setuju"
-              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
-            />
-            <FormControlLabel
-              value="s"
-              control={<Radio size="small" />}
-              label="Setuju"
-              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
-            />
-            <FormControlLabel
-              value="ss"
-              control={<Radio size="small" />}
-              label="Sangat Setuju"
-              sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
-            />
+            {soal.answer_data.answer_mapping_reader.map((answer) => (
+              <FormControlLabel
+                value={answer.value}
+                control={<Radio size="small" />}
+                label={answer.content}
+                sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+              />
+            ))}
           </RadioGroup>
           {/* TODO: will show it later for different test tools */}
           {/* <ToggleButtonGroup

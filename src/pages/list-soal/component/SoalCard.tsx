@@ -1,15 +1,30 @@
+import { useExamHooks } from "@/hooks/useExamHooks"
+import { useStartExamMutation } from "@/mutations/exam.mutation"
 import { Button, Card, CardActions, CardContent, Typography } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 
 interface ujianSchema {
   Uuid: string
+  exam_uuid: string
   module_data: {
     module_name: string
+    exam_tool_uuid: string
+    Uuid: string
   }
 }
 
 const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
   const navigate = useNavigate()
+
+  const { startExamMutation } = useStartExamMutation()
+  const examMutation = startExamMutation()
+
+  const handleStartExam = () => {
+    examMutation.mutate({
+      examUuid: ujian.exam_uuid,
+      moduleUuid: ujian.Uuid,
+    })
+  }
 
   return (
     <>
@@ -30,7 +45,7 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
           <Typography variant="h6">{ujian.module_data.module_name}</Typography>
         </CardContent>
         <CardActions>
-          <Button onClick={() => navigate(`/lembar-ujian/${ujian.Uuid}`)}>Mulai</Button>
+          <Button onClick={handleStartExam}>Mulai</Button>
         </CardActions>
       </Card>
     </>

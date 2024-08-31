@@ -160,6 +160,90 @@ export interface Exam {
   }
 }
 
+interface ExamActivity {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  exam_id: number
+  exam_uuid: string
+  module_id: number
+  module_uuid: string
+  exam_tool_id: number
+  exam_tool_uuid: string
+  exam_type_name: string
+  user_id: number
+  user_uuid: string
+  exam_attendance_id: number
+  exam_attendance_uuid: string
+  last_question_filled: number
+  last_question_showed: number
+  total_consume_time: number
+  activity_stage: number
+  activity_status: number
+  last_stage_at: string
+  start_exam_at: string
+  end_exam_at: string
+  user_finger_print: string
+}
+
+interface FinishExambeforeDone {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  exam_id: number
+  exam_uuid: string
+  module_id: number
+  module_uuid: string
+  exam_tool_id: number
+  exam_tool_uuid: string
+  exam_type_name: string
+  user_id: number
+  user_uuid: string
+  exam_attendance_id: number
+  exam_attendance_uuid: string
+  last_question_filled: number
+  last_question_showed: number
+  total_consume_time: number
+  activity_stage: number
+  activity_status: number
+  last_stage_at: string
+  start_exam_at: string
+  end_exam_at: string
+  user_finger_print: string
+}
+
+export interface SoalExam {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  question_type: number
+  question_order: number
+  question_content: string
+  timer: number
+  answer_data: {
+    ID: number
+    CreatedAt: string
+    UpdatedAt: string
+    DeletedAt: string | null
+    Uuid: string
+    question_id: number
+    question_uuid: string
+    answer_mapping: string
+    answer_mapping_reader: {
+      content: string
+      value: number
+    }[]
+  }
+}
+
+// ========================================
+
 export interface IExamAvailableResponse {
   code: number
   data: ExamItem[]
@@ -197,4 +281,32 @@ export interface IModuleGetExamResponse {
     total_data: number
     total_page: number
   }
+}
+
+export interface IExamActivityResponse {
+  code: number
+  data: ExamActivity
+  message: string
+}
+
+export interface IExamStartResponse {
+  code: number
+  data: ExamActivity
+  message: string
+}
+
+export interface IExamFinishBeforeDoneResponse {
+  code: number
+  data: FinishExambeforeDone
+  message: string
+}
+
+export interface ISoalExamByModuleResponse {
+  code: number
+  data: SoalExam[]
+  message: string
+}
+
+export interface ISoalExam {
+  SoalExam: SoalExam
 }
