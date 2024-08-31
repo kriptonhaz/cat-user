@@ -40,8 +40,9 @@ const SoalPertanyaanPilgan = ({ soal }: { soal: SoalExam }) => {
         <Typography variant="h6">{soal.question_content}</Typography>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", mt: 4 }}>
           <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
-            {soal.answer_data.answer_mapping_reader.map((answer) => (
+            {soal.answer_data.answer_mapping_reader.map((answer, index) => (
               <FormControlLabel
+                key={index}
                 value={answer.value}
                 control={<Radio size="small" />}
                 label={answer.content}
