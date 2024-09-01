@@ -1,5 +1,5 @@
 import { useExamHooks } from "@/hooks/useExamHooks"
-import { useStartExamMutation } from "@/mutations/exam.mutation"
+import { useExamMutation } from "@/mutations/exam.mutation"
 import { Button, Card, CardActions, CardContent, Typography } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 
@@ -16,7 +16,7 @@ interface ujianSchema {
 const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
   const navigate = useNavigate()
 
-  const { startExamMutation } = useStartExamMutation()
+  const { startExamMutation } = useExamMutation()
   const examMutation = startExamMutation()
 
   const handleStartExam = () => {

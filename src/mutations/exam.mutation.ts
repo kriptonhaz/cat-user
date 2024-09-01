@@ -1,8 +1,8 @@
-import { startExam, leftExamBeforeFinish } from "@/service/exam.service"
+import { startExam, leftExamBeforeFinish, finishExam } from "@/service/exam.service"
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 
-export function useStartExamMutation() {
+export function useExamMutation() {
   const navigate = useNavigate()
 
   const startExamMutation = () => {
@@ -29,5 +29,18 @@ export function useStartExamMutation() {
     })
   }
 
-  return { startExamMutation, leftExamBeforeFinishMutation }
+  const finishExamMutation = () => {
+    return useMutation({
+      mutationKey: ["exam", "finishExam"],
+      mutationFn: async ({ activityUuid }: { activityUuid: string }) => {
+        const finish = await finishExam(activityUuid)
+        return finish
+      },
+      onSuccess: (data, variables, context) => {
+        navigate(`/list-soal/${data.data.exam_uuid}`)
+      },
+    })
+  }
+
+  return { startExamMutation, leftExamBeforeFinishMutation, finishExamMutation }
 }

@@ -216,6 +216,33 @@ interface FinishExambeforeDone {
   user_finger_print: string
 }
 
+interface FinishExam {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  exam_id: number
+  exam_uuid: string
+  module_id: number
+  module_uuid: string
+  exam_tool_id: number
+  exam_tool_uuid: string
+  exam_type_name: string
+  user_id: number
+  user_uuid: string
+  exam_attendance_id: number
+  exam_attendance_uuid: string
+  last_question_filled: number
+  last_question_showed: number
+  total_consume_time: number
+  activity_stage: number
+  activity_status: number
+  last_stage_at: string
+  start_exam_at: string
+  end_exam_at: string
+  user_finger_print: string
+}
 export interface SoalExam {
   ID: number
   CreatedAt: string
@@ -298,6 +325,12 @@ export interface IExamStartResponse {
 export interface IExamFinishBeforeDoneResponse {
   code: number
   data: FinishExambeforeDone
+  message: string
+}
+
+export interface IExamFinishResponse {
+  code: number
+  data: FinishExam
   message: string
 }
 

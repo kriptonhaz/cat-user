@@ -1,27 +1,26 @@
 import React, { useState } from "react"
-import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio } from "@mui/material"
+import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio, Button } from "@mui/material"
 import { SoalExam } from "@/interfaces/exam.interface"
+import { useExamMutation } from "@/mutations/exam.mutation"
 
-interface soalSchema {
-  Uuid: string
-  question_content: string
-  question_order: number
-  answer_data: {
-    question_uuid: string
-    answer_mapping: string
-    answer_mapping_reader: {
-      content: string
-      value: number
-    }[]
-  }
-}
-
-const SoalPertanyaanPilgan = ({ soal }: { soal: SoalExam }) => {
+const SoalPertanyaanPilgan = ({
+  soal,
+  isFinalQuestion,
+  activityId,
+}: {
+  soal: SoalExam
+  isFinalQuestion: boolean
+  activityId: string
+}) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
 
   const handleOptionChange = (_event: React.MouseEvent<HTMLElement>, newOption: string | null) => {
     setSelectedOption(newOption)
   }
+
+  const { finishExamMutation } = useExamMutation()
+  const examMutation = finishExamMutation()
+
   return (
     <Card
       sx={{
@@ -81,6 +80,7 @@ const SoalPertanyaanPilgan = ({ soal }: { soal: SoalExam }) => {
             ))}
           </ToggleButtonGroup> */}
         </Box>
+        {isFinalQuestion && <Button onClick={() => examMutation.mutate({ activityUuid: activityId })}>Selesai</Button>}
       </CardContent>
     </Card>
   )

@@ -6,6 +6,7 @@ import {
   IExamStartResponse,
   IExamFinishBeforeDoneResponse,
   ISoalExamByModuleResponse,
+  IExamFinishResponse,
 } from "@/interfaces/exam.interface"
 import API from "./base.service"
 
@@ -86,6 +87,15 @@ export const startExam = async (
 export const leftExamBeforeFinish = async (activityUuid?: string): Promise<IExamFinishBeforeDoneResponse> => {
   const { data } = await API().request<IExamFinishBeforeDoneResponse>({
     url: `/v1/cat+apps/exam/activity/logged+out/${activityUuid}`,
+    method: "PUT",
+  })
+
+  return data
+}
+
+export const finishExam = async (activityUuid?: string): Promise<IExamFinishResponse> => {
+  const { data } = await API().request<IExamFinishResponse>({
+    url: `/v1/cat+apps/exam/activity/finish/${activityUuid}`,
     method: "PUT",
   })
 

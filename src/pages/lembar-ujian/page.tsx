@@ -7,11 +7,12 @@ import SoalPertanyaanEssay from "./component/soalPertanyaanEssay"
 import { FiberManualRecord, Mic } from "@mui/icons-material"
 import { useExamHooks } from "@/hooks/useExamHooks"
 import { useParams } from "react-router-dom"
-import { useStartExamMutation } from "@/mutations/exam.mutation"
+import { useExamMutation } from "@/mutations/exam.mutation"
 import { ISoalExam, ISoalExamByModuleResponse, SoalExam } from "@/interfaces/exam.interface"
 
 const LembarUjian = () => {
   const [soal, setSoal] = useState<SoalExam | null>(null)
+  const [finalQuestion, setFinalQuestion] = useState(false)
 
   const params = useParams()
   const videoConstraints = {
@@ -25,7 +26,7 @@ const LembarUjian = () => {
     questionNo: index + 1,
   }))
 
-  const { leftExamBeforeFinishMutation } = useStartExamMutation()
+  const { leftExamBeforeFinishMutation } = useExamMutation()
   const examMutation = leftExamBeforeFinishMutation()
 
   const { queryGetSoalExamByModule } = useExamHooks()
@@ -69,7 +70,11 @@ const LembarUjian = () => {
             pl: 8,
           }}
         >
-          <Box>{soal && <SoalPertanyaanPilgan soal={soal} />}</Box>
+          <Box>
+            {soal && params.activityId && (
+              <SoalPertanyaanPilgan soal={soal} isFinalQuestion={finalQuestion} activityId={params.activityId} />
+            )}
+          </Box>
         </Grid>
         <Grid item xs={12} md={3}>
           <Box>
@@ -221,7 +226,15 @@ const LembarUjian = () => {
                               alignItems: "center",
                               justifyContent: "center",
                             }}
-                            onClick={() => setSoal(soalExamAvailable.data[question.question_order - 1])}
+                            onClick={() => {
+                              setSoal(soalExamAvailable.data[question.question_order - 1])
+
+                              if (question.question_order === soalExamAvailable.data.length) {
+                                setFinalQuestion(true)
+                              } else {
+                                setFinalQuestion(false)
+                              }
+                            }}
                           >
                             {question.question_order}
                           </Button>
