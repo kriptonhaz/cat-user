@@ -15,40 +15,63 @@ const TestCard = ({ soal }: { soal: soalSchema }) => {
   const navigate = useNavigate()
 
   return (
-    <>
-      <Card
+    <Card
+      sx={{
+        border: "0.5px solid #ccc",
+        boxShadow: 3,
+        borderRadius: 2,
+        transition: "0.3s",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        "&:hover": {
+          boxShadow: 6,
+        },
+      }}
+    >
+      <CardHeader
+        title={
+          <Typography
+            variant="h6"
+            sx={{
+              display: "-webkit-box",
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              lineHeight: 1.2,
+              height: "3.6em", // 3 lines * 1.2 line-height
+            }}
+          >
+            {soal.title}
+          </Typography>
+        }
         sx={{
-          border: "0.5px solid #ccc",
-          boxShadow: 3,
-          borderRadius: 2,
-          transition: "0.3s",
-          height: "350px",
-          "&:hover": {
-            boxShadow: 6,
-          },
+          flexShrink: 0,
+          padding: 2,
+        }}
+      />
+      <CardContent
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          padding: 2,
         }}
       >
-        <CardHeader title={soal.title}></CardHeader>
-        <CardContent
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          <Typography variant="body1" color="text.secondary">
-            Tanggal : {soal.tanggalMulai} - {soal.tanggalSelesai}
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Tempat dan Batch : {soal.tempat}, Batch {soal.batch}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <Button onClick={() => navigate(`/list-soal/${soal.uuid}`)}>Kerjakan</Button>
-        </CardActions>
-      </Card>
-    </>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          Tanggal : {soal.tanggalMulai} - {soal.tanggalSelesai}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Tempat dan Batch : {soal.tempat}, Batch {soal.batch}
+        </Typography>
+      </CardContent>
+      <CardActions sx={{ justifyContent: "flex-start", padding: 2 }}>
+        <Button variant="contained" onClick={() => navigate(`/list-soal/${soal.uuid}`)}>
+          Kerjakan
+        </Button>
+      </CardActions>
+    </Card>
   )
 }
 
