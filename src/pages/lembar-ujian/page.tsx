@@ -13,6 +13,7 @@ import { ISoalExam, ISoalExamByModuleResponse, SoalExam } from "@/interfaces/exa
 const LembarUjian = () => {
   const [soal, setSoal] = useState<SoalExam | null>(null)
   const [finalQuestion, setFinalQuestion] = useState(false)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0) // Add state to track current question index
 
   const params = useParams()
   const videoConstraints = {
@@ -51,6 +52,17 @@ const LembarUjian = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload)
     }
   }, [soalExamAvailable])
+
+  const handleNextQuestion = () => {
+    if (soalExamAvailable?.data) {
+      const nextIndex = currentQuestionIndex + 1
+      if (nextIndex < soalExamAvailable.data.length) {
+        setSoal(soalExamAvailable.data[nextIndex])
+        setCurrentQuestionIndex(nextIndex)
+        setFinalQuestion(nextIndex === soalExamAvailable.data.length - 1)
+      }
+    }
+  }
 
   const vibrate = keyframes`
   0% { transform: scale(1); }
@@ -100,7 +112,10 @@ const LembarUjian = () => {
                   <Typography variant="h6">Sisa Waktu : 00:00:00</Typography>
                   <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
                     <Button color="warning">Instruksi</Button>
-                    <Button color="info">Simpan dan Lanjutkan</Button>
+                    <Button color="info" onClick={handleNextQuestion}>
+                      Simpan dan Lanjutkan
+                    </Button>{" "}
+                    {/* Add onClick handler */}
                   </Box>
                   <Box sx={{ display: "flex", mt: 5, justifyContent: "center" }}>
                     <Box
@@ -228,6 +243,7 @@ const LembarUjian = () => {
                             }}
                             onClick={() => {
                               setSoal(soalExamAvailable.data[question.question_order - 1])
+                              setCurrentQuestionIndex(question.question_order - 1) // Update current question index
 
                               if (question.question_order === soalExamAvailable.data.length) {
                                 setFinalQuestion(true)
