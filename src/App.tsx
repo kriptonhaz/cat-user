@@ -7,6 +7,7 @@ import ListSoal from "./pages/list-soal"
 import Navbar from "./components/navbar"
 import LembarUjian from "./pages/lembar-ujian/page"
 import useTokenStore from "./store/token.store"
+import RiwayatUjian from "./pages/riwayat-ujian"
 
 function App() {
   const queryClient = new QueryClient()
@@ -31,6 +32,7 @@ function App() {
             <Route path={"/home"} element={<HomePage />} />
             <Route path={"/list-soal/:examId"} element={<ListSoal />} />
             <Route path={"/lembar-ujian/:examId/module/:moduleId/activity/:activityId"} element={<LembarUjian />} />
+            <Route path={"/riwayat-ujian"} element={<RiwayatUjian />} />
           </Route>
         </Routes>
         <Toaster position="top-right" />

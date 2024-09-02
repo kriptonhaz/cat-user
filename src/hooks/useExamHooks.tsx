@@ -38,6 +38,12 @@ export const useExamHooks = () => {
       queryFn: () => ExamService.getSoalExamByModule(uuidModule),
     })
 
+  const queryGetRiwayatUjian = () =>
+    useQuery({
+      queryKey: ["exam", "riwayatExam"],
+      queryFn: () => ExamService.getRiwayatUjian(),
+    })
+
   return {
     queryExamAvailable,
     queryModuleExamAvailable,
@@ -45,5 +51,6 @@ export const useExamHooks = () => {
     queryActivityExam,
     queryStartExam,
     queryGetSoalExamByModule,
+    queryGetRiwayatUjian,
   }
 }

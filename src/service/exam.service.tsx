@@ -7,6 +7,7 @@ import {
   IExamFinishBeforeDoneResponse,
   ISoalExamByModuleResponse,
   IExamFinishResponse,
+  IRiwayatExamResponse,
 } from "@/interfaces/exam.interface"
 import API from "./base.service"
 
@@ -105,6 +106,15 @@ export const finishExam = async (activityUuid?: string): Promise<IExamFinishResp
 export const getSoalExamByModule = async (uuidModule?: string): Promise<ISoalExamByModuleResponse> => {
   const { data } = await API().request<ISoalExamByModuleResponse>({
     url: `/v1/cat+apps/exam/question/by+module/${uuidModule}`,
+    method: "GET",
+  })
+
+  return data
+}
+
+export const getRiwayatUjian = async (): Promise<IRiwayatExamResponse> => {
+  const { data } = await API().request<IRiwayatExamResponse>({
+    url: "/v1/cat+apps/exam/passed",
     method: "GET",
   })
 
