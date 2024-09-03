@@ -10,6 +10,7 @@ import {
   IRiwayatExamResponse,
 } from "@/interfaces/exam.interface"
 import API from "./base.service"
+import { setRiwayatUjianParams } from "@/pages/riwayat-ujian"
 
 export const getExamAvailable = async (): Promise<IExamAvailableResponse> => {
   const { data } = await API().request<IExamAvailableResponse>({
@@ -112,11 +113,15 @@ export const getSoalExamByModule = async (uuidModule?: string): Promise<ISoalExa
   return data
 }
 
-export const getRiwayatUjian = async (): Promise<IRiwayatExamResponse> => {
+export const getRiwayatUjian = async (params: setRiwayatUjianParams): Promise<IRiwayatExamResponse> => {
+  console.log(params)
+
   const { data } = await API().request<IRiwayatExamResponse>({
-    url: "/v1/cat+apps/exam/passed",
+    url: `/v1/cat+apps/exam/passed?page=${params.page}&per_page=${params.per_page}`,
     method: "GET",
   })
+
+  console.log(data)
 
   return data
 }

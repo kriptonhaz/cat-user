@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import * as ExamService from "@/service/exam.service"
+import { setRiwayatUjianParams } from "@/pages/riwayat-ujian"
 
 export const useExamHooks = () => {
   const queryExamAvailable = () =>
@@ -38,10 +39,10 @@ export const useExamHooks = () => {
       queryFn: () => ExamService.getSoalExamByModule(uuidModule),
     })
 
-  const queryGetRiwayatUjian = () =>
+  const queryGetRiwayatUjian = (params: setRiwayatUjianParams) =>
     useQuery({
-      queryKey: ["exam", "riwayatExam"],
-      queryFn: () => ExamService.getRiwayatUjian(),
+      queryKey: ["exam", params],
+      queryFn: () => ExamService.getRiwayatUjian(params),
     })
 
   return {

@@ -269,7 +269,7 @@ export interface SoalExam {
   }
 }
 
-interface RiwayatUjian {
+export interface RiwayatUjian {
   ID: number
   CreatedAt: string
   UpdatedAt: string
@@ -420,4 +420,11 @@ export interface IRiwayatExamResponse {
   code: number
   data: RiwayatUjian[]
   message: string
+  meta: {
+    page: number
+    per_page: number
+    offset: number
+    total_data: number
+    total_page: number
+  }
 }
