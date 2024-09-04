@@ -36,16 +36,21 @@ const SoalPertanyaanPilgan = ({
       }}
     >
       <CardContent>
-        <Typography variant="h6">{soal.question_content}</Typography>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", mt: 4 }}>
-          <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
+        <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+          <Typography variant="h6" sx={{ mr: 2, minWidth: "30px" }}>
+            {soal.question_order}.
+          </Typography>
+          <Typography variant="h6">{soal.question_content}</Typography>
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", mt: 4, pl: "35px" }}>
+          <RadioGroup aria-labelledby="demo-radio-buttons-group-label" name="radio-buttons-group">
             {soal.answer_data.answer_mapping_reader.map((answer, index) => (
               <FormControlLabel
                 key={index}
                 value={answer.value}
                 control={<Radio size="small" />}
                 label={answer.content}
-                sx={{ mr: 8, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+                sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
               />
             ))}
           </RadioGroup>
