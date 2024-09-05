@@ -70,11 +70,16 @@ const TableRiwayatUjian = ({
         Cell: ({ row }) => row.original.exam_data.location,
       },
       {
-        accessorKey: "end_time",
-        header: "Tanggal",
+        accessorKey: "start_time",
+        header: "Tanggal Mulai",
         enableSorting: false,
-        size: 300,
-        Cell: ({ row }) => dayjs(row.original.end_time).format("DD MMM YYYY"),
+        Cell: ({ row }) => dayjs(row.original.exam_data.start_time).format("DD MMM YYYY"),
+      },
+      {
+        accessorKey: "end_time",
+        header: "Tanggal Selesai",
+        enableSorting: false,
+        Cell: ({ row }) => dayjs(row.original.exam_data.end_time).format("DD MMM YYYY"),
       },
     ],
     []
