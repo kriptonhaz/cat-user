@@ -115,7 +115,6 @@ const LembarUjian = () => {
                     <Button color="info" onClick={handleNextQuestion}>
                       Simpan dan Lanjutkan
                     </Button>{" "}
-                    {/* Add onClick handler */}
                   </Box>
                   <Box sx={{ display: "flex", mt: 5, justifyContent: "center" }}>
                     <Box
@@ -224,39 +223,40 @@ const LembarUjian = () => {
                   }}
                 >
                   <Grid container spacing={3}>
-                    {soalExamAvailable?.data.map((question) => {
-                      return (
-                        <Grid item key={question.Uuid} xs={2} sm={1} sx={{ ml: 2 }}>
-                          <Button
-                            variant="outlined"
-                            key={question.Uuid}
-                            sx={{
-                              width: "100%",
-                              minWidth: 30,
-                              height: 30,
-                              borderRadius: 0,
-                              fontSize: "0.875rem",
-                              padding: 0,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                            onClick={() => {
-                              setSoal(soalExamAvailable.data[question.question_order - 1])
-                              setCurrentQuestionIndex(question.question_order - 1) // Update current question index
+                    {soalExamAvailable?.data &&
+                      soalExamAvailable?.data.map((question) => {
+                        return (
+                          <Grid item key={question.Uuid} xs={2} sm={1} sx={{ ml: 2 }}>
+                            <Button
+                              variant="outlined"
+                              key={question.Uuid}
+                              sx={{
+                                width: "100%",
+                                minWidth: 30,
+                                height: 30,
+                                borderRadius: 0,
+                                fontSize: "0.875rem",
+                                padding: 0,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                              onClick={() => {
+                                setSoal(soalExamAvailable.data[question.question_order - 1])
+                                setCurrentQuestionIndex(question.question_order - 1) // Update current question index
 
-                              if (question.question_order === soalExamAvailable.data.length) {
-                                setFinalQuestion(true)
-                              } else {
-                                setFinalQuestion(false)
-                              }
-                            }}
-                          >
-                            {question.question_order}
-                          </Button>
-                        </Grid>
-                      )
-                    })}
+                                if (question.question_order === soalExamAvailable.data.length) {
+                                  setFinalQuestion(true)
+                                } else {
+                                  setFinalQuestion(false)
+                                }
+                              }}
+                            >
+                              {question.question_order}
+                            </Button>
+                          </Grid>
+                        )
+                      })}
                   </Grid>
                 </CardContent>
               </Card>
