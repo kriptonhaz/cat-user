@@ -2,6 +2,7 @@ import { useExamHooks } from "@/hooks/useExamHooks"
 import { useExamMutation } from "@/mutations/exam.mutation"
 import { Button, Card, CardActions, CardContent, Typography } from "@mui/material"
 import { useNavigate } from "react-router-dom"
+import { neutral, info, danger, success } from "@/theme/ts/colors"
 
 interface ujianSchema {
   Uuid: string
@@ -27,6 +28,36 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
     })
   }
 
+  const statusUjian = (status: number) => {
+    const sedangDikerjakanStage = [1, 2, 3, 4, 5, 6, 7]
+
+    if (status === 0) {
+      return {
+        color: neutral[500],
+        fontColor: "white",
+        status: "Belum Dikerjakan",
+      }
+    } else if (sedangDikerjakanStage.includes(status)) {
+      return {
+        color: info[500],
+        fontColor: "white",
+        status: "Sedang Dikerjakan",
+      }
+    } else if (status === 8) {
+      return {
+        color: danger[500],
+        fontColor: "white",
+        status: "Waktu Habis",
+      }
+    } else {
+      return {
+        color: success[500],
+        fontColor: "white",
+        status: "Selesai",
+      }
+    }
+  }
+
   return (
     <>
       <Card
@@ -43,20 +74,23 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
           position: "relative",
         }}
       >
-        <Typography
-          variant="subtitle2"
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            backgroundColor: "#f0f0f0", // TODO: wiring from activityExam gray for 0, blue for 1-7, red for 8, green for 9
-            padding: "4px 8px",
-            borderRadius: 1,
-            fontSize: "0.75rem",
-          }}
-        >
-          {/* TODO: wiring from activityExam */}
-        </Typography>
+        {activityExam?.data.activity_stage && (
+          <Typography
+            variant="subtitle2"
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              backgroundColor: statusUjian(activityExam.data.activity_stage).color,
+              color: statusUjian(activityExam.data.activity_stage).fontColor,
+              padding: "4px 8px",
+              borderRadius: 1,
+              fontSize: "0.75rem",
+            }}
+          >
+            {statusUjian(activityExam.data.activity_stage).status}
+          </Typography>
+        )}
         <CardContent sx={{ display: "flex", alignItems: "center", pt: 4 }}>
           <Typography variant="h6">{ujian.module_data.module_name}</Typography>
         </CardContent>
