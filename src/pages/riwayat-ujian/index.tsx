@@ -34,28 +34,26 @@ const RiwayatUjian = () => {
   const { data: dataRiwayatUjian, isLoading, isError } = queryGetRiwayatUjian(getRiwayatUjianParams)
 
   return (
-    !isLoading && (
-      <Box>
-        <Grid container sx={{ mt: 5, pl: 5 }} spacing={5}>
-          <Grid item xs={12}>
-            <Typography sx={{ fontWeight: "bold", fontSize: 30 }}>Riwayat Ujian Anda</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography sx={{ fontWeight: "medium", fontSize: 25 }}>
-              Berikut merupakan ujian yang telah anda kerjakan
-            </Typography>
-          </Grid>
+    <Box>
+      <Grid container sx={{ mt: 5, pl: 5 }} spacing={5}>
+        <Grid item xs={12}>
+          <Typography sx={{ fontWeight: "bold", fontSize: 30 }}>Riwayat Ujian Anda</Typography>
         </Grid>
-        {dataRiwayatUjian && (
-          <TableRiwayatUjian
-            data={dataRiwayatUjian}
-            isLoading={isLoading}
-            isError={isError}
-            setParams={setRiwayatUjianParams}
-          />
-        )}
-      </Box>
-    )
+        <Grid item xs={12}>
+          <Typography sx={{ fontWeight: "medium", fontSize: 25 }}>
+            Berikut merupakan ujian yang telah anda kerjakan
+          </Typography>
+        </Grid>
+      </Grid>
+      {dataRiwayatUjian && (
+        <TableRiwayatUjian
+          data={dataRiwayatUjian}
+          isLoading={isLoading}
+          isError={isError}
+          setParams={setRiwayatUjianParams}
+        />
+      )}
+    </Box>
   )
 }
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { IusePagination } from "@/hooks/usePagination"
 import { IRiwayatExamResponse, RiwayatUjian } from "@/interfaces/exam.interface"
 import {
