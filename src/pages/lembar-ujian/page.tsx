@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Grid, Box, Card, CardHeader, Button, CardContent, Typography, keyframes } from "@mui/material"
+import { Grid, Box, Card, Button, CardContent, Typography, keyframes } from "@mui/material"
 import Webcam from "react-webcam"
 import { warning } from "@/theme/ts/colors"
 import SoalPertanyaanPilgan from "./component/soalPertanyaanPilgan"
@@ -8,12 +8,14 @@ import { FiberManualRecord, Mic } from "@mui/icons-material"
 import { useExamHooks } from "@/hooks/useExamHooks"
 import { useParams } from "react-router-dom"
 import { useExamMutation } from "@/mutations/exam.mutation"
-import { ISoalExam, ISoalExamByModuleResponse, SoalExam } from "@/interfaces/exam.interface"
+import { SoalExam } from "@/interfaces/exam.interface"
+import CameraOff from "@/assets/camera-off.png"
 
 const LembarUjian = () => {
   const [soal, setSoal] = useState<SoalExam | null>(null)
   const [finalQuestion, setFinalQuestion] = useState(false)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0) // Add state to track current question index
+  const [isWebcamError, setIsWebcamError] = useState(true)
 
   const params = useParams()
   const videoConstraints = {
@@ -136,29 +138,46 @@ const LembarUjian = () => {
                           pointerEvents: "none",
                         }}
                       />
-                      <Box
-                        sx={{
-                          animation: "vibrate 1s infinite ease-in-out",
-                          color: "red",
-                          fontSize: 20,
-                          position: "absolute",
-                          top: 5,
-                          left: 5,
-                          zIndex: 2,
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <FiberManualRecord />
-                        Recording
-                      </Box>
+
+                      {isWebcamError ? (
+                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                          <img src={CameraOff} alt="Camera Off" style={{ width: "100px", height: "100px" }} />
+                          <Typography variant="body2" sx={{ color: "red", mt: 1, textAlign: "center" }}>
+                            Terjadi kesalahan saat mengakses kamera
+                          </Typography>
+                        </Box>
+                      ) : (
+                        <Box
+                          sx={{
+                            animation: "vibrate 1s infinite ease-in-out",
+                            color: "red",
+                            fontSize: 20,
+                            position: "absolute",
+                            top: 5,
+                            left: 5,
+                            zIndex: 2,
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <FiberManualRecord />
+                          Recording
+                        </Box>
+                      )}
                       <Webcam
                         audio={false}
                         height={170}
                         screenshotFormat="image/jpeg"
                         width={400}
+                        mirrored={true}
                         videoConstraints={videoConstraints}
                         style={{ position: "absolute", zIndex: 0, borderRadius: "15px" }}
+                        onUserMediaError={() => {
+                          setIsWebcamError(true)
+                        }}
+                        onUserMedia={() => {
+                          setIsWebcamError(false)
+                        }}
                       />
                     </Box>
                   </Box>
