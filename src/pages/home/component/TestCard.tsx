@@ -68,7 +68,7 @@ const TestCard = ({ soal }: { soal: soalSchema }) => {
       </CardContent>
       <CardActions sx={{ justifyContent: "flex-start", padding: 2 }}>
         <Button variant="contained" onClick={() => navigate(`/list-soal/${soal.uuid}`)}>
-          Kerjakan
+          Mulai
         </Button>
       </CardActions>
     </Card>
