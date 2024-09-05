@@ -40,9 +40,27 @@ const Navbar = () => {
             {/* Navigation Menu */}
             {localStorage.getItem("name") && !isMatchingRoute(location.pathname, /^\/lembar-ujian\/\d+$/) && (
               <Box sx={{ display: "flex", ml: 4 }}>
-                <Button sx={{ color: "white", mr: 2 }}>Jadwal Ujian</Button>
-                <Button sx={{ color: "white", mr: 2 }}>Profil Peserta</Button>
-                <Button sx={{ color: "white", mr: 2 }} onClick={() => navigate("/riwayat-ujian")}>
+                <Button
+                  sx={{
+                    color: "white",
+                    mr: 2,
+                    backgroundColor: location.pathname === "/home" ? "rgba(255, 255, 255, 0.2)" : "transparent",
+                    border: "1px solid white",
+                  }}
+                  onClick={() => navigate("/home")}
+                >
+                  Home
+                </Button>
+                <Button
+                  sx={{
+                    color: "white",
+                    mr: 2,
+                    backgroundColor:
+                      location.pathname === "/riwayat-ujian" ? "rgba(255, 255, 255, 0.2)" : "transparent",
+                    border: "1px solid white",
+                  }}
+                  onClick={() => navigate("/riwayat-ujian")}
+                >
                   Riwayat Ujian
                 </Button>
               </Box>
