@@ -4,40 +4,46 @@ import Webcam from "react-webcam"
 import { warning } from "@/theme/ts/colors"
 import SoalPertanyaanPilgan from "./component/soalPertanyaanPilgan"
 import SoalPertanyaanEssay from "./component/soalPertanyaanEssay"
-import { FiberManualRecord, Mic } from "@mui/icons-material"
 import { useExamHooks } from "@/hooks/useExamHooks"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useExamMutation } from "@/mutations/exam.mutation"
-import { SoalExam } from "@/interfaces/exam.interface"
-import CameraOff from "@/assets/camera-off.png"
+import { SoalExam, TimerUjian } from "@/interfaces/exam.interface"
+import TimerAndWebcam from "./component/timerAndWebcam"
 
 const LembarUjian = () => {
+  const navigate = useNavigate()
   const [soal, setSoal] = useState<SoalExam | null>(null)
   const [finalQuestion, setFinalQuestion] = useState(false)
+  const [timer, setTimer] = useState(0)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0) // Add state to track current question index
-  const [isWebcamError, setIsWebcamError] = useState(true)
-
   const params = useParams()
-  const videoConstraints = {
-    width: 1280,
-    height: 720,
-    facingMode: "user",
-  }
-
-  const questionList = Array.from({ length: 50 }, (_, index) => ({
-    id: index + 1,
-    questionNo: index + 1,
-  }))
 
   const { leftExamBeforeFinishMutation } = useExamMutation()
   const examMutation = leftExamBeforeFinishMutation()
 
+  const { finishExamMutation } = useExamMutation()
+  const finishMutation = finishExamMutation()
+
   const { queryGetSoalExamByModule } = useExamHooks()
-  const { data: soalExamAvailable } = queryGetSoalExamByModule(params.moduleId)
+  const { data: soalExamAvailable, isLoading: isLoadingSoal } = queryGetSoalExamByModule(params.moduleId)
+
+  const { queryGetTimerUjian } = useExamHooks()
+  const { data: timerUjian, isLoading: isLoadingTimer } = queryGetTimerUjian({
+    model: params.model,
+    examUuid: params.examToolId,
+  })
 
   useEffect(() => {
-    if (soalExamAvailable?.data && soalExamAvailable.data.length > 0) {
-      setSoal(soalExamAvailable.data[0])
+    if (soalExamAvailable?.data && soalExamAvailable.data.length > 0 && currentQuestionIndex === 0 && timerUjian) {
+      setSoal(soalExamAvailable.data[15])
+      setCurrentQuestionIndex(15)
+      setFinalQuestion(false)
+
+      if (timerUjian.data.timer_type === 1) {
+        setTimer(soalExamAvailable.data[15].timer)
+      } else {
+        setTimer(timerUjian?.data.total_time)
+      }
     }
 
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -53,7 +59,7 @@ const LembarUjian = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload)
     }
-  }, [soalExamAvailable])
+  }, [soalExamAvailable, soal])
 
   const handleNextQuestion = () => {
     if (soalExamAvailable?.data) {
@@ -62,15 +68,36 @@ const LembarUjian = () => {
         setSoal(soalExamAvailable.data[nextIndex])
         setCurrentQuestionIndex(nextIndex)
         setFinalQuestion(nextIndex === soalExamAvailable.data.length - 1)
+
+        if (timerUjian?.data.timer_type === 1) {
+          setTimer(soalExamAvailable.data[nextIndex].timer)
+        }
+      }
+
+      if (timerUjian?.data.timer_type === 1 && nextIndex === soalExamAvailable.data.length && params.activityId) {
+        finishMutation.mutate({ activityUuid: params.activityId })
       }
     }
   }
 
-  const vibrate = keyframes`
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-  `
+  const handlePreviousQuestion = () => {
+    if (soalExamAvailable?.data) {
+      const nextIndex = currentQuestionIndex - 1
+      if (nextIndex < soalExamAvailable.data.length) {
+        setSoal(soalExamAvailable.data[nextIndex])
+        setCurrentQuestionIndex(nextIndex)
+        setFinalQuestion(nextIndex === soalExamAvailable.data.length - 1)
+
+        if (timerUjian?.data.timer_type === 1) {
+          setTimer(soalExamAvailable.data[nextIndex].timer)
+        }
+      }
+    }
+  }
+
+  if (!soalExamAvailable) {
+    return <>Loading...</>
+  }
 
   return (
     <>
@@ -86,7 +113,25 @@ const LembarUjian = () => {
         >
           <Box>
             {soal && params.activityId && (
-              <SoalPertanyaanPilgan soal={soal} isFinalQuestion={finalQuestion} activityId={params.activityId} />
+              <>
+                {timerUjian?.data.timer_type === 1 && (
+                  <SoalPertanyaanPilgan soal={soal} isFinalQuestion={finalQuestion} activityId={params.activityId} />
+                )}
+                {timerUjian?.data.timer_type === 2 && (
+                  <Box sx={{ display: "flex", justifyContent: "flex-end", width: "98%" }}>
+                    <Button
+                      onClick={() => handlePreviousQuestion()}
+                      disabled={currentQuestionIndex === 0}
+                      sx={{ mr: 2 }}
+                    >
+                      Sebelumnya
+                    </Button>
+                    <Button onClick={() => handleNextQuestion()} disabled={finalQuestion}>
+                      Selanjutnya
+                    </Button>
+                  </Box>
+                )}
+              </>
             )}
           </Box>
         </Grid>
@@ -111,79 +156,24 @@ const LembarUjian = () => {
                 }}
               >
                 <CardContent>
-                  <Typography variant="h6">Sisa Waktu : 00:00:00</Typography>
-                  <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-                    <Button color="warning">Instruksi</Button>
-                    <Button color="info" onClick={handleNextQuestion}>
-                      Simpan dan Lanjutkan
-                    </Button>{" "}
-                  </Box>
-                  <Box sx={{ display: "flex", mt: 5, justifyContent: "center" }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        mt: 5,
-                        justifyContent: "center",
-                        position: "relative",
-                        width: 320,
-                        height: 170,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          position: "absolute",
-                          width: "100%",
-                          height: "100%",
-                          zIndex: 1,
-                          pointerEvents: "none",
-                        }}
-                      />
-
-                      {isWebcamError ? (
-                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                          <img src={CameraOff} alt="Camera Off" style={{ width: "100px", height: "100px" }} />
-                          <Typography variant="body2" sx={{ color: "red", mt: 1, textAlign: "center" }}>
-                            Terjadi kesalahan saat mengakses kamera
-                          </Typography>
-                        </Box>
-                      ) : (
-                        <Box
-                          sx={{
-                            animation: "vibrate 1s infinite ease-in-out",
-                            color: "red",
-                            fontSize: 20,
-                            position: "absolute",
-                            top: 5,
-                            left: 5,
-                            zIndex: 2,
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <FiberManualRecord />
-                          Recording
-                        </Box>
-                      )}
-                      <Webcam
-                        audio={false}
-                        height={170}
-                        screenshotFormat="image/jpeg"
-                        width={400}
-                        mirrored={true}
-                        videoConstraints={videoConstraints}
-                        style={{ position: "absolute", zIndex: 0, borderRadius: "15px" }}
-                        onUserMediaError={() => {
-                          setIsWebcamError(true)
-                        }}
-                        onUserMedia={() => {
-                          setIsWebcamError(false)
-                        }}
-                      />
-                    </Box>
-                  </Box>
-                  <Box sx={{ display: "flex", mt: 5, justifyContent: "right" }}>
-                    <Typography variant="subtitle1">Waktu yang digunakan : 00:00:00</Typography>
-                  </Box>
+                  {!isLoadingSoal && timerUjian?.data.timer_type === 1 && (
+                    <TimerAndWebcam
+                      tipeTimer={1}
+                      waktu={timer}
+                      nextQuestion={() => handleNextQuestion()}
+                      questionIndex={currentQuestionIndex}
+                      isLoadingTimer={isLoadingSoal}
+                    />
+                  )}
+                  {!isLoadingSoal && timerUjian?.data.timer_type === 2 && (
+                    <TimerAndWebcam
+                      tipeTimer={2}
+                      waktu={timer}
+                      nextQuestion={() => handleNextQuestion()}
+                      questionIndex={currentQuestionIndex}
+                      isLoadingTimer={isLoadingSoal}
+                    />
+                  )}
                 </CardContent>
               </Card>
               <Card
@@ -261,13 +251,15 @@ const LembarUjian = () => {
                                 justifyContent: "center",
                               }}
                               onClick={() => {
-                                setSoal(soalExamAvailable.data[question.question_order - 1])
-                                setCurrentQuestionIndex(question.question_order - 1) // Update current question index
+                                if (timerUjian?.data.timer_type !== 1) {
+                                  setSoal(soalExamAvailable.data[question.question_order - 1])
+                                  setCurrentQuestionIndex(question.question_order - 1) // Update current question index
 
-                                if (question.question_order === soalExamAvailable.data.length) {
-                                  setFinalQuestion(true)
-                                } else {
-                                  setFinalQuestion(false)
+                                  if (question.question_order === soalExamAvailable.data.length) {
+                                    setFinalQuestion(true)
+                                  } else {
+                                    setFinalQuestion(false)
+                                  }
                                 }
                               }}
                             >

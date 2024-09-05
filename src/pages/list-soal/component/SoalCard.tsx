@@ -7,9 +7,10 @@ import { neutral, info, danger, success } from "@/theme/ts/colors"
 interface ujianSchema {
   Uuid: string
   exam_uuid: string
+  exam_type_name: string
   module_data: {
     module_name: string
-    exam_tool_uuid: string
+    exam_tool_model_uuid: string
     Uuid: string
   }
 }
@@ -21,10 +22,12 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
   const { data: activityExam } = useExamHooks().queryActivityExam(ujian.exam_uuid, ujian.Uuid)
   const examMutation = startExamMutation()
 
-  const handleStartExam = () => {
+  const handleStartExam = (model: string, examToolUuid: string) => {
     examMutation.mutate({
       examUuid: ujian.exam_uuid,
       moduleUuid: ujian.Uuid,
+      examToolUuid,
+      model,
     })
   }
 
@@ -75,28 +78,35 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
         }}
       >
         {activityExam?.data.activity_stage && (
-          <Typography
-            variant="subtitle2"
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              backgroundColor: statusUjian(activityExam.data.activity_stage).color,
-              color: statusUjian(activityExam.data.activity_stage).fontColor,
-              padding: "4px 8px",
-              borderRadius: 1,
-              fontSize: "0.75rem",
-            }}
-          >
-            {statusUjian(activityExam.data.activity_stage).status}
-          </Typography>
+          <>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                backgroundColor: statusUjian(activityExam.data.activity_stage).color,
+                color: statusUjian(activityExam.data.activity_stage).fontColor,
+                padding: "4px 8px",
+                borderRadius: 1,
+                fontSize: "0.75rem",
+              }}
+            >
+              {statusUjian(activityExam.data.activity_stage).status}
+            </Typography>
+            <CardContent sx={{ display: "flex", alignItems: "center", pt: 4 }}>
+              <Typography variant="h6">{ujian.module_data.module_name}</Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                disabled={activityExam.data.activity_stage === 9}
+                onClick={() => handleStartExam(ujian.exam_type_name, ujian.module_data.exam_tool_model_uuid)}
+              >
+                Mulai
+              </Button>
+            </CardActions>
+          </>
         )}
-        <CardContent sx={{ display: "flex", alignItems: "center", pt: 4 }}>
-          <Typography variant="h6">{ujian.module_data.module_name}</Typography>
-        </CardContent>
-        <CardActions>
-          <Button onClick={handleStartExam}>Mulai</Button>
-        </CardActions>
       </Card>
     </>
   )

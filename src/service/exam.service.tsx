@@ -8,6 +8,7 @@ import {
   ISoalExamByModuleResponse,
   IExamFinishResponse,
   IRiwayatExamResponse,
+  ITimerUjianResponse,
 } from "@/interfaces/exam.interface"
 import API from "./base.service"
 import { setRiwayatUjianParams } from "@/pages/riwayat-ujian"
@@ -61,6 +62,7 @@ export const startExam = async (
 
   if (allowedToResumeExamStage.includes(activity.activity_stage)) {
     ///hit redoing test
+    console.log("Redoing")
     const { data } = await API().request<IExamStartResponse>({
       url: `/v1/cat+apps/exam/activity/redoing/${activity.Uuid}`,
       method: "PUT",
@@ -114,14 +116,25 @@ export const getSoalExamByModule = async (uuidModule?: string): Promise<ISoalExa
 }
 
 export const getRiwayatUjian = async (params: setRiwayatUjianParams): Promise<IRiwayatExamResponse> => {
-  console.log(params)
-
   const { data } = await API().request<IRiwayatExamResponse>({
     url: `/v1/cat+apps/exam/passed?page=${params.page}&per_page=${params.per_page}`,
     method: "GET",
   })
 
-  console.log(data)
+  return data
+}
+
+export const getTimerUjian = async ({
+  model,
+  examUuid,
+}: {
+  model?: string
+  examUuid?: string
+}): Promise<ITimerUjianResponse> => {
+  const { data } = await API().request<ITimerUjianResponse>({
+    url: `/v1/cat+apps/exam/model/by+tool/${model}/and+model/${examUuid}`,
+    method: "GET",
+  })
 
   return data
 }

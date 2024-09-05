@@ -341,6 +341,22 @@ export interface RiwayatUjian {
   }
 }
 
+export interface TimerUjian {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  code: string
+  name: string
+  timer_type: number
+  total_time: number
+  is_must_fill_all_question: boolean
+  added_time: number
+  can_go_back: boolean
+  create_by: string
+}
+
 // ========================================
 
 export interface IExamAvailableResponse {
@@ -427,4 +443,10 @@ export interface IRiwayatExamResponse {
     total_data: number
     total_page: number
   }
+}
+
+export interface ITimerUjianResponse {
+  data: TimerUjian
+  message: string
+  code: number
 }

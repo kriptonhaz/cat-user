@@ -45,6 +45,12 @@ export const useExamHooks = () => {
       queryFn: () => ExamService.getRiwayatUjian(params),
     })
 
+  const queryGetTimerUjian = ({ model, examUuid }: { model?: string; examUuid?: string }) =>
+    useQuery({
+      queryKey: ["exam", "timerUjian"],
+      queryFn: () => ExamService.getTimerUjian({ model, examUuid }),
+    })
+
   return {
     queryExamAvailable,
     queryModuleExamAvailable,
@@ -53,5 +59,6 @@ export const useExamHooks = () => {
     queryStartExam,
     queryGetSoalExamByModule,
     queryGetRiwayatUjian,
+    queryGetTimerUjian,
   }
 }
