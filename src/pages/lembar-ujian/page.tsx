@@ -35,12 +35,13 @@ const LembarUjian = () => {
 
   useEffect(() => {
     if (soalExamAvailable?.data && soalExamAvailable.data.length > 0 && currentQuestionIndex === 0 && timerUjian) {
-      setSoal(soalExamAvailable.data[15])
-      setCurrentQuestionIndex(15)
+      console.log(soalExamAvailable)
+      setSoal(soalExamAvailable.data[0])
+      setCurrentQuestionIndex(0)
       setFinalQuestion(false)
 
       if (timerUjian.data.timer_type === 1) {
-        setTimer(soalExamAvailable.data[15].timer)
+        setTimer(soalExamAvailable.data[0].timer)
       } else {
         setTimer(timerUjian?.data.total_time)
       }
@@ -114,9 +115,7 @@ const LembarUjian = () => {
           <Box>
             {soal && params.activityId && (
               <>
-                {timerUjian?.data.timer_type === 1 && (
-                  <SoalPertanyaanPilgan soal={soal} isFinalQuestion={finalQuestion} activityId={params.activityId} />
-                )}
+                {<SoalPertanyaanPilgan soal={soal} isFinalQuestion={finalQuestion} activityId={params.activityId} />}
                 {timerUjian?.data.timer_type === 2 && (
                   <Box sx={{ display: "flex", justifyContent: "flex-end", width: "98%" }}>
                     <Button

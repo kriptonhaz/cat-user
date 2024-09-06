@@ -30,11 +30,15 @@ const TimerAndWebcam = ({
   }, [waktu])
 
   useEffect(() => {
-    if (!isLoadingTimer && tipeTimer === 1) {
+    if (!isLoadingTimer) {
       const timer = setInterval(() => {
         setRemainingTime((prevTime) => {
           if (prevTime <= 0) {
-            nextQuestion()
+            if (tipeTimer === 1) {
+              nextQuestion()
+            } else {
+              ///TODO : tambah waktu
+            }
             return waktu
           }
           return prevTime - 1
@@ -57,10 +61,12 @@ const TimerAndWebcam = ({
 
   return (
     <>
-      <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
+      <Typography variant="h6">
+        Sisa Waktu {tipeTimer}: {formatTime(remainingTime)}
+      </Typography>
       <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
         <Button color="warning">Instruksi</Button>
-        <Button color="info">Simpan dan Lanjutkan</Button>{" "}
+        <Button color="info">Simpan dan Lanjutkan </Button>{" "}
       </Box>
       <Box sx={{ display: "flex", mt: 5, justifyContent: "center" }}>
         <Box
