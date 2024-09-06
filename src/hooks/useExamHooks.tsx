@@ -25,6 +25,7 @@ export const useExamHooks = () => {
     useQuery({
       queryKey: ["exam", "activityExamByModule"],
       queryFn: () => ExamService.getExamActivityByModule(uuidExam, uuidModule),
+      enabled: !!uuidExam && !!uuidModule,
     })
 
   const queryStartExam = (uuidExam?: string, uuidModule?: string) =>
