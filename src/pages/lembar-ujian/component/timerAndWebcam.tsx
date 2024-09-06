@@ -61,9 +61,7 @@ const TimerAndWebcam = ({
 
   return (
     <>
-      <Typography variant="h6">
-        Sisa Waktu {tipeTimer}: {formatTime(remainingTime)}
-      </Typography>
+      <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
       <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
         <Button color="warning">Instruksi</Button>
         <Button color="info">Simpan dan Lanjutkan </Button>{" "}
