@@ -7,7 +7,8 @@ import { useProfileHooks } from "@/hooks/useProfileHooks"
 import { useEffect, useState } from "react"
 
 const HomePage: React.FC = () => {
-  const [expanded, setExpanded] = useState(false)
+  const [edukasiExpanded, setEdukasiExpanded] = useState(false)
+  const [jobExpanded, setJobExpanded] = useState(false)
 
   const { queryExamAvailable } = useExamHooks()
   const { queryProfile } = useProfileHooks()
@@ -25,74 +26,74 @@ const HomePage: React.FC = () => {
 
   return (
     <>
-      <Card>
-        <Grid container sx={{ mt: 5, pl: 5 }} spacing={5}>
-          <Grid item xs={12}>
-            <Typography sx={{ fontWeight: "bold", fontSize: 30 }}>Profil</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography sx={{ fontWeight: "medium", fontSize: 25 }}>Informasi Data Diri</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography sx={{ fontWeight: "regular", fontSize: 20 }}>Nama : {dataProfile?.data.full_name}</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography sx={{ fontWeight: "regular", fontSize: 20 }}>NIP : {dataProfile?.data.nip}</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Card
-              sx={{
-                cursor: "pointer",
-                transition: "0.3s",
-                border: "1px solid #ccc", // Added border
-                "&:hover": {
-                  boxShadow: 3,
-                },
-              }}
-              onClick={() => setExpanded(!expanded)}
-            >
-              <CardContent>
-                <Typography sx={{ fontWeight: "regular", fontSize: 20 }}>Riwayat Edukasi</Typography>
-                {expanded && (
-                  <div>
-                    <Typography sx={{ mt: 2 }}>
-                      Jenis Kelamin: {dataProfile?.data.sex === 1 ? "Laki-laki" : "Perempuan"}
-                    </Typography>
-                    <Typography>Email: {dataProfile?.data.email}</Typography>
-                    {/* Tambahkan informasi lain yang ingin ditampilkan */}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12}>
-            <Card
-              sx={{
-                cursor: "pointer",
-                transition: "0.3s",
-                border: "1px solid #ccc", // Added border
-                "&:hover": {
-                  boxShadow: 3,
-                },
-              }}
-              onClick={() => setExpanded(!expanded)}
-            >
-              <CardContent>
-                <Typography sx={{ fontWeight: "regular", fontSize: 20 }}>Riwayat Pekerjaan</Typography>
-                {expanded && (
-                  <div>
-                    <Typography sx={{ mt: 2 }}>
-                      Jenis Kelamin: {dataProfile?.data.sex === 1 ? "Laki-laki" : "Perempuan"}
-                    </Typography>
-                    <Typography>Email: {dataProfile?.data.email}</Typography>
-                    {/* Tambahkan informasi lain yang ingin ditampilkan */}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
+      <Grid container sx={{ mt: 5, pl: 5 }} spacing={5}>
+        <Grid item xs={12}>
+          <Typography sx={{ fontWeight: "bold", fontSize: 30 }}>Profil</Typography>
         </Grid>
-      </Card>
+        <Grid item xs={12}>
+          <Typography sx={{ fontWeight: "medium", fontSize: 25 }}>Informasi Data Diri</Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography sx={{ fontWeight: "regular", fontSize: 20 }}>Nama : {dataProfile?.data.full_name}</Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography sx={{ fontWeight: "regular", fontSize: 20 }}>NIP : {dataProfile?.data.nip}</Typography>
+        </Grid>
+        <Grid item xs={5}>
+          <Card
+            sx={{
+              cursor: "pointer",
+              transition: "0.3s",
+              border: "1px solid #ccc", // Added border
+              "&:hover": {
+                boxShadow: 3,
+              },
+            }}
+            onClick={() => setEdukasiExpanded(!edukasiExpanded)}
+          >
+            <CardContent>
+              <Typography sx={{ fontWeight: "regular", fontSize: 20 }}>Riwayat Edukasi</Typography>
+              {edukasiExpanded &&
+                dataProfile?.data.education.map((edukasi) => (
+                  <div key={edukasi.ID}>
+                    <Card>
+                      <Typography sx={{ mt: 2 }}>
+                        Jurusan: {edukasi.grade} {edukasi.major}
+                      </Typography>
+                      <Typography sx={{ mt: 2 }}>Gelar: {edukasi.title}</Typography>
+                    </Card>
+                  </div>
+                ))}
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={5}>
+          <Card
+            sx={{
+              cursor: "pointer",
+              transition: "0.3s",
+              border: "1px solid #ccc", // Added border
+              "&:hover": {
+                boxShadow: 3,
+              },
+            }}
+            onClick={() => setJobExpanded(!jobExpanded)}
+          >
+            <CardContent>
+              <Typography sx={{ fontWeight: "regular", fontSize: 20 }}>Riwayat Pekerjaan</Typography>
+              {jobExpanded &&
+                dataProfile?.data.job.map((job) => (
+                  <div key={job.ID}>
+                    <Card>
+                      <Typography sx={{ mt: 2 }}>Divisi: {job.work_department}</Typography>
+                      <Typography sx={{ mt: 2 }}>Jabatan: {job.job_title}</Typography>
+                    </Card>
+                  </div>
+                ))}
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
       <Grid container sx={{ mt: 5, pl: 5, mb: 5 }} spacing={5}>
         <Grid item xs={12}>
           <Typography sx={{ fontWeight: "bold", fontSize: 30 }}>Daftar Ujian</Typography>
