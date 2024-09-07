@@ -35,7 +35,7 @@ const RiwayatUjian = () => {
 
   return (
     <Box>
-      <Grid container sx={{ mt: 5, pl: 5 }} spacing={5}>
+      <Grid container sx={{ mt: 10, pl: 5 }} spacing={5}>
         <Grid item xs={12}>
           <Typography sx={{ fontWeight: "bold", fontSize: 30 }}>Riwayat Ujian Anda</Typography>
         </Grid>

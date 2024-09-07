@@ -1,8 +1,7 @@
-import { AppBar, Box, Button, Container, Modal, Toolbar, Typography } from "@mui/material"
+import { AppBar, Box, Button, Container, Toolbar, Typography } from "@mui/material"
 import "@splidejs/react-splide/css"
 import Logo from "@/assets/logo-kemenhan.png"
 import { useLocation, useNavigate } from "react-router-dom"
-import { useState } from "react"
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -16,8 +15,8 @@ const Navbar = () => {
 
   return (
     <>
-      <AppBar position="static">
-        <Container maxWidth={false} sx={{ maxWidth: "1900px" }}>
+      <AppBar position="fixed">
+        <Container maxWidth={false} sx={{ maxWidth: "1900px", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
           <Toolbar disableGutters>
             <img src={Logo} alt="cat kemenhan" style={{ width: "4%" }} />
             <Typography
