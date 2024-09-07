@@ -80,47 +80,56 @@ const HomePage: React.FC = () => {
                 <WorkOutline sx={{ mr: 3 }} />
                 Pekerjaan Terakhir
               </Typography>
-              <Typography
-                sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
-              >
-                Jabatan: {dataProfile?.data.job[0].job_title}
-              </Typography>
-              <Typography
-                sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
-              >
-                Grade: {dataProfile?.data.job[0].grade}
-              </Typography>
-              <Typography
-                sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
-              >
-                Departement: {dataProfile?.data.job[0].work_department}
-              </Typography>
-              <Typography
-                sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
-              >
-                Tempat Bekerja: {dataProfile?.data.job[0].work_place}
-              </Typography>
+              {dataProfile?.data && dataProfile?.data?.job?.length > 0 && (
+                <>
+                  <Typography
+                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                  >
+                    Jabatan: {dataProfile?.data.job[0].job_title}
+                  </Typography>
+                  <Typography
+                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                  >
+                    Grade: {dataProfile?.data.job[0].grade}
+                  </Typography>
+                  <Typography
+                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                  >
+                    Departement: {dataProfile?.data.job[0].work_department}
+                  </Typography>
+                  <Typography
+                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                  >
+                    Tempat Bekerja: {dataProfile?.data.job[0].work_place}
+                  </Typography>
+                </>
+              )}
+
               <Typography
                 sx={{ fontWeight: "regular", fontSize: 20, mt: 7, mb: 3, display: "flex", alignItems: "center" }}
               >
                 <SchoolOutlined sx={{ mr: 3 }} />
                 Pendidikan Terakhir
               </Typography>
-              <Typography
-                sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
-              >
-                Gelar: {dataProfile?.data.education[0].title}
-              </Typography>
-              <Typography
-                sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
-              >
-                Grade: {dataProfile?.data.education[0].grade}
-              </Typography>
-              <Typography
-                sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
-              >
-                Program Studi: {dataProfile?.data.education[0].major}
-              </Typography>
+              {dataProfile?.data && dataProfile?.data?.education?.length > 0 && (
+                <>
+                  <Typography
+                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                  >
+                    Gelar: {dataProfile?.data.education[0].title}
+                  </Typography>
+                  <Typography
+                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                  >
+                    Grade: {dataProfile?.data.education[0].grade}
+                  </Typography>
+                  <Typography
+                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                  >
+                    Program Studi: {dataProfile?.data.education[0].major}
+                  </Typography>
+                </>
+              )}
             </CardContent>
           </Card>
         </Grid>
