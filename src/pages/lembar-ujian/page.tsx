@@ -3,7 +3,7 @@ import { Grid, Box, Card, Button, CardContent, Typography, keyframes } from "@mu
 import SoalPertanyaanPilgan, { answer } from "./component/soalPertanyaanPilgan"
 import SoalPertanyaanEssay from "./component/soalPertanyaanEssay"
 import { useExamHooks } from "@/hooks/useExamHooks"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import { useExamMutation } from "@/mutations/exam.mutation"
 import { SoalExam } from "@/interfaces/exam.interface"
 import TimerAndWebcam from "./component/timerAndWebcam"
@@ -60,6 +60,21 @@ const LembarUjian = () => {
       } else {
         setTimer(timerUjian?.data.total_time)
       }
+
+      // Set the initial selectedAnswer based on questionResponseByActivity
+      if (questionResponseByActivity?.data) {
+        const currentResponse = questionResponseByActivity.data.find(
+          (response) => response.question_order === currentQuestionIndex + 1
+        )
+        if (currentResponse) {
+          setSelectedAnswer({
+            content: currentResponse.user_response_content,
+            value: currentResponse.user_response_value,
+          })
+        } else {
+          setSelectedAnswer(null)
+        }
+      }
     }
 
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -75,11 +90,26 @@ const LembarUjian = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload)
     }
-  }, [soalExamAvailable, activityExam])
+  }, [soalExamAvailable, activityExam, questionResponseByActivity])
 
   useEffect(() => {
-    setSelectedAnswer(null) // Reset selected answer when changing questions
-  }, [currentQuestionIndex])
+    // Update selectedAnswer when changing questions
+    if (questionResponseByActivity?.data) {
+      const currentResponse = questionResponseByActivity.data.find(
+        (response) => response.question_order === currentQuestionIndex + 1
+      )
+      if (currentResponse) {
+        setSelectedAnswer({
+          content: currentResponse.user_response_content,
+          value: currentResponse.user_response_value,
+        })
+      } else {
+        setSelectedAnswer(null)
+      }
+    } else {
+      setSelectedAnswer(null)
+    }
+  }, [currentQuestionIndex, questionResponseByActivity])
 
   const handleNextQuestion = () => {
     if (soalExamAvailable?.data) {
