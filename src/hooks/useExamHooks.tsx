@@ -11,45 +11,50 @@ export const useExamHooks = () => {
 
   const queryModuleExamAvailable = (uuid?: string) =>
     useQuery({
-      queryKey: ["exam", "moduleAvailable"],
+      queryKey: ["exam", "moduleAvailable", uuid],
       queryFn: () => ExamService.getModuleExamAvailable(uuid),
+      enabled: !!uuid,
     })
 
   const queryGetExam = (uuid?: string) =>
     useQuery({
-      queryKey: ["exam", "getExam"],
+      queryKey: ["exam", "getExam", uuid],
       queryFn: () => ExamService.getExamByUuid(uuid),
+      enabled: !!uuid,
     })
 
   const queryActivityExam = (uuidExam?: string, uuidModule?: string) =>
     useQuery({
-      queryKey: ["exam", "activityExamByModule"],
+      queryKey: ["exam", "activityExamByModule", uuidExam, uuidModule],
       queryFn: () => ExamService.getExamActivityByModule(uuidExam, uuidModule),
       enabled: !!uuidExam && !!uuidModule,
     })
 
   const queryStartExam = (uuidExam?: string, uuidModule?: string) =>
     useQuery({
-      queryKey: ["exam", "startExam"],
+      queryKey: ["exam", "startExam", uuidExam, uuidModule],
       queryFn: () => ExamService.startExam(uuidExam, uuidModule),
+      enabled: !!uuidExam && !!uuidModule,
     })
 
   const queryGetSoalExamByModule = (uuidModule?: string) =>
     useQuery({
-      queryKey: ["exam", "soalExam"],
+      queryKey: ["exam", "soalExam", uuidModule],
       queryFn: () => ExamService.getSoalExamByModule(uuidModule),
+      enabled: !!uuidModule,
     })
 
   const queryGetRiwayatUjian = (params: setRiwayatUjianParams) =>
     useQuery({
-      queryKey: ["exam", params],
+      queryKey: ["exam", "riwayatUjian", params],
       queryFn: () => ExamService.getRiwayatUjian(params),
     })
 
   const queryGetTimerUjian = ({ model, examUuid }: { model?: string; examUuid?: string }) =>
     useQuery({
-      queryKey: ["exam", "timerUjian"],
+      queryKey: ["exam", "timerUjian", model, examUuid],
       queryFn: () => ExamService.getTimerUjian({ model, examUuid }),
+      enabled: !!model && !!examUuid,
     })
 
   const queryGetQuestionResponseByActivity = (activityUuid?: string) =>
