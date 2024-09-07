@@ -16,14 +16,6 @@ const HomePage: React.FC = () => {
   const { data: dataExamAvailable } = queryExamAvailable()
   const { data: dataProfile } = queryProfile()
 
-  useEffect(() => {
-    if (dataProfile) {
-      localStorage.setItem("nip", dataProfile.data.nip)
-      localStorage.setItem("name", dataProfile.data.full_name)
-      localStorage.setItem("gender", dataProfile.data.sex === 1 ? "Laki - laki" : "Perempuan")
-    }
-  }, [dataProfile])
-
   return (
     <>
       <Grid container sx={{ mt: 5, pl: 5 }} spacing={5}>
