@@ -1,21 +1,25 @@
-import React, { useEffect, useState } from "react"
+import React, { act, useEffect, useState } from "react"
 import { Grid, Box, Card, Button, CardContent, Typography, keyframes } from "@mui/material"
 import Webcam from "react-webcam"
 import { warning } from "@/theme/ts/colors"
-import SoalPertanyaanPilgan from "./component/soalPertanyaanPilgan"
+import SoalPertanyaanPilgan, { answer } from "./component/soalPertanyaanPilgan"
 import SoalPertanyaanEssay from "./component/soalPertanyaanEssay"
 import { useExamHooks } from "@/hooks/useExamHooks"
-import { useNavigate, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { useExamMutation } from "@/mutations/exam.mutation"
 import { SoalExam, TimerUjian } from "@/interfaces/exam.interface"
 import TimerAndWebcam from "./component/timerAndWebcam"
 
 const LembarUjian = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+
   const [soal, setSoal] = useState<SoalExam | null>(null)
   const [finalQuestion, setFinalQuestion] = useState(false)
   const [timer, setTimer] = useState(0)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0) // Add state to track current question index
+  const [selectedAnswer, setSelectedAnswer] = useState<{ content: string; value: number } | null>(null)
+
   const params = useParams()
 
   const { leftExamBeforeFinishMutation } = useExamMutation()
@@ -23,6 +27,12 @@ const LembarUjian = () => {
 
   const { finishExamMutation } = useExamMutation()
   const finishMutation = finishExamMutation()
+
+  const { submitJawabanMutation } = useExamMutation()
+  const submitMutation = submitJawabanMutation()
+
+  const { queryActivityExam } = useExamHooks()
+  const { data: activityExam, isLoading: isLoadingActivity } = queryActivityExam(params.examId, params.moduleId)
 
   const { queryGetSoalExamByModule } = useExamHooks()
   const { data: soalExamAvailable, isLoading: isLoadingSoal } = queryGetSoalExamByModule(params.moduleId)
@@ -96,6 +106,32 @@ const LembarUjian = () => {
     }
   }
 
+  // const handleJawab = (
+  //   {questionModelId, questionModelUuid, questionId, questionUuid}:
+  //     {questionModelId: number, questionModelUuid: string, questionId: number, questionUuid: string }) => {
+  const handleJawab = ({ responseAt, totalConsume }: { responseAt: number; totalConsume: number }) => {
+    if (activityExam && selectedAnswer && soal) {
+      const body = {
+        activity_id: activityExam.data.ID,
+        activity_uuid: activityExam.data.Uuid,
+        question_model_id: location.state.question_model_id,
+        question_model_uuid: location.state.question_model_uuid,
+        question_id: soal.ID,
+        question_uuid: soal.Uuid,
+        question_order: soal.question_order,
+        user_response_content: selectedAnswer.content,
+        user_response_value: selectedAnswer.value,
+        user_response_at_second: totalConsume,
+        total_consume_time:
+          activityExam.data.user_response_at === 0 ? responseAt : responseAt + activityExam.data.user_response_at,
+      }
+
+      submitMutation.mutate({ body })
+
+      handleNextQuestion()
+    }
+  }
+
   if (!soalExamAvailable) {
     return <>Loading...</>
   }
@@ -115,7 +151,14 @@ const LembarUjian = () => {
           <Box>
             {soal && params.activityId && (
               <>
-                {<SoalPertanyaanPilgan soal={soal} isFinalQuestion={finalQuestion} activityId={params.activityId} />}
+                {
+                  <SoalPertanyaanPilgan
+                    soal={soal}
+                    isFinalQuestion={finalQuestion}
+                    activityId={params.activityId}
+                    setAnswer={(answer: answer) => setSelectedAnswer(answer)}
+                  />
+                }
                 {timerUjian?.data.timer_type === 2 && (
                   <Box sx={{ display: "flex", justifyContent: "flex-end", width: "98%" }}>
                     <Button
@@ -162,6 +205,7 @@ const LembarUjian = () => {
                       nextQuestion={() => handleNextQuestion()}
                       questionIndex={currentQuestionIndex}
                       isLoadingTimer={isLoadingSoal}
+                      handleJawab={(responseAt, totalConsume) => handleJawab({ responseAt, totalConsume })}
                     />
                   )}
                   {!isLoadingSoal && timerUjian?.data.timer_type === 2 && (
@@ -171,6 +215,7 @@ const LembarUjian = () => {
                       nextQuestion={() => handleNextQuestion()}
                       questionIndex={currentQuestionIndex}
                       isLoadingTimer={isLoadingSoal}
+                      handleJawab={(responseAt, totalConsume) => handleJawab({ responseAt, totalConsume })}
                     />
                   )}
                 </CardContent>

@@ -1,4 +1,4 @@
-import { startExam, leftExamBeforeFinish, finishExam } from "@/service/exam.service"
+import { startExam, leftExamBeforeFinish, finishExam, submitJawaban, SubmitJawabanParams } from "@/service/exam.service"
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 
@@ -13,19 +13,27 @@ export function useExamMutation() {
         moduleUuid,
         model,
         examToolUuid,
+        examModelId,
       }: {
         examUuid: string
         moduleUuid: string
         model: string
         examToolUuid: string
+        examModelId: number
       }) => {
-        const result = await startExam(examUuid, moduleUuid)
+        const result = await startExam(examUuid, moduleUuid, examModelId)
         return result
       },
       onSuccess: (data, variables, context) => {
         if (data) {
           navigate(
-            `/lembar-ujian/${variables.examUuid}/module/${variables.moduleUuid}/activity/${data.activity.Uuid}/model/${variables.model}/examTool/${variables.examToolUuid}`
+            `/lembar-ujian/${variables.examUuid}/module/${variables.moduleUuid}/activity/${data.activity.Uuid}/model/${variables.model}/examTool/${variables.examToolUuid}`,
+            {
+              state: {
+                question_model_id: variables.examModelId,
+                question_model_uuid: variables.examToolUuid,
+              },
+            }
           )
         }
       },
@@ -54,5 +62,15 @@ export function useExamMutation() {
     })
   }
 
-  return { startExamMutation, leftExamBeforeFinishMutation, finishExamMutation }
+  const submitJawabanMutation = () => {
+    return useMutation({
+      mutationKey: ["exam", "submitJawaban"],
+      mutationFn: async ({ body }: { body: SubmitJawabanParams }) => {
+        const finish = await submitJawaban({ body })
+        return finish
+      },
+    })
+  }
+
+  return { startExamMutation, leftExamBeforeFinishMutation, finishExamMutation, submitJawabanMutation }
 }

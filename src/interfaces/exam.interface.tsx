@@ -179,6 +179,7 @@ interface ExamActivity {
   exam_attendance_uuid: string
   last_question_filled: number
   last_question_showed: number
+  user_response_at: number
   total_consume_time: number
   activity_stage: number
   activity_status: number
@@ -357,6 +358,35 @@ export interface TimerUjian {
   create_by: string
 }
 
+interface SubmitAnswer {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  user_id: number
+  user_uuid: string
+  activity_id: number
+  activity_uuid: string
+  exam_id: number
+  exam_uuid: string
+  module_id: number
+  module_uuid: string
+  exam_tool_id: number
+  exam_tool_uuid: string
+  exam_type_name: string
+  question_model_id: number
+  question_model_uuid: string
+  question_id: number
+  question_uuid: string
+  question_order: number
+  user_response_content: string
+  user_response_value: number
+  user_response_at_second: number
+  total_consume_time: number
+  created_by: string
+}
+
 // ========================================
 
 export interface IExamAvailableResponse {
@@ -447,6 +477,12 @@ export interface IRiwayatExamResponse {
 
 export interface ITimerUjianResponse {
   data: TimerUjian
+  message: string
+  code: number
+}
+
+export interface ISubmitAnswerResponse {
+  data: SubmitAnswer
   message: string
   code: number
 }

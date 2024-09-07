@@ -9,6 +9,7 @@ import {
   IExamFinishResponse,
   IRiwayatExamResponse,
   ITimerUjianResponse,
+  ISubmitAnswerResponse,
 } from "@/interfaces/exam.interface"
 import API from "./base.service"
 import { setRiwayatUjianParams } from "@/pages/riwayat-ujian"
@@ -49,12 +50,15 @@ export const getExamActivityByModule = async (
     method: "GET",
   })
 
+  console.log(data)
+
   return data
 }
 
 export const startExam = async (
   uuidExam?: string,
-  uuidModule?: string
+  uuidModule?: string,
+  examModelId?: number
 ): Promise<{ activity: IExamActivityResponse["data"]; startExam: IExamStartResponse } | void> => {
   const allowedToResumeExamStage = [1, 2, 3, 4]
 
@@ -101,6 +105,43 @@ export const finishExam = async (activityUuid?: string): Promise<IExamFinishResp
   const { data } = await API().request<IExamFinishResponse>({
     url: `/v1/cat+apps/exam/activity/finish/${activityUuid}`,
     method: "PUT",
+  })
+
+  return data
+}
+
+export interface SubmitJawabanParams {
+  activity_id: number
+  activity_uuid: string
+  question_model_id: number
+  question_model_uuid: string
+  question_id: number
+  question_uuid: string
+  question_order: number
+  user_response_content: string
+  user_response_value: number
+  user_response_at_second: number
+  total_consume_time: number
+}
+
+export const submitJawaban = async ({ body }: { body: SubmitJawabanParams }): Promise<ISubmitAnswerResponse> => {
+  const { data } = await API().request<ISubmitAnswerResponse>({
+    url: "/v1/cat+apps/exam/question/response",
+    method: "POST",
+    data: body,
+    // data: {
+    //   "activity_id": body.activity_id,
+    //   "activity_uuid": body.activity_uuid,
+    //   "question_model_id": body.question_model_id,
+    //   "question_model_uuid": body.question_model_uuid,
+    //   "question_id": body.question_id,
+    //   "question_uuid": body.question_uuid,
+    //   "question_order": body.question_order,
+    //   "user_response_content": body.user_response_content,
+    //   "user_response_value": body.user_response_value,
+    //   "user_response_at_second": body.user_response_at_second,
+    //   "total_consume_time": body.total_consume_time
+    // }
   })
 
   return data

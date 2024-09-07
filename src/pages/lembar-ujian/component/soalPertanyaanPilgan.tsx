@@ -3,14 +3,21 @@ import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio
 import { SoalExam } from "@/interfaces/exam.interface"
 import { useExamMutation } from "@/mutations/exam.mutation"
 
+export interface answer {
+  content: string
+  value: number
+}
+
 const SoalPertanyaanPilgan = ({
   soal,
   isFinalQuestion,
   activityId,
+  setAnswer,
 }: {
   soal: SoalExam
   isFinalQuestion: boolean
   activityId: string
+  setAnswer: (answer: answer) => void
 }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
 
@@ -20,6 +27,22 @@ const SoalPertanyaanPilgan = ({
 
   const { finishExamMutation } = useExamMutation()
   const examMutation = finishExamMutation()
+
+  const handleChoose = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const choosenAnswer = parseInt(event.target.value)
+    console.log(choosenAnswer)
+
+    console.log(soal.answer_data.answer_mapping_reader)
+
+    const answer = soal.answer_data.answer_mapping_reader.find((answer) => answer.value === choosenAnswer)
+
+    if (answer?.content && answer?.value) {
+      setAnswer({
+        content: answer.content,
+        value: answer.value,
+      })
+    }
+  }
 
   return (
     <>
@@ -44,7 +67,11 @@ const SoalPertanyaanPilgan = ({
             <Typography variant="h6">{soal.question_content}</Typography>
           </Box>
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", mt: 4, pl: "35px" }}>
-            <RadioGroup aria-labelledby="demo-radio-buttons-group-label" name="radio-buttons-group">
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              name="radio-buttons-group"
+              onChange={handleChoose}
+            >
               {soal.answer_data.answer_mapping_reader.map((answer, index) => (
                 <FormControlLabel
                   key={index}

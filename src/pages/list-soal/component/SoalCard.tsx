@@ -7,6 +7,7 @@ interface ujianSchema {
   exam_uuid: string
   exam_type_name: string
   module_data: {
+    exam_tool_model_id: number
     module_name: string
     exam_tool_model_uuid: string
     Uuid: string
@@ -18,11 +19,12 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
   const { startExamMutation } = useExamMutation()
   const examMutation = startExamMutation()
 
-  const handleStartExam = (model: string, examToolUuid: string) => {
+  const handleStartExam = (model: string, examToolModelUuid: string, examModelId: number) => {
     examMutation.mutate({
       examUuid: ujian.exam_uuid,
       moduleUuid: ujian.Uuid,
-      examToolUuid,
+      examToolUuid: examToolModelUuid,
+      examModelId,
       model,
     })
   }
@@ -95,7 +97,13 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
           <CardActions>
             <Button
               disabled={ujian.activity_stage === 9}
-              onClick={() => handleStartExam(ujian.exam_type_name, ujian.module_data.exam_tool_model_uuid)}
+              onClick={() =>
+                handleStartExam(
+                  ujian.exam_type_name,
+                  ujian.module_data.exam_tool_model_uuid,
+                  ujian.module_data.exam_tool_model_id
+                )
+              }
             >
               Mulai
             </Button>

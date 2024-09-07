@@ -10,15 +10,19 @@ const TimerAndWebcam = ({
   nextQuestion,
   questionIndex,
   isLoadingTimer,
+  handleJawab,
 }: {
   tipeTimer: number
   waktu: number
   nextQuestion: () => void
   questionIndex: number
   isLoadingTimer: boolean
+  handleJawab: (answerAt: number, totalTime: number) => void
 }) => {
   const [remainingTime, setRemainingTime] = useState(waktu)
+  const [timerSoal, setTimerSoal] = useState(0)
   const [isWebcamError, setIsWebcamError] = useState(true)
+
   const videoConstraints = {
     width: 1280,
     height: 720,
@@ -28,6 +32,16 @@ const TimerAndWebcam = ({
   useEffect(() => {
     setRemainingTime(waktu)
   }, [waktu])
+
+  useEffect(() => {
+    if (!isLoadingTimer) {
+      const timerSoal = setInterval(() => {
+        setTimerSoal((prevSeconds) => prevSeconds + 1)
+      }, 1000)
+
+      return () => clearInterval(timerSoal)
+    }
+  }, [])
 
   useEffect(() => {
     if (!isLoadingTimer) {
@@ -64,7 +78,9 @@ const TimerAndWebcam = ({
       <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
       <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
         <Button color="warning">Instruksi</Button>
-        <Button color="info">Simpan dan Lanjutkan </Button>{" "}
+        <Button color="info" onClick={() => handleJawab(timerSoal, waktu - remainingTime)}>
+          Simpan dan Lanjutkan{" "}
+        </Button>{" "}
       </Box>
       <Box sx={{ display: "flex", mt: 5, justifyContent: "center" }}>
         <Box
