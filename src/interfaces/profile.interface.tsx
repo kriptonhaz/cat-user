@@ -20,8 +20,32 @@ export interface IProfileResponse {
     is_active: boolean
     user_type: number
     registration_from: number
-    education: any[]
-    job: any[]
+    education: {
+      ID: number
+      CreatedAt: string
+      UpdatedAt: string
+      DeletedAt: string | null
+      uuid: string
+      user_id: number
+      user_uuid: string
+      title: string
+      grade: string
+      major: string
+    }[]
+    job: {
+      ID: number
+      CreatedAt: string
+      UpdatedAt: string
+      DeletedAt: string | null
+      uuid: string
+      user_id: number
+      user_uuid: string
+      job_title: string
+      grade: string
+      work_department: string
+      work_place: string
+      city_code: string
+    }[]
   }
   message: string
 }
