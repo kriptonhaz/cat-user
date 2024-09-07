@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio, Button } from "@mui/material"
 import { SoalExam } from "@/interfaces/exam.interface"
 import { useExamMutation } from "@/mutations/exam.mutation"
@@ -13,26 +13,20 @@ const SoalPertanyaanPilgan = ({
   isFinalQuestion,
   activityId,
   setAnswer,
+  selectedAnswer,
 }: {
   soal: SoalExam
   isFinalQuestion: boolean
   activityId: string
   setAnswer: (answer: answer) => void
+  selectedAnswer: answer | null
 }) => {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null)
-
-  const handleOptionChange = (_event: React.MouseEvent<HTMLElement>, newOption: string | null) => {
-    setSelectedOption(newOption)
-  }
-
   const { finishExamMutation } = useExamMutation()
   const examMutation = finishExamMutation()
 
   const handleChoose = (event: React.ChangeEvent<HTMLInputElement>) => {
     const choosenAnswer = parseInt(event.target.value)
-    console.log(choosenAnswer)
-
-    console.log(soal.answer_data.answer_mapping_reader)
+    // Remove this line: setSelectedOption(event.target.value)
 
     const answer = soal.answer_data.answer_mapping_reader.find((answer) => answer.value === choosenAnswer)
 
@@ -71,6 +65,7 @@ const SoalPertanyaanPilgan = ({
               aria-labelledby="demo-radio-buttons-group-label"
               name="radio-buttons-group"
               onChange={handleChoose}
+              value={selectedAnswer ? selectedAnswer.value.toString() : ""}
             >
               {soal.answer_data.answer_mapping_reader.map((answer, index) => (
                 <FormControlLabel

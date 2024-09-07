@@ -44,7 +44,6 @@ const LembarUjian = () => {
 
   useEffect(() => {
     if (soalExamAvailable?.data && soalExamAvailable.data.length > 0 && currentQuestionIndex === 0 && timerUjian) {
-      console.log(soalExamAvailable)
       setSoal(soalExamAvailable.data[0])
       setCurrentQuestionIndex(0)
       setFinalQuestion(false)
@@ -69,7 +68,11 @@ const LembarUjian = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload)
     }
-  }, [soalExamAvailable, soal])
+  }, [soalExamAvailable])
+
+  useEffect(() => {
+    setSelectedAnswer(null) // Reset selected answer when changing questions
+  }, [currentQuestionIndex])
 
   const handleNextQuestion = () => {
     if (soalExamAvailable?.data) {
@@ -154,6 +157,7 @@ const LembarUjian = () => {
                     isFinalQuestion={finalQuestion}
                     activityId={params.activityId}
                     setAnswer={(answer: answer) => setSelectedAnswer(answer)}
+                    selectedAnswer={selectedAnswer} // Pass selectedAnswer as prop
                   />
                 }
                 {timerUjian?.data.timer_type === 2 && (
