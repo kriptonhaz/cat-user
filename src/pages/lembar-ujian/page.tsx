@@ -24,13 +24,23 @@ const LembarUjian = () => {
   const finishMutation = finishExamMutation()
   const submitMutation = submitJawabanMutation()
 
-  const { queryActivityExam, queryGetSoalExamByModule, queryGetTimerUjian } = useExamHooks()
+  const { queryActivityExam, queryGetSoalExamByModule, queryGetTimerUjian, queryGetQuestionResponseByActivity } =
+    useExamHooks()
   const { data: activityExam, isLoading: isLoadingActivity } = queryActivityExam(params.examId, params.moduleId)
   const { data: soalExamAvailable, isLoading: isLoadingSoal } = queryGetSoalExamByModule(params.moduleId)
   const { data: timerUjian, isLoading: isLoadingTimer } = queryGetTimerUjian({
     model: params.model,
     examUuid: params.examToolId,
   })
+  const {
+    data: questionResponseByActivity,
+    refetch: refetchQuestionResponseByActivity,
+    isLoading: isLoadingQuestionResponse,
+  } = queryGetQuestionResponseByActivity(params.activityId)
+
+  useEffect(() => {
+    refetchQuestionResponseByActivity()
+  }, [currentQuestionIndex])
 
   useEffect(() => {
     if (soalExamAvailable?.data && soalExamAvailable.data.length > 0 && currentQuestionIndex === 0 && timerUjian) {
@@ -224,17 +234,38 @@ const LembarUjian = () => {
                   <Typography variant="subtitle2" sx={{ fontSize: "0.8rem" }}>
                     Keterangan:
                   </Typography>
-                  <Box sx={{ display: "flex", flexDirection: "row" }}>
-                    <Typography variant="body2" sx={{ mb: 0, fontSize: "0.75rem" }}>
+                  <Box>
+                    <Typography variant="body2" sx={{ mb: 1, fontSize: "0.75rem" }}>
                       Soal belum dikerjakan :{" "}
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         size="sm"
                         sx={{
                           width: "1%",
                           minWidth: 5,
                           borderRadius: 0,
                           fontSize: "0.875rem",
+                          backgroundColor: "white",
+                          color: "#4828A3",
+                          border: "1px solid #4828A3",
+                        }}
+                      >
+                        1
+                      </Button>
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1, fontSize: "0.75rem" }}>
+                      Soal terlewat dan belum terjawab :{" "}
+                      <Button
+                        variant="contained"
+                        size="sm"
+                        sx={{
+                          width: "1%",
+                          minWidth: 5,
+                          borderRadius: 0,
+                          fontSize: "0.875rem",
+                          border: "1px solid red",
+                          backgroundColor: "red",
+                          color: "white",
                         }}
                       >
                         1
@@ -250,6 +281,8 @@ const LembarUjian = () => {
                           minWidth: 5,
                           borderRadius: 0,
                           fontSize: "0.875rem",
+                          border: "1px solid #4828A3",
+                          color: "white",
                         }}
                       >
                         1
@@ -268,7 +301,7 @@ const LembarUjian = () => {
                         return (
                           <Grid item key={question.Uuid} xs={2} sm={1} sx={{ ml: 2 }}>
                             <Button
-                              variant="outlined"
+                              variant="contained"
                               key={question.Uuid}
                               sx={{
                                 width: "100%",
@@ -280,6 +313,27 @@ const LembarUjian = () => {
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
+                                backgroundColor:
+                                  questionResponseByActivity?.data &&
+                                  questionResponseByActivity?.data.length > 0 &&
+                                  questionResponseByActivity?.data.filter(
+                                    (ar) => ar.question_order === question.question_order
+                                  ).length > 0
+                                    ? "#4828A3"
+                                    : currentQuestionIndex + 1 <= question.question_order
+                                    ? "white"
+                                    : "red",
+                                color:
+                                  questionResponseByActivity?.data &&
+                                  questionResponseByActivity?.data.length > 0 &&
+                                  questionResponseByActivity?.data.filter(
+                                    (ar) => ar.question_order === question.question_order
+                                  ).length > 0
+                                    ? "white"
+                                    : currentQuestionIndex + 1 <= question.question_order
+                                    ? "#4828A3"
+                                    : "white",
+                                border: "1px solid #4828A3",
                               }}
                               onClick={() => {
                                 if (timerUjian?.data.timer_type !== 1) {
