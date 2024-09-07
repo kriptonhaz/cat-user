@@ -44,8 +44,15 @@ const LembarUjian = () => {
 
   useEffect(() => {
     if (soalExamAvailable?.data && soalExamAvailable.data.length > 0 && currentQuestionIndex === 0 && timerUjian) {
-      setSoal(soalExamAvailable.data[0])
-      setCurrentQuestionIndex(0)
+      if (activityExam?.data) {
+        if (activityExam?.data.last_question_filled === 0) {
+          setSoal(soalExamAvailable.data[0])
+          setCurrentQuestionIndex(0)
+        } else {
+          setSoal(soalExamAvailable.data[activityExam?.data.last_question_filled])
+          setCurrentQuestionIndex(activityExam?.data.last_question_filled)
+        }
+      }
       setFinalQuestion(false)
 
       if (timerUjian.data.timer_type === 1) {
@@ -68,7 +75,7 @@ const LembarUjian = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload)
     }
-  }, [soalExamAvailable])
+  }, [soalExamAvailable, activityExam])
 
   useEffect(() => {
     setSelectedAnswer(null) // Reset selected answer when changing questions
@@ -125,9 +132,15 @@ const LembarUjian = () => {
           activityExam.data.user_response_at === 0 ? responseAt : responseAt + activityExam.data.user_response_at,
       }
 
-      submitMutation.mutate({ body })
-
-      handleNextQuestion()
+      submitMutation.mutate(
+        { body },
+        {
+          onSuccess: () => {
+            refetchQuestionResponseByActivity()
+            handleNextQuestion()
+          },
+        }
+      )
     }
   }
 

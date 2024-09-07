@@ -62,12 +62,17 @@ export function useExamMutation() {
     })
   }
 
-  const submitJawabanMutation = () => {
+  const submitJawabanMutation = (params?: SubmitJawabanParams) => {
     return useMutation({
       mutationKey: ["exam", "submitJawaban"],
       mutationFn: async ({ body }: { body: SubmitJawabanParams }) => {
         const finish = await submitJawaban({ body })
         return finish
+      },
+      onSuccess: (data, variables, context) => {
+        if (params?.onSuccess) {
+          params.onSuccess()
+        }
       },
     })
   }

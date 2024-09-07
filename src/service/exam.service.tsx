@@ -121,6 +121,7 @@ export interface SubmitJawabanParams {
   user_response_value: number
   user_response_at_second: number
   total_consume_time: number
+  onSuccess?: () => void
 }
 
 export const submitJawaban = async ({ body }: { body: SubmitJawabanParams }): Promise<ISubmitAnswerResponse> => {
