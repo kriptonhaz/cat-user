@@ -267,10 +267,11 @@ const LembarUjian = () => {
                           border: "1px solid #4828A3",
                         }}
                       >
-                        1
+                        {soalExamAvailable.data.length - (questionResponseByActivity?.data?.length || 0)}
                       </Button>
                     </Typography>
-                    <Typography variant="body2" sx={{ mb: 1, fontSize: "0.75rem" }}>
+                    {/* TODO: will be activate once it's confirm */}
+                    {/* <Typography variant="body2" sx={{ mb: 1, fontSize: "0.75rem" }}>
                       Soal terlewat dan belum terjawab :{" "}
                       <Button
                         variant="contained"
@@ -287,7 +288,7 @@ const LembarUjian = () => {
                       >
                         1
                       </Button>
-                    </Typography>
+                    </Typography> */}
                     <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
                       Soal sudah dikerjakan :{" "}
                       <Button
@@ -302,7 +303,7 @@ const LembarUjian = () => {
                           color: "white",
                         }}
                       >
-                        1
+                        {questionResponseByActivity?.data?.length || 0}
                       </Button>
                     </Typography>
                   </Box>
