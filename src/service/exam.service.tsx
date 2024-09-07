@@ -51,8 +51,6 @@ export const getExamActivityByModule = async (
     method: "GET",
   })
 
-  console.log(data)
-
   return data
 }
 
