@@ -146,6 +146,7 @@ const LembarUjian = () => {
           sx={{
             pt: 5,
             pl: 8,
+            mt: 10,
           }}
         >
           <Box>
@@ -177,7 +178,7 @@ const LembarUjian = () => {
             )}
           </Box>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={3} sx={{ mt: 10 }}>
           <Box>
             <Grid
               sx={{
