@@ -8,6 +8,7 @@ import Navbar from "./components/navbar"
 import LembarUjian from "./pages/lembar-ujian/page"
 import useTokenStore from "./store/token.store"
 import RiwayatUjian from "./pages/riwayat-ujian"
+import Layout from "./pages/layout/Layout"
 
 function App() {
   const queryClient = new QueryClient()
@@ -25,19 +26,21 @@ function App() {
     <div className="App">
       <QueryClientProvider client={queryClient}>
         <Navbar />
-        <Routes>
-          <Route path={"/login"} element={<LoginPage />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path={"/"} element={<HomePage />} />
-            <Route path={"/home"} element={<HomePage />} />
-            <Route path={"/list-soal/:examId"} element={<ListSoal />} />
-            <Route
-              path={"/lembar-ujian/:examId/module/:moduleId/activity/:activityId/model/:model/examTool/:examToolId"}
-              element={<LembarUjian />}
-            />
-            <Route path={"/riwayat-ujian"} element={<RiwayatUjian />} />
-          </Route>
-        </Routes>
+        <Layout>
+          <Routes>
+            <Route path={"/login"} element={<LoginPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path={"/"} element={<HomePage />} />
+              <Route path={"/home"} element={<HomePage />} />
+              <Route path={"/list-soal/:examId"} element={<ListSoal />} />
+              <Route
+                path={"/lembar-ujian/:examId/module/:moduleId/activity/:activityId/model/:model/examTool/:examToolId"}
+                element={<LembarUjian />}
+              />
+              <Route path={"/riwayat-ujian"} element={<RiwayatUjian />} />
+            </Route>
+          </Routes>
+        </Layout>
         <Toaster position="top-right" />
       </QueryClientProvider>
     </div>

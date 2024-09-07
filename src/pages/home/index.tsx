@@ -25,11 +25,7 @@ const HomePage: React.FC = () => {
 
   return (
     <>
-      <Grid
-        container
-        sx={{ mt: 10, pl: 5, pr: 5, pb: 5, backgroundColor: "#f5f5f5", minHeight: "calc(100vh - 64px)" }}
-        spacing={5}
-      >
+      <Grid container sx={{ mt: 10, pl: 5, pr: 5, pb: 5, minHeight: "calc(100vh - 64px)" }} spacing={5}>
         <Grid item xs={12} md={4}>
           <Card
             sx={{
