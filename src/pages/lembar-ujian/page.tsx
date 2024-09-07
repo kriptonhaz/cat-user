@@ -1,17 +1,14 @@
-import React, { act, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Grid, Box, Card, Button, CardContent, Typography, keyframes } from "@mui/material"
-import Webcam from "react-webcam"
-import { warning } from "@/theme/ts/colors"
 import SoalPertanyaanPilgan, { answer } from "./component/soalPertanyaanPilgan"
 import SoalPertanyaanEssay from "./component/soalPertanyaanEssay"
 import { useExamHooks } from "@/hooks/useExamHooks"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { useExamMutation } from "@/mutations/exam.mutation"
-import { SoalExam, TimerUjian } from "@/interfaces/exam.interface"
+import { SoalExam } from "@/interfaces/exam.interface"
 import TimerAndWebcam from "./component/timerAndWebcam"
 
 const LembarUjian = () => {
-  const navigate = useNavigate()
   const location = useLocation()
 
   const [soal, setSoal] = useState<SoalExam | null>(null)
@@ -22,22 +19,14 @@ const LembarUjian = () => {
 
   const params = useParams()
 
-  const { leftExamBeforeFinishMutation } = useExamMutation()
+  const { leftExamBeforeFinishMutation, finishExamMutation, submitJawabanMutation } = useExamMutation()
   const examMutation = leftExamBeforeFinishMutation()
-
-  const { finishExamMutation } = useExamMutation()
   const finishMutation = finishExamMutation()
-
-  const { submitJawabanMutation } = useExamMutation()
   const submitMutation = submitJawabanMutation()
 
-  const { queryActivityExam } = useExamHooks()
+  const { queryActivityExam, queryGetSoalExamByModule, queryGetTimerUjian } = useExamHooks()
   const { data: activityExam, isLoading: isLoadingActivity } = queryActivityExam(params.examId, params.moduleId)
-
-  const { queryGetSoalExamByModule } = useExamHooks()
   const { data: soalExamAvailable, isLoading: isLoadingSoal } = queryGetSoalExamByModule(params.moduleId)
-
-  const { queryGetTimerUjian } = useExamHooks()
   const { data: timerUjian, isLoading: isLoadingTimer } = queryGetTimerUjian({
     model: params.model,
     examUuid: params.examToolId,
@@ -106,9 +95,6 @@ const LembarUjian = () => {
     }
   }
 
-  // const handleJawab = (
-  //   {questionModelId, questionModelUuid, questionId, questionUuid}:
-  //     {questionModelId: number, questionModelUuid: string, questionId: number, questionUuid: string }) => {
   const handleJawab = ({ responseAt, totalConsume }: { responseAt: number; totalConsume: number }) => {
     if (activityExam && selectedAnswer && soal) {
       const body = {

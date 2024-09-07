@@ -10,6 +10,7 @@ import {
   IRiwayatExamResponse,
   ITimerUjianResponse,
   ISubmitAnswerResponse,
+  IQuestionResponseByActivityResponse,
 } from "@/interfaces/exam.interface"
 import API from "./base.service"
 import { setRiwayatUjianParams } from "@/pages/riwayat-ujian"
@@ -174,6 +175,17 @@ export const getTimerUjian = async ({
 }): Promise<ITimerUjianResponse> => {
   const { data } = await API().request<ITimerUjianResponse>({
     url: `/v1/cat+apps/exam/model/by+tool/${model}/and+model/${examUuid}`,
+    method: "GET",
+  })
+
+  return data
+}
+
+export const getQuestionResponseByActivity = async (
+  activityUuid?: string
+): Promise<IQuestionResponseByActivityResponse> => {
+  const { data } = await API().request<IQuestionResponseByActivityResponse>({
+    url: `/v1/cat+apps/exam/question/response/by+activity/${activityUuid}`,
     method: "GET",
   })
 
