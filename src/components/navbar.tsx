@@ -2,10 +2,12 @@ import { AppBar, Box, Button, Container, Toolbar, Typography } from "@mui/materi
 import "@splidejs/react-splide/css"
 import Logo from "@/assets/logo-kemenhan.png"
 import { useLocation, useNavigate } from "react-router-dom"
+import useTokenStore from "@/store/token.store"
 
 const Navbar = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const tokenStore = useTokenStore()
 
   const isMatchingRoute = (pathname: string, pattern: RegExp) => pattern.test(pathname)
 
@@ -74,7 +76,7 @@ const Navbar = () => {
                   color="error"
                   sx={{ ml: 3 }}
                   onClick={() => {
-                    localStorage.removeItem("name")
+                    tokenStore.logout()
                     navigate("/login")
                   }}
                 >

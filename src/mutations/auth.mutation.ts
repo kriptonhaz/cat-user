@@ -9,22 +9,22 @@ import { LoginMutationParams } from "@/interfaces/auth.interface"
 export function useLoginMutation() {
   const toastId = React.useId()
   const navigate = useNavigate()
+  const tokenStore = useTokenStore()
 
   const loginMutation = (params?: LoginMutationParams) => {
     const { onSuccess, onError } = params || {}
-    const tokenStore = useTokenStore()
     return useMutation({
       mutationKey: ["auth", "login"],
       mutationFn: submitLoginForm,
       onSuccess: (data, variables, context) => {
         tokenStore.setAccessToken(data.data?.token)
-        tokenStore.setAccessToken(data.data?.token)
         tokenStore.setIsLogin(true)
-        navigate("/home")
         if (onSuccess) {
-          // onSuccess(data, variables, context)
+          onSuccess(data, variables, context)
           return
         }
+
+        navigate("/home")
       },
       onError: (err: Error, variables, context) => {
         toast.error("Username atau password salah", {
