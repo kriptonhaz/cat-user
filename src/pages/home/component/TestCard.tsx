@@ -1,4 +1,5 @@
 import { Card, CardHeader, CardContent, Typography, CardActions, Button } from "@mui/material"
+import dayjs from "dayjs"
 import { useNavigate } from "react-router-dom"
 
 interface soalSchema {
@@ -67,7 +68,13 @@ const TestCard = ({ soal }: { soal: soalSchema }) => {
         </Typography>
       </CardContent>
       <CardActions sx={{ justifyContent: "flex-start", padding: 2 }}>
-        <Button variant="contained" onClick={() => navigate(`/list-soal/${soal.uuid}`)}>
+        <Button
+          disabled={
+            dayjs().isBefore(dayjs(soal.tanggalMulai).format()) || dayjs().isAfter(dayjs(soal.tanggalSelesai).format())
+          }
+          variant="contained"
+          onClick={() => navigate(`/list-soal/${soal.uuid}`)}
+        >
           Mulai
         </Button>
       </CardActions>
