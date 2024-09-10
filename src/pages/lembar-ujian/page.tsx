@@ -10,14 +10,15 @@ import TimerAndWebcam from "./component/timerAndWebcam"
 
 const LembarUjian = () => {
   const location = useLocation()
+  const params = useParams()
 
   const [soal, setSoal] = useState<SoalExam | null>(null)
   const [finalQuestion, setFinalQuestion] = useState(false)
   const [timer, setTimer] = useState(0)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0) // Add state to track current question index
   const [selectedAnswer, setSelectedAnswer] = useState<{ content: string; value: number } | null>(null)
-
-  const params = useParams()
+  const [remainingTime, setRemainingTime] = useState(0)
+  const [timerSoal, setTimerSoal] = useState(0)
 
   const { leftExamBeforeFinishMutation, finishExamMutation, submitJawabanMutation } = useExamMutation()
   const examMutation = leftExamBeforeFinishMutation()
@@ -58,7 +59,7 @@ const LembarUjian = () => {
       if (timerUjian.data.timer_type === 1) {
         setTimer(soalExamAvailable.data[0].timer)
       } else {
-        setTimer(timerUjian?.data.total_time)
+        setTimer(timerUjian?.data.total_time - (activityExam?.data.total_consume_time || 0))
       }
 
       // Set the initial selectedAnswer based on questionResponseByActivity
@@ -111,8 +112,41 @@ const LembarUjian = () => {
     }
   }, [currentQuestionIndex, questionResponseByActivity])
 
+  useEffect(() => {
+    if (!isLoadingTimer) {
+      const timerSoal = setInterval(() => {
+        setTimerSoal((prevSeconds) => prevSeconds + 1)
+      }, 1000)
+
+      return () => clearInterval(timerSoal)
+    }
+  }, [isLoadingTimer])
+
+  useEffect(() => {
+    if (!isLoadingTimer && timer > 0) {
+      setRemainingTime(timer)
+      const countdownTimer = setInterval(() => {
+        setRemainingTime((prevTime) => {
+          if (prevTime <= 0) {
+            if (timerUjian?.data.timer_type === 1) {
+              handleNextQuestion()
+            } else {
+              // TODO: handle timer type 2
+            }
+            return timer
+          }
+          return prevTime - 1
+        })
+      }, 1000)
+
+      return () => clearInterval(countdownTimer)
+    }
+  }, [isLoadingTimer, timer, timerUjian?.data.timer_type])
+
   const handleNextQuestion = () => {
-    if (soalExamAvailable?.data) {
+    if (selectedAnswer) {
+      handleJawab()
+    } else if (soalExamAvailable?.data) {
       const nextIndex = currentQuestionIndex + 1
       if (nextIndex < soalExamAvailable.data.length) {
         setSoal(soalExamAvailable.data[nextIndex])
@@ -145,7 +179,7 @@ const LembarUjian = () => {
     }
   }
 
-  const handleJawab = ({ responseAt, totalConsume }: { responseAt: number; totalConsume: number }) => {
+  const handleJawab = () => {
     if (activityExam && selectedAnswer && soal) {
       const body = {
         activity_id: activityExam.data.ID,
@@ -157,9 +191,9 @@ const LembarUjian = () => {
         question_order: soal.question_order,
         user_response_content: selectedAnswer.content,
         user_response_value: selectedAnswer.value,
-        user_response_at_second: totalConsume,
+        user_response_at_second: timer - remainingTime,
         total_consume_time:
-          activityExam.data.user_response_at === 0 ? responseAt : responseAt + activityExam.data.user_response_at,
+          activityExam.data.user_response_at === 0 ? timerSoal : timerSoal + activityExam.data.user_response_at,
       }
 
       submitMutation.mutate(
@@ -242,26 +276,16 @@ const LembarUjian = () => {
                 }}
               >
                 <CardContent>
-                  {!isLoadingSoal && timerUjian?.data.timer_type === 1 && (
+                  {!isLoadingSoal && timerUjian?.data.timer_type && (
                     <TimerAndWebcam
-                      tipeTimer={1}
+                      tipeTimer={timerUjian.data.timer_type}
                       waktu={timer}
-                      nextQuestion={() => handleNextQuestion()}
+                      nextQuestion={handleNextQuestion}
                       questionIndex={currentQuestionIndex}
                       isLoadingTimer={isLoadingSoal}
-                      handleJawab={(responseAt, totalConsume) => handleJawab({ responseAt, totalConsume })}
+                      handleJawab={handleJawab}
                       total_consume_time={activityExam?.data.total_consume_time || 0}
-                    />
-                  )}
-                  {!isLoadingSoal && timerUjian?.data.timer_type === 2 && (
-                    <TimerAndWebcam
-                      tipeTimer={2}
-                      waktu={timer}
-                      nextQuestion={() => handleNextQuestion()}
-                      questionIndex={currentQuestionIndex}
-                      isLoadingTimer={isLoadingSoal}
-                      handleJawab={(responseAt, totalConsume) => handleJawab({ responseAt, totalConsume })}
-                      total_consume_time={activityExam?.data.total_consume_time || 0}
+                      remainingTime={remainingTime}
                     />
                   )}
                 </CardContent>
