@@ -14,12 +14,13 @@ const LoginForm = () => {
   const { loginMutation } = useLoginMutation()
   const mutation = loginMutation()
 
-  const onSubmit: SubmitHandler<LoginForm> = (data) => {
+  const onSubmit = handleSubmit((data) => {
+    console.log(data)
     mutation.mutate(data)
-  }
+  })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={onSubmit}>
       <InputGroup
         label="Nama Pengguna"
         placeholder="masukan nama pengguna anda disini"

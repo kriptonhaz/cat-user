@@ -22,13 +22,24 @@ function App() {
     return <Outlet />
   }
 
+  const GuestRoute: React.FC = () => {
+    const token = useTokenStore((state) => state.accessToken)
+    const isLogin = useTokenStore((state) => state.isLogin)
+
+    if (!!token && !!isLogin) return <Navigate to="/home" />
+
+    return <Outlet />
+  }
+
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>
         <Navbar />
         <Layout>
           <Routes>
-            <Route path={"/login"} element={<LoginPage />} />
+            <Route element={<GuestRoute />}>
+              <Route path={"/login"} element={<LoginPage />} />
+            </Route>
             <Route element={<ProtectedRoute />}>
               <Route path={"/"} element={<HomePage />} />
               <Route path={"/home"} element={<HomePage />} />

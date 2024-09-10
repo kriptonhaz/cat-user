@@ -128,21 +128,33 @@ const HomePage: React.FC = () => {
             Berikut ujian yang dapat anda kerjakan
           </Typography>
           <Grid container spacing={3}>
-            {dataExamAvailable?.data.map((exam) => (
-              <Grid item xs={12} md={6} lg={4} key={exam.ID}>
-                <TestCard
-                  soal={{
-                    id: exam.ID,
-                    uuid: exam.exam_uuid,
-                    title: exam.exam_data.name,
-                    tanggalMulai: dayjs(exam.exam_data.start_time).locale("id").format("dddd, DD MMMM YYYY"),
-                    tanggalSelesai: dayjs(exam.exam_data.end_time).locale("id").format("dddd, DD MMMM YYYY"),
-                    tempat: exam.exam_data.location,
-                    batch: parseInt(exam.exam_data.batch),
-                  }}
-                />
+            {dataExamAvailable?.data.length === 0 ? (
+              <Grid
+                item
+                xs={12}
+                sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px", width: "100%" }}
+              >
+                <Typography variant="h4" sx={{ color: "text.secondary", fontWeight: "medium", textAlign: "center" }}>
+                  Tidak ada ujian yang tersedia saat ini.
+                </Typography>
               </Grid>
-            ))}
+            ) : (
+              dataExamAvailable?.data.map((exam) => (
+                <Grid item xs={12} md={6} lg={4} key={exam.ID}>
+                  <TestCard
+                    soal={{
+                      id: exam.ID,
+                      uuid: exam.exam_uuid,
+                      title: exam.exam_data.name,
+                      tanggalMulai: dayjs(exam.exam_data.start_time).locale("id").format("dddd, DD MMMM YYYY"),
+                      tanggalSelesai: dayjs(exam.exam_data.end_time).locale("id").format("dddd, DD MMMM YYYY"),
+                      tempat: exam.exam_data.location,
+                      batch: parseInt(exam.exam_data.batch),
+                    }}
+                  />
+                </Grid>
+              ))
+            )}
           </Grid>
         </Grid>
       </Grid>

@@ -23,8 +23,6 @@ export function useLoginMutation() {
           onSuccess(data, variables, context)
           return
         }
-
-        navigate("/home")
       },
       onError: (err: Error, variables, context) => {
         toast.error("Username atau password salah", {
