@@ -1,8 +1,8 @@
 import Webcam from "react-webcam"
-import { Grid, Box, Card, Button, CardContent, Typography, keyframes } from "@mui/material"
+import { Box, Button, Typography } from "@mui/material"
 import CameraOff from "@/assets/camera-off.png"
 import React, { useEffect, useState } from "react"
-import { FiberManualRecord, Mic } from "@mui/icons-material"
+import { FiberManualRecord } from "@mui/icons-material"
 
 const TimerAndWebcam = ({
   tipeTimer,
@@ -11,6 +11,7 @@ const TimerAndWebcam = ({
   questionIndex,
   isLoadingTimer,
   handleJawab,
+  total_consume_time,
 }: {
   tipeTimer: number
   waktu: number
@@ -18,10 +19,12 @@ const TimerAndWebcam = ({
   questionIndex: number
   isLoadingTimer: boolean
   handleJawab: (answerAt: number, totalTime: number) => void
+  total_consume_time: number
 }) => {
   const [remainingTime, setRemainingTime] = useState(waktu)
   const [timerSoal, setTimerSoal] = useState(0)
   const [isWebcamError, setIsWebcamError] = useState(true)
+  const [elapsedTime, setElapsedTime] = useState(total_consume_time)
 
   const videoConstraints = {
     width: 1280,
@@ -62,6 +65,16 @@ const TimerAndWebcam = ({
       return () => clearInterval(timer)
     }
   }, [nextQuestion])
+
+  useEffect(() => {
+    if (!isLoadingTimer) {
+      const elapsedTimer = setInterval(() => {
+        setElapsedTime((prevTime) => prevTime + 1)
+      }, 1000)
+
+      return () => clearInterval(elapsedTimer)
+    }
+  }, [isLoadingTimer])
 
   const formatTime = (time: number) => {
     const hours = Math.floor(time / 3600)
@@ -146,7 +159,7 @@ const TimerAndWebcam = ({
         </Box>
       </Box>
       <Box sx={{ display: "flex", mt: 5, justifyContent: "right" }}>
-        <Typography variant="subtitle1">Waktu yang digunakan : 00:00:00</Typography>
+        <Typography variant="subtitle1">Waktu yang digunakan: {formatTime(elapsedTime)}</Typography>
       </Box>
     </>
   )

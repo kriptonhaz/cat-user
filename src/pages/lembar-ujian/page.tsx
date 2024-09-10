@@ -250,6 +250,7 @@ const LembarUjian = () => {
                       questionIndex={currentQuestionIndex}
                       isLoadingTimer={isLoadingSoal}
                       handleJawab={(responseAt, totalConsume) => handleJawab({ responseAt, totalConsume })}
+                      total_consume_time={activityExam?.data.total_consume_time || 0}
                     />
                   )}
                   {!isLoadingSoal && timerUjian?.data.timer_type === 2 && (
@@ -260,6 +261,7 @@ const LembarUjian = () => {
                       questionIndex={currentQuestionIndex}
                       isLoadingTimer={isLoadingSoal}
                       handleJawab={(responseAt, totalConsume) => handleJawab({ responseAt, totalConsume })}
+                      total_consume_time={activityExam?.data.total_consume_time || 0}
                     />
                   )}
                 </CardContent>
