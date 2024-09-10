@@ -195,13 +195,29 @@ const LembarUjian = () => {
         total_consume_time:
           activityExam.data.user_response_at === 0 ? timerSoal : timerSoal + activityExam.data.user_response_at,
       }
-
+      // console.log(body)
       submitMutation.mutate(
         { body },
         {
           onSuccess: () => {
-            refetchQuestionResponseByActivity()
-            handleNextQuestion()
+            console.log(soalExamAvailable?.data)
+            if (soalExamAvailable?.data) {
+              const nextIndex = currentQuestionIndex + 1
+              if (nextIndex < soalExamAvailable.data.length) {
+                setSoal(soalExamAvailable.data[nextIndex])
+                setCurrentQuestionIndex(nextIndex)
+                setFinalQuestion(nextIndex === soalExamAvailable.data.length - 1)
+
+                if (timerUjian?.data.timer_type === 1) {
+                  setTimer(soalExamAvailable.data[nextIndex].timer)
+                }
+
+                // Refetch after updating the state
+                refetchQuestionResponseByActivity()
+              } else if (timerUjian?.data.timer_type === 1 && params.activityId) {
+                finishMutation.mutate({ activityUuid: params.activityId })
+              }
+            }
           },
         }
       )
