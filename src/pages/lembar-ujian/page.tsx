@@ -431,6 +431,7 @@ const LembarUjian = () => {
                               border: "1px solid #4828A3",
                             }}
                             onClick={() => {
+                              // @ts-ignore
                               const onlyExam = soalExamAvailable.data.filter((ar) => ar.question_type === 1)
                               if (timerUjian?.data.timer_type !== 1) {
                                 setSoal(onlyExam[item])
