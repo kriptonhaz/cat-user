@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react"
 import { Grid, Box, Card, Button, CardContent, Typography, keyframes } from "@mui/material"
 import SoalPertanyaanPilgan, { answer } from "./component/soalPertanyaanPilgan"
+import ExamInstruction from "./component/examInstruction"
 import SoalPertanyaanEssay from "./component/soalPertanyaanEssay"
 import { useExamHooks } from "@/hooks/useExamHooks"
 import { useLocation, useParams } from "react-router-dom"
 import { useExamMutation } from "@/mutations/exam.mutation"
-import { SoalExam } from "@/interfaces/exam.interface"
+import { SoalExam, SoalExamLS1 } from "@/interfaces/exam.interface"
 import TimerAndWebcam from "./component/timerAndWebcam"
+import ExamExample from "./component/examExample"
 
 const LembarUjian = () => {
   const location = useLocation()
   const params = useParams()
 
-  const [soal, setSoal] = useState<SoalExam | null>(null)
+  const [soal, setSoal] = useState<SoalExam | SoalExamLS1 | null>(null)
   const [finalQuestion, setFinalQuestion] = useState(false)
   const [timer, setTimer] = useState(0)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0) // Add state to track current question index
@@ -180,7 +182,24 @@ const LembarUjian = () => {
   }
 
   const handleJawab = () => {
-    if (activityExam && selectedAnswer && soal) {
+    const nextQuestionAfterSubmit = () => {
+      if (soalExamAvailable?.data) {
+        const nextIndex = currentQuestionIndex + 1
+        if (nextIndex < soalExamAvailable.data.length) {
+          setSoal(soalExamAvailable.data[nextIndex])
+          setCurrentQuestionIndex(nextIndex)
+          setFinalQuestion(nextIndex === soalExamAvailable.data.length - 1)
+          if (timerUjian?.data.timer_type === 1) {
+            setTimer(soalExamAvailable.data[nextIndex].timer)
+          }
+          // Refetch after updating the state
+          refetchQuestionResponseByActivity()
+        } else if (timerUjian?.data.timer_type === 1 && params.activityId) {
+          finishMutation.mutate({ activityUuid: params.activityId })
+        }
+      }
+    }
+    if (activityExam && selectedAnswer && soal && soal.question_type === 1) {
       const body = {
         activity_id: activityExam.data.ID,
         activity_uuid: activityExam.data.Uuid,
@@ -200,27 +219,12 @@ const LembarUjian = () => {
         { body },
         {
           onSuccess: () => {
-            console.log(soalExamAvailable?.data)
-            if (soalExamAvailable?.data) {
-              const nextIndex = currentQuestionIndex + 1
-              if (nextIndex < soalExamAvailable.data.length) {
-                setSoal(soalExamAvailable.data[nextIndex])
-                setCurrentQuestionIndex(nextIndex)
-                setFinalQuestion(nextIndex === soalExamAvailable.data.length - 1)
-
-                if (timerUjian?.data.timer_type === 1) {
-                  setTimer(soalExamAvailable.data[nextIndex].timer)
-                }
-
-                // Refetch after updating the state
-                refetchQuestionResponseByActivity()
-              } else if (timerUjian?.data.timer_type === 1 && params.activityId) {
-                finishMutation.mutate({ activityUuid: params.activityId })
-              }
-            }
+            nextQuestionAfterSubmit()
           },
         }
       )
+    } else {
+      nextQuestionAfterSubmit()
     }
   }
 
@@ -244,15 +248,19 @@ const LembarUjian = () => {
           <Box>
             {soal && params.activityId && (
               <>
-                {
+                {soal.question_type === 1 ? (
                   <SoalPertanyaanPilgan
                     soal={soal}
                     isFinalQuestion={finalQuestion}
                     activityId={params.activityId}
                     setAnswer={(answer: answer) => setSelectedAnswer(answer)}
-                    selectedAnswer={selectedAnswer} // Pass selectedAnswer as prop
+                    selectedAnswer={selectedAnswer}
                   />
-                }
+                ) : soal.question_type === 2 ? (
+                  <ExamExample question={soal as SoalExamLS1} />
+                ) : (
+                  <ExamInstruction content={soal.question_content} imageSrc={(soal as SoalExamLS1).image_path_cat} />
+                )}
                 {timerUjian?.data.timer_type === 2 && (
                   <Box sx={{ display: "flex", justifyContent: "flex-end", width: "98%" }}>
                     <Button
@@ -386,63 +394,60 @@ const LembarUjian = () => {
                   }}
                 >
                   <Grid container spacing={3}>
-                    {soalExamAvailable?.data &&
-                      soalExamAvailable?.data.map((question) => {
-                        return (
-                          <Grid item key={question.Uuid} xs={2} sm={1} sx={{ ml: 2 }}>
-                            <Button
-                              variant="contained"
-                              key={question.Uuid}
-                              sx={{
-                                width: "100%",
-                                minWidth: 30,
-                                height: 30,
-                                borderRadius: 0,
-                                fontSize: "0.875rem",
-                                padding: 0,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                backgroundColor:
-                                  questionResponseByActivity?.data &&
-                                  questionResponseByActivity?.data.length > 0 &&
-                                  questionResponseByActivity?.data.filter(
-                                    (ar) => ar.question_order === question.question_order
-                                  ).length > 0
-                                    ? "#4828A3"
-                                    : currentQuestionIndex + 1 <= question.question_order
-                                    ? "white"
-                                    : "red",
-                                color:
-                                  questionResponseByActivity?.data &&
-                                  questionResponseByActivity?.data.length > 0 &&
-                                  questionResponseByActivity?.data.filter(
-                                    (ar) => ar.question_order === question.question_order
-                                  ).length > 0
-                                    ? "white"
-                                    : currentQuestionIndex + 1 <= question.question_order
-                                    ? "#4828A3"
-                                    : "white",
-                                border: "1px solid #4828A3",
-                              }}
-                              onClick={() => {
-                                if (timerUjian?.data.timer_type !== 1) {
-                                  setSoal(soalExamAvailable.data[question.question_order - 1])
-                                  setCurrentQuestionIndex(question.question_order - 1) // Update current question index
-
-                                  if (question.question_order === soalExamAvailable.data.length) {
-                                    setFinalQuestion(true)
-                                  } else {
-                                    setFinalQuestion(false)
-                                  }
+                    {Array.from(Array(soalExamAvailable.meta.total_data).keys()).map((item) => {
+                      return (
+                        <Grid item key={item} xs={2} sm={1} sx={{ ml: 2 }}>
+                          <Button
+                            variant="contained"
+                            key={item}
+                            sx={{
+                              width: "100%",
+                              minWidth: 30,
+                              height: 30,
+                              borderRadius: 0,
+                              fontSize: "0.875rem",
+                              padding: 0,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              backgroundColor:
+                                questionResponseByActivity?.data &&
+                                questionResponseByActivity?.data.length > 0 &&
+                                questionResponseByActivity?.data.filter((ar) => ar.question_order === item + 1).length >
+                                  0
+                                  ? "#4828A3"
+                                  : currentQuestionIndex + 1 <= item + 1
+                                  ? "white"
+                                  : "red",
+                              color:
+                                questionResponseByActivity?.data &&
+                                questionResponseByActivity?.data.length > 0 &&
+                                questionResponseByActivity?.data.filter((ar) => ar.question_order === item + 1).length >
+                                  0
+                                  ? "white"
+                                  : currentQuestionIndex + 1 <= item + 1
+                                  ? "#4828A3"
+                                  : "white",
+                              border: "1px solid #4828A3",
+                            }}
+                            onClick={() => {
+                              const onlyExam = soalExamAvailable.data.filter((ar) => ar.question_type === 1)
+                              if (timerUjian?.data.timer_type !== 1) {
+                                setSoal(onlyExam[item])
+                                setCurrentQuestionIndex(onlyExam[item].question_order - 1) // Update current question index
+                                if (item === soalExamAvailable.meta.total_data - 1) {
+                                  setFinalQuestion(true)
+                                } else {
+                                  setFinalQuestion(false)
                                 }
-                              }}
-                            >
-                              {question.question_order}
-                            </Button>
-                          </Grid>
-                        )
-                      })}
+                              }
+                            }}
+                          >
+                            {item + 1}
+                          </Button>
+                        </Grid>
+                      )
+                    })}
                   </Grid>
                 </CardContent>
               </Card>

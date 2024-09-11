@@ -270,6 +270,70 @@ export interface SoalExam {
   }
 }
 
+export interface SoalExamLS1 {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  question_model_id: number
+  question_model_uuid: string
+  sub_test_id: number
+  sub_test_uuid: string
+  code: string
+  question_type: number
+  showing_order: number
+  question_order: number
+  question_content: string
+  image_path_admin: string
+  image_path_cat: string
+  image_position: number
+  timer: number
+  is_has_answer: boolean
+  create_by: string
+  answer_data: {
+    ID: number
+    CreatedAt: string
+    UpdatedAt: string
+    DeletedAt: string | null
+    Uuid: string
+    question_id: number
+    question_uuid: string
+    label: string
+    content: string
+    image_path_admin: string
+    image_path_cat: string
+    image_position: number
+    is_question_answer: boolean
+    create_by: string
+  }[]
+  question_model_data: {
+    ID: number
+    CreatedAt: string
+    UpdatedAt: string
+    DeletedAt: string | null
+    Uuid: string
+    code: string
+    name: string
+    timer_type: number
+    total_time: number
+    is_must_fill_all_question: boolean
+    added_time: number
+    can_go_back: boolean
+    create_by: string
+  }
+  sub_test_data: {
+    ID: number
+    CreatedAt: string
+    UpdatedAt: string
+    DeletedAt: string | null
+    Uuid: string
+    subtest_number: number
+    name: string
+    create_by: string
+  }
+}
+
 export interface RiwayatUjian {
   ID: number
   CreatedAt: string
@@ -454,8 +518,16 @@ export interface IExamFinishResponse {
 
 export interface ISoalExamByModuleResponse {
   code: number
-  data: SoalExam[]
+  data: SoalExam[] | SoalExamLS1[]
   message: string
+  meta: {
+    page: number
+    per_page: number
+    offset: number
+    total_data: number
+    total_showing_data: number
+    total_page: number
+  }
 }
 
 export interface ISoalExam {
