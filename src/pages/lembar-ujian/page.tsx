@@ -6,7 +6,7 @@ import SoalPertanyaanEssay from "./component/soalPertanyaanEssay"
 import { useExamHooks } from "@/hooks/useExamHooks"
 import { useLocation, useParams } from "react-router-dom"
 import { useExamMutation } from "@/mutations/exam.mutation"
-import { SoalExam, SoalExamLS1 } from "@/interfaces/exam.interface"
+import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import TimerAndWebcam from "./component/timerAndWebcam"
 import ExamExample from "./component/examExample"
 
@@ -14,7 +14,7 @@ const LembarUjian = () => {
   const location = useLocation()
   const params = useParams()
 
-  const [soal, setSoal] = useState<SoalExam | SoalExamLS1 | null>(null)
+  const [soal, setSoal] = useState<SoalExam | SoalExamLS1 | SoalExamPPI | null>(null)
   const [finalQuestion, setFinalQuestion] = useState(false)
   const [timer, setTimer] = useState(0)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0) // Add state to track current question index
@@ -41,11 +41,19 @@ const LembarUjian = () => {
     isLoading: isLoadingQuestionResponse,
   } = queryGetQuestionResponseByActivity(params.activityId)
 
-  const isSoalExamLS1 = (soal: SoalExam | SoalExamLS1 | null): soal is SoalExamLS1 => {
+  const isSoalExamLS1 = (soal: SoalExam | SoalExamLS1 | SoalExamPPI | null): soal is SoalExamLS1 => {
     return soal !== null && "image_path_cat" in soal
   }
 
-  const questionType: "SoalExamLS1" | "SoalExam" = isSoalExamLS1(soal) ? "SoalExamLS1" : "SoalExam"
+  const isSoalExamPPI = (soal: SoalExam | SoalExamLS1 | SoalExamPPI | null): soal is SoalExamPPI => {
+    return soal !== null && "answer_data" in soal && "option_one_value" in soal.answer_data
+  }
+
+  const questionType: "SoalExamLS1" | "SoalExam" | "SoalExamPPI" = isSoalExamLS1(soal)
+    ? "SoalExamLS1"
+    : isSoalExamPPI(soal)
+    ? "SoalExamPPI"
+    : "SoalExam"
 
   useEffect(() => {
     refetchQuestionResponseByActivity()
@@ -213,7 +221,10 @@ const LembarUjian = () => {
         question_model_uuid: location.state.question_model_uuid,
         question_id: soal.ID,
         question_uuid: soal.Uuid,
-        question_order: questionType === "SoalExam" ? soal.question_order : (soal as SoalExamLS1).showing_order,
+        question_order:
+          questionType === "SoalExam" || questionType === "SoalExamPPI"
+            ? soal.question_order
+            : (soal as SoalExamLS1).showing_order,
         user_response_content: selectedAnswer.content,
         user_response_value: selectedAnswer.value,
         user_response_at_second: timer - remainingTime,
@@ -353,7 +364,8 @@ const LembarUjian = () => {
                           border: "1px solid #4828A3",
                         }}
                       >
-                        {soalExamAvailable.data.length - (questionResponseByActivity?.data?.length || 0)}
+                        {soalExamAvailable.data.filter((ar) => ar.question_type === 1).length -
+                          (questionResponseByActivity?.data?.length || 0)}
                       </Button>
                     </Typography>
                     {/* TODO: will be activate once it's confirm */}
@@ -422,7 +434,7 @@ const LembarUjian = () => {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 backgroundColor:
-                                  questionType === "SoalExam"
+                                  questionType === "SoalExam" || questionType === "SoalExamPPI"
                                     ? answeredExam &&
                                       answeredExam?.data.filter((ar) => ar.question_order === item.question_order)
                                         .length > 0
@@ -439,7 +451,7 @@ const LembarUjian = () => {
                                     ? "white" //the exam that still not answered yet LS1
                                     : "red", //the exam that's not being answered item but already getting pass through LS1
                                 color:
-                                  questionType === "SoalExam"
+                                  questionType === "SoalExam" || questionType === "SoalExamPPI"
                                     ? answeredExam &&
                                       answeredExam?.data.filter((ar) => ar.question_order === item.question_order)
                                         .length > 0

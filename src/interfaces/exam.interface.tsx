@@ -334,6 +334,70 @@ export interface SoalExamLS1 {
   }
 }
 
+export interface SoalExamPPI {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  question_model_id: number
+  question_model_uuid: string
+  question_type: number
+  question_order: number
+  question_content: string
+  timer: number
+  is_has_answer: boolean
+  created_by: string
+  question_model: {
+    ID: number
+    CreatedAt: string
+    UpdatedAt: string
+    DeletedAt: string | null
+    Uuid: string
+    code: string
+    name: string
+    timer_type: number
+    total_time: number
+    is_must_fill_all_question: boolean
+    added_time: number
+    can_go_back: boolean
+    created_by: string
+  }
+  answer_data: {
+    ID: number
+    CreatedAt: string
+    UpdatedAt: string
+    DeletedAt: string | null
+    Uuid: string
+    question_id: number
+    question_uuid: string
+    answer_type: number
+    option_one_sub_aspect_id: number
+    option_one_sub_aspect_uuid: string
+    option_one_content: string
+    option_one_value: string
+    option_two_sub_aspect_id: number
+    option_two_sub_aspect_uuid: string
+    option_two_content: string
+    option_two_value: string
+    consistency_number: number
+    ConsistencyData: null | {
+      CreatedAt: string
+      DeletedAt: string | null
+      ID: number
+      UpdatedAt: string
+      Uuid: string
+      consistency_number: number
+      created_by: string
+      option_one: string
+      option_one_value: number
+      option_two: string
+      option_two_value: number
+    }
+    created_by: string
+  }
+}
+
 export interface RiwayatUjian {
   ID: number
   CreatedAt: string
@@ -518,7 +582,7 @@ export interface IExamFinishResponse {
 
 export interface ISoalExamByModuleResponse {
   code: number
-  data: SoalExam[] | SoalExamLS1[]
+  data: SoalExam[] | SoalExamLS1[] | SoalExamPPI[]
   message: string
   meta: {
     page: number

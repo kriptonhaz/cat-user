@@ -17,8 +17,8 @@ const ExamInstruction: React.FC<ExamInstructionProps> = ({
       <div className="content">
         <Typography dangerouslySetInnerHTML={{ __html: content }} sx={{ "& p": { fontSize: "22px" } }} />
       </div>
-      <div className="image">
-        <img src={import.meta.env.VITE_API_URL + imageSrc} alt={imageAlt} style={{ width: "50%", height: "50%" }} />
+      <div className="image" style={{ height: "500px", maxHeight: "500px" }}>
+        <img src={import.meta.env.VITE_API_URL + imageSrc} alt={imageAlt} style={{ width: "auto", height: "50%" }} />
       </div>
     </div>
   )
