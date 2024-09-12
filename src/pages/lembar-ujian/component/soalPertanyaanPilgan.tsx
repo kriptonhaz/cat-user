@@ -111,12 +111,15 @@ const SoalPertanyaanPilgan = ({
                       control={<Radio size="small" />}
                       label={
                         <>
-                          <Typography dangerouslySetInnerHTML={{ __html: answer.content }} />
+                          <Typography
+                            dangerouslySetInnerHTML={{ __html: answer.content }}
+                            sx={{ "& img": { width: "50%", height: "50%" } }}
+                          />
                           {answer.image_path_cat && (
                             <img
                               src={import.meta.env.VITE_API_URL + answer.image_path_cat}
                               alt={`Answer ${index + 1} image`}
-                              style={{ maxWidth: "100%", marginTop: "8px" }}
+                              style={{ maxWidth: "50%", marginTop: "8px", width: "50%", height: "50%" }}
                             />
                           )}
                         </>

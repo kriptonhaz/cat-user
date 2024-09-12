@@ -41,6 +41,12 @@ const LembarUjian = () => {
     isLoading: isLoadingQuestionResponse,
   } = queryGetQuestionResponseByActivity(params.activityId)
 
+  const isSoalExamLS1 = (soal: SoalExam | SoalExamLS1 | null): soal is SoalExamLS1 => {
+    return soal !== null && "image_path_cat" in soal
+  }
+
+  const questionType: "SoalExamLS1" | "SoalExam" = isSoalExamLS1(soal) ? "SoalExamLS1" : "SoalExam"
+
   useEffect(() => {
     refetchQuestionResponseByActivity()
   }, [currentQuestionIndex])
@@ -207,7 +213,7 @@ const LembarUjian = () => {
         question_model_uuid: location.state.question_model_uuid,
         question_id: soal.ID,
         question_uuid: soal.Uuid,
-        question_order: soal.question_order,
+        question_order: questionType === "SoalExam" ? soal.question_order : (soal as SoalExamLS1).showing_order,
         user_response_content: selectedAnswer.content,
         user_response_value: selectedAnswer.value,
         user_response_at_second: timer - remainingTime,
@@ -394,61 +400,80 @@ const LembarUjian = () => {
                   }}
                 >
                   <Grid container spacing={3}>
-                    {Array.from(Array(soalExamAvailable.meta.total_data).keys()).map((item) => {
-                      return (
-                        <Grid item key={item} xs={2} sm={1} sx={{ ml: 2 }}>
-                          <Button
-                            variant="contained"
-                            key={item}
-                            sx={{
-                              width: "100%",
-                              minWidth: 30,
-                              height: 30,
-                              borderRadius: 0,
-                              fontSize: "0.875rem",
-                              padding: 0,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              backgroundColor:
-                                questionResponseByActivity?.data &&
-                                questionResponseByActivity?.data.length > 0 &&
-                                questionResponseByActivity?.data.filter((ar) => ar.question_order === item + 1).length >
-                                  0
-                                  ? "#4828A3"
-                                  : currentQuestionIndex + 1 <= item + 1
-                                  ? "white"
-                                  : "red",
-                              color:
-                                questionResponseByActivity?.data &&
-                                questionResponseByActivity?.data.length > 0 &&
-                                questionResponseByActivity?.data.filter((ar) => ar.question_order === item + 1).length >
-                                  0
-                                  ? "white"
-                                  : currentQuestionIndex + 1 <= item + 1
-                                  ? "#4828A3"
-                                  : "white",
-                              border: "1px solid #4828A3",
-                            }}
-                            onClick={() => {
-                              // @ts-ignore
-                              const onlyExam = soalExamAvailable.data.filter((ar) => ar.question_type === 1)
-                              if (timerUjian?.data.timer_type !== 1) {
-                                setSoal(onlyExam[item])
-                                setCurrentQuestionIndex(onlyExam[item].question_order - 1) // Update current question index
-                                if (item === soalExamAvailable.meta.total_data - 1) {
-                                  setFinalQuestion(true)
-                                } else {
-                                  setFinalQuestion(false)
+                    {soalExamAvailable?.data
+                      ?.filter((ar) => ar.question_type === 1)
+                      .map((item, index) => {
+                        const answeredExam = questionResponseByActivity
+                        return (
+                          <Grid item key={index} xs={2} sm={1} sx={{ ml: 2 }}>
+                            <Button
+                              variant="contained"
+                              key={index}
+                              sx={{
+                                width: "100%",
+                                minWidth: 30,
+                                height: 30,
+                                borderRadius: 0,
+                                fontSize: "0.875rem",
+                                padding: 0,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor:
+                                  questionType === "SoalExam"
+                                    ? answeredExam &&
+                                      answeredExam?.data.filter((ar) => ar.question_order === item.question_order)
+                                        .length > 0
+                                      ? "#4828A3" //answered exam
+                                      : currentQuestionIndex + 1 <= item.question_order
+                                      ? "white" //the exam that still not answered yet
+                                      : "red" //the exam that's not being answered item but already getting pass through
+                                    : answeredExam &&
+                                      answeredExam?.data.filter(
+                                        (ar) => ar.question_order === (item as SoalExamLS1).showing_order
+                                      ).length > 0
+                                    ? "#4828A3" //answered exam LS1
+                                    : currentQuestionIndex + 1 <= (item as SoalExamLS1).showing_order
+                                    ? "white" //the exam that still not answered yet LS1
+                                    : "red", //the exam that's not being answered item but already getting pass through LS1
+                                color:
+                                  questionType === "SoalExam"
+                                    ? answeredExam &&
+                                      answeredExam?.data.filter((ar) => ar.question_order === item.question_order)
+                                        .length > 0
+                                      ? "white" //answered exam
+                                      : currentQuestionIndex + 1 <= item.question_order
+                                      ? "#4828A3" //the exam that still not answered yet
+                                      : "white" //the exam that's not being answered item but already getting pass through
+                                    : answeredExam &&
+                                      answeredExam?.data.filter(
+                                        (ar) => ar.question_order === (item as SoalExamLS1).showing_order
+                                      ).length > 0
+                                    ? "white" //answered exam LS1
+                                    : currentQuestionIndex + 1 <= (item as SoalExamLS1).showing_order
+                                    ? "#4828A3" //the exam that still not answered yet LS1
+                                    : "white", //the exam that's not being answered item but already getting pass through LS1
+                                border: "1px solid #4828A3",
+                              }}
+                              onClick={() => {
+                                // @ts-ignore
+                                const onlyExam = soalExamAvailable.data.filter((ar) => ar.question_type === 1)
+                                if (timerUjian?.data.timer_type !== 1) {
+                                  setSoal(onlyExam[index])
+                                  setCurrentQuestionIndex(onlyExam[index].question_order - 1) // Update current question index
+                                  if (index === soalExamAvailable.meta.total_data - 1) {
+                                    setFinalQuestion(true)
+                                  } else {
+                                    setFinalQuestion(false)
+                                  }
                                 }
-                              }
-                            }}
-                          >
-                            {item + 1}
-                          </Button>
-                        </Grid>
-                      )
-                    })}
+                              }}
+                            >
+                              {index + 1}
+                            </Button>
+                          </Grid>
+                        )
+                      })}
                   </Grid>
                 </CardContent>
               </Card>

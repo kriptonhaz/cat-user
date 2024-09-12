@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material"
 import React from "react"
 
 interface ExamInstructionProps {
@@ -14,10 +15,10 @@ const ExamInstruction: React.FC<ExamInstructionProps> = ({
   return (
     <div className="exam-instruction">
       <div className="content">
-        <div dangerouslySetInnerHTML={{ __html: content }} />
+        <Typography dangerouslySetInnerHTML={{ __html: content }} sx={{ "& p": { fontSize: "22px" } }} />
       </div>
       <div className="image">
-        <img src={import.meta.env.VITE_API_URL + imageSrc} alt={imageAlt} style={{ width: "700px", height: "auto" }} />
+        <img src={import.meta.env.VITE_API_URL + imageSrc} alt={imageAlt} style={{ width: "50%", height: "50%" }} />
       </div>
     </div>
   )
