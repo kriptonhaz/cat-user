@@ -401,7 +401,9 @@ const LembarUjian = () => {
                 >
                   <Grid container spacing={3}>
                     {soalExamAvailable?.data
+                      // @ts-ignore
                       ?.filter((ar) => ar.question_type === 1)
+                      // @ts-ignore
                       .map((item, index) => {
                         const answeredExam = questionResponseByActivity
                         return (
