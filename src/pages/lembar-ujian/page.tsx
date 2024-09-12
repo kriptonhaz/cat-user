@@ -364,6 +364,7 @@ const LembarUjian = () => {
                           border: "1px solid #4828A3",
                         }}
                       >
+                        {/* @ts-ignore */}
                         {soalExamAvailable.data.filter((ar) => ar.question_type === 1).length -
                           (questionResponseByActivity?.data?.length || 0)}
                       </Button>
