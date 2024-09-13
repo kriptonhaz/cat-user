@@ -19,6 +19,7 @@ export function useLoginMutation() {
       onSuccess: (data, variables, context) => {
         tokenStore.setAccessToken(data.data?.token)
         tokenStore.setIsLogin(true)
+        window.location.reload()
         if (onSuccess) {
           onSuccess(data, variables, context)
           return
