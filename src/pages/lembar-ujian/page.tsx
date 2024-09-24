@@ -266,37 +266,45 @@ const LembarUjian = () => {
             {soal && params.activityId && (
               <>
                 {soal.question_type === 1 ? (
-                  <SoalPertanyaanPilgan
-                    soal={soal}
-                    isFinalQuestion={finalQuestion}
-                    activityId={params.activityId}
-                    setAnswer={(answer: answer) => setSelectedAnswer(answer)}
-                    selectedAnswer={selectedAnswer}
-                  />
+                  <>
+                    <SoalPertanyaanPilgan
+                      soal={soal}
+                      isFinalQuestion={finalQuestion}
+                      activityId={params.activityId}
+                      setAnswer={(answer: answer) => setSelectedAnswer(answer)}
+                      selectedAnswer={selectedAnswer}
+                      remainingTime={remainingTime}
+                    />
+                  </>
                 ) : soal.question_type === 2 ? (
                   <ExamExample question={soal as SoalExamLS1} />
                 ) : (
                   <ExamInstruction content={soal.question_content} imageSrc={(soal as SoalExamLS1).image_path_cat} />
                 )}
-                {timerUjian?.data.timer_type === 2 && (
-                  <Box sx={{ display: "flex", justifyContent: "flex-end", width: "98%" }}>
-                    <Button
-                      onClick={() => handlePreviousQuestion()}
-                      disabled={currentQuestionIndex === 0}
-                      sx={{ mr: 2 }}
-                    >
-                      Sebelumnya
-                    </Button>
-                    <Button onClick={() => handleNextQuestion()} disabled={finalQuestion}>
-                      Selanjutnya
-                    </Button>
-                  </Box>
-                )}
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "98%" }}>
+                  <Button color="info" onClick={handleJawab}>
+                    Simpan dan Lanjutkan{" "}
+                  </Button>
+                  {timerUjian?.data.timer_type === 2 && (
+                    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                      <Button
+                        onClick={() => handlePreviousQuestion()}
+                        disabled={currentQuestionIndex === 0}
+                        sx={{ mr: 2 }}
+                      >
+                        Sebelumnya
+                      </Button>
+                      <Button onClick={() => handleNextQuestion()} disabled={finalQuestion}>
+                        Selanjutnya
+                      </Button>
+                    </Box>
+                  )}
+                </Box>
               </>
             )}
           </Box>
         </Grid>
-        <Grid item xs={12} md={3} sx={{ mt: 10 }}>
+        <Grid item xs={12} md={3} sx={{ mt: 10, height: "90vh", overflow: "auto" }}>
           <Box>
             <Grid
               sx={{
@@ -305,6 +313,8 @@ const LembarUjian = () => {
             >
               <Card
                 sx={{
+                  position: "sticky",
+                  top: "20px",
                   width: "95%",
                   border: "0.5px solid #ccc",
                   boxShadow: 3,
@@ -342,14 +352,18 @@ const LembarUjian = () => {
                     boxShadow: 6,
                   },
                   mb: 5,
+                  padding: 0,
                 }}
               >
                 <CardContent>
                   <Typography variant="subtitle2" sx={{ fontSize: "0.8rem" }}>
                     Keterangan:
                   </Typography>
-                  <Box>
-                    <Typography variant="body2" sx={{ mb: 1, fontSize: "0.75rem" }}>
+                  <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontSize: "0.75rem", mr: 2, display: "flex", alignItems: "center" }}
+                    >
                       Soal belum dikerjakan :{" "}
                       <Button
                         variant="contained"
@@ -362,6 +376,7 @@ const LembarUjian = () => {
                           backgroundColor: "white",
                           color: "#4828A3",
                           border: "1px solid #4828A3",
+                          ml: 2,
                         }}
                       >
                         {/* @ts-ignore */}
@@ -369,26 +384,7 @@ const LembarUjian = () => {
                           (questionResponseByActivity?.data?.length || 0)}
                       </Button>
                     </Typography>
-                    {/* TODO: will be activate once it's confirm */}
-                    {/* <Typography variant="body2" sx={{ mb: 1, fontSize: "0.75rem" }}>
-                      Soal terlewat dan belum terjawab :{" "}
-                      <Button
-                        variant="contained"
-                        size="sm"
-                        sx={{
-                          width: "1%",
-                          minWidth: 5,
-                          borderRadius: 0,
-                          fontSize: "0.875rem",
-                          border: "1px solid red",
-                          backgroundColor: "red",
-                          color: "white",
-                        }}
-                      >
-                        1
-                      </Button>
-                    </Typography> */}
-                    <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
+                    <Typography variant="body2" sx={{ fontSize: "0.75rem", display: "flex", alignItems: "center" }}>
                       Soal sudah dikerjakan :{" "}
                       <Button
                         variant="contained"
@@ -400,6 +396,7 @@ const LembarUjian = () => {
                           fontSize: "0.875rem",
                           border: "1px solid #4828A3",
                           color: "white",
+                          ml: 2,
                         }}
                       >
                         {questionResponseByActivity?.data?.length || 0}
@@ -410,9 +407,10 @@ const LembarUjian = () => {
                 <CardContent
                   sx={{
                     width: "100%",
+                    flexWrap: "wrap",
                   }}
                 >
-                  <Grid container spacing={3}>
+                  <Grid container spacing={3} gap={2}>
                     {soalExamAvailable?.data
                       // @ts-ignore
                       ?.filter((ar) => ar.question_type === 1)
@@ -420,7 +418,7 @@ const LembarUjian = () => {
                       .map((item, index) => {
                         const answeredExam = questionResponseByActivity
                         return (
-                          <Grid item key={index} xs={2} sm={1} sx={{ ml: 2 }}>
+                          <Grid item key={index} xs={2} sm={1}>
                             <Button
                               variant="contained"
                               key={index}

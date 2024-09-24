@@ -1,8 +1,9 @@
 import Webcam from "react-webcam"
-import { Box, Button, Typography } from "@mui/material"
+import { Box, Typography } from "@mui/material"
 import CameraOff from "@/assets/camera-off.png"
 import React, { useEffect, useState } from "react"
 import { FiberManualRecord } from "@mui/icons-material"
+import { formatTime } from "@/utils/timer"
 
 const TimerAndWebcam = ({
   tipeTimer,
@@ -42,26 +43,9 @@ const TimerAndWebcam = ({
     }
   }, [isLoadingTimer])
 
-  const formatTime = (time: number) => {
-    const hours = Math.floor(time / 3600)
-    const minutes = Math.floor((time % 3600) / 60)
-    const seconds = time % 60
-
-    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`
-  }
-
   return (
     <>
-      <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
-      <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-        <Button color="warning">Instruksi</Button>
-        <Button color="info" onClick={handleJawab}>
-          Simpan dan Lanjutkan{" "}
-        </Button>{" "}
-      </Box>
-      <Box sx={{ display: "flex", mt: 5, justifyContent: "center" }}>
+      <Box sx={{ display: "flex", mt: 1, justifyContent: "center" }}>
         <Box
           sx={{
             display: "flex",

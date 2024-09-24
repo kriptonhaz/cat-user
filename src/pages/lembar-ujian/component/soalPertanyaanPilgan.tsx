@@ -1,7 +1,8 @@
 import React from "react"
-import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio, Button } from "@mui/material"
+import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio, Button, Divider } from "@mui/material"
 import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import { useExamMutation } from "@/mutations/exam.mutation"
+import { formatTime } from "@/utils/timer"
 
 export interface answer {
   content: string
@@ -14,12 +15,14 @@ const SoalPertanyaanPilgan = ({
   activityId,
   setAnswer,
   selectedAnswer,
+  remainingTime,
 }: {
   soal: SoalExam | SoalExamLS1 | SoalExamPPI
   isFinalQuestion: boolean
   activityId: string
   setAnswer: (answer: answer) => void
   selectedAnswer: answer | null
+  remainingTime: number
 }) => {
   const { finishExamMutation } = useExamMutation()
   const examMutation = finishExamMutation()
@@ -94,6 +97,12 @@ const SoalPertanyaanPilgan = ({
         }}
       >
         <CardContent>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
+            <Button color="warning">Instruksi</Button>
+          </Box>
+
+          <Divider sx={{ my: 3 }} />
           <Box sx={{ display: "flex", alignItems: "flex-start" }}>
             <Typography variant="h6" sx={{ mr: 2, minWidth: "30px" }}>
               {soal.question_order}.
