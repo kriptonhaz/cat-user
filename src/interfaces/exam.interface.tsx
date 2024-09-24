@@ -467,6 +467,57 @@ export interface RiwayatUjian {
       name: string
       CreatedBy: string
     }
+    test_module_data: ITestModuleData[]
+  }
+}
+
+export interface ITestModuleData {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  exam_id: number
+  exam_uuid: string
+  exam_tool_id: number
+  exam_tool_uuid: string
+  exam_type_name: string
+  module_id: number
+  module_uuid: string
+  created_by: string
+  tools_data: {
+    ID: number
+    CreatedAt: string
+    UpdatedAt: string
+    DeletedAt: string | null
+    Uuid: string
+    name: string
+    created_by: string
+  }
+  module_data: {
+    ID: number
+    CreatedAt: string
+    UpdatedAt: string
+    DeletedAt: string | null
+    Uuid: string
+    exam_tool_id: number
+    exam_tool_uuid: string
+    exam_type_name: string
+    exam_tool_model_id: number
+    exam_tool_model_uuid: string
+    module_code: string
+    module_name: string
+    module_alias: string
+    created_by: string
+    exam_tool: {
+      ID: number
+      CreatedAt: string
+      UpdatedAt: string
+      DeletedAt: string | null
+      Uuid: string
+      name: string
+      created_by: string
+    }
   }
 }
 
