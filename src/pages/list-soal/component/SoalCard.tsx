@@ -62,16 +62,16 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
     <>
       <Card
         sx={{
-          maxWidth: "50%",
           border: "0.5px solid #ccc",
           boxShadow: 3,
           borderRadius: 2,
           transition: "0.3s",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
           "&:hover": {
             boxShadow: 6,
           },
-          mb: 5,
-          position: "relative",
         }}
       >
         <>

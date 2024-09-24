@@ -38,24 +38,24 @@ const ListSoal = () => {
           </Typography>
         </Grid>
       </Grid>
-      <Grid container sx={{ mt: 5, pl: 5 }} direction="column" spacing={3}>
-        <Grid item>
-          {dataModuleExamAvailable?.data.length === 0 ? (
-            <Typography
-              sx={{
-                color: "text.secondary",
-                fontWeight: "medium",
-                fontSize: 20,
-                textAlign: "center",
-                width: "100%",
-                mt: 4,
-              }}
-            >
-              Tidak ada modul ujian yang tersedia saat ini.
-            </Typography>
-          ) : (
-            dataModuleExamAvailable?.data.map((module, index) => {
-              return (
+      <Grid container sx={{ padding: 5 }} spacing={3}>
+        {dataModuleExamAvailable?.data.length === 0 ? (
+          <Typography
+            sx={{
+              color: "text.secondary",
+              fontWeight: "medium",
+              fontSize: 20,
+              textAlign: "center",
+              width: "100%",
+              mt: 4,
+            }}
+          >
+            Tidak ada modul ujian yang tersedia saat ini.
+          </Typography>
+        ) : (
+          dataModuleExamAvailable?.data.map((module, index) => {
+            return (
+              <Grid item xs={12} md={6} lg={3} key={module.module_id}>
                 <SoalCard
                   key={module.module_id}
                   ujian={{
@@ -63,15 +63,15 @@ const ListSoal = () => {
                     activity_stage:
                       activityExams.length > 0
                         ? activityExams.filter(
-                          (ar) => ar.data.exam_uuid === module.exam_uuid && ar.data.module_uuid === module.Uuid
-                        )[0].data.activity_stage
+                            (ar) => ar.data.exam_uuid === module.exam_uuid && ar.data.module_uuid === module.Uuid
+                          )[0].data.activity_stage
                         : 0,
                   }}
                 />
-              )
-            })
-          )}
-        </Grid>
+              </Grid>
+            )
+          })
+        )}
       </Grid>
     </>
   )
