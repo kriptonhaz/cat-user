@@ -52,26 +52,15 @@ const TableRiwayatUjian = ({
   const columns = useMemo(
     () => [
       {
-        accessorKey: "code",
-        header: "Kode Ujian",
-        enableSorting: false,
-        size: 300,
-        Cell: ({ row }) => row.original.exam_data.code,
-      },
-      {
         accessorKey: "name",
-        header: "Kode Ujian",
+        header: "Nama Ujian",
         enableSorting: false,
-        Cell: ({ row }) => row.original.exam_data.name,
-      },
-      {
-        accessorKey: "location",
-        header: "Lokasi",
-        enableSorting: false,
-        Cell: ({ row }) => row.original.exam_data.location,
+        Cell: ({ row }) => <div style={{ marginLeft: 0, zIndex: 9999 }}>{row.original.exam_data.name}</div>,
+        Header: () => <div style={{ marginLeft: 0, zIndex: 9999 }}>Nama Ujian</div>,
       },
       {
         accessorKey: "start_time",
+        size: 80,
         header: "Tanggal Mulai",
         enableSorting: false,
         Cell: ({ row }) => dayjs(row.original.exam_data.start_time).format("DD MMM YYYY"),
@@ -80,7 +69,27 @@ const TableRiwayatUjian = ({
         accessorKey: "end_time",
         header: "Tanggal Selesai",
         enableSorting: false,
+        size: 20,
         Cell: ({ row }) => dayjs(row.original.exam_data.end_time).format("DD MMM YYYY"),
+      },
+      {
+        accessorKey: "location",
+        header: "Lokasi",
+        enableSorting: false,
+        size: 100,
+        Cell: ({ row }) => row.original.exam_data.location,
+      },
+      {
+        accessorKey: "name",
+        header: "Tujuan",
+        enableSorting: false,
+        Cell: ({ row }) => row.original.exam_data.purpose_data.name,
+      },
+      {
+        accessorKey: "name",
+        header: "Posisi",
+        enableSorting: false,
+        Cell: ({ row }) => row.original.exam_data.position_purpose_data.name,
       },
     ],
     []
@@ -88,14 +97,64 @@ const TableRiwayatUjian = ({
 
   return (
     <>
-      <DataTable
-        columns={columns}
-        data={data.data || ([] as RiwayatUjian[])}
-        onPaginationChange={setPagination}
-        rowCount={data.meta.total_data || 0}
-        state={{ pagination, isLoading, showAlertBanner: isError }}
-        enableGlobalFilter={false}
-      />
+      {/* <MaterialReactTable table={table} /> */}
+      <Box sx={{ paddingLeft: "20px", paddingRight: "20px" }}>
+        <DataTable
+          columns={columns}
+          data={data.data || ([] as RiwayatUjian[])}
+          onPaginationChange={setPagination}
+          rowCount={data.meta.total_data || 0}
+          state={{ pagination, isLoading, showAlertBanner: isError }}
+          enableGlobalFilter={false}
+          enableExpandAll={false}
+          muiTableBodyProps={{
+            sx: {
+              "& .MuiTableRow-root": {
+                alignItems: "flex-start",
+              },
+            },
+          }}
+          displayColumnDefOptions={{
+            "mrt-row-expand": {
+              size: 10,
+              header: "",
+            },
+          }}
+          muiTableDetailPanelProps={() => ({
+            sx: (theme) => ({
+              backgroundColor: theme.palette.mode === "dark" ? "rgba(255,210,244,0.1)" : "rgba(0,0,0,0.1)",
+            }),
+          })}
+          muiTableBodyRowProps={({ row, table }) => ({
+            onClick: () => table.setExpanded({ [row.id]: !row.getIsExpanded() }),
+            sx: {
+              cursor: "pointer",
+            },
+          })}
+          muiExpandButtonProps={({ row, table }) => ({
+            onClick: () => table.setExpanded({ [row.id]: !row.getIsExpanded() }),
+            sx: {
+              transform: row.getIsExpanded() ? "rotate(180deg)" : "rotate(-90deg)",
+              transition: "transform 0.2s",
+              display: "none",
+            },
+          })}
+          renderDetailPanel={(row) => (
+            <Box
+              sx={
+                {
+                  // padding: "1rem",
+                }
+              }
+            >
+              <Typography>Lokasi: {row.row.original.exam_data.location}</Typography>
+              <Typography>Batch: {row.row.original.exam_data.batch}</Typography>
+            </Box>
+          )}
+          positionExpandColumn={"last"}
+          enableExpanding
+        />
+      </Box>
     </>
   )
 }
