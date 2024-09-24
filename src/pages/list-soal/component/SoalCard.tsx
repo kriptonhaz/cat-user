@@ -18,6 +18,7 @@ interface ujianSchema {
 const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
   const { startExamMutation } = useExamMutation()
   const examMutation = startExamMutation()
+  const sedangDikerjakanStage = [1, 2, 3, 4, 5, 6, 7]
 
   const handleStartExam = (model: string, examToolModelUuid: string, examModelId: number) => {
     examMutation.mutate({
@@ -30,8 +31,6 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
   }
 
   const statusUjian = (status: number) => {
-    const sedangDikerjakanStage = [1, 2, 3, 4, 5, 6, 7]
-
     if (status === 0) {
       return {
         color: neutral[500],
@@ -105,7 +104,11 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
                 )
               }
             >
-              Mulai
+              {ujian.activity_stage === 0
+                ? "Mulai"
+                : sedangDikerjakanStage.includes(ujian.activity_stage)
+                ? "Lanjutkan"
+                : "Sudah Selesai"}
             </Button>
           </CardActions>
         </>
