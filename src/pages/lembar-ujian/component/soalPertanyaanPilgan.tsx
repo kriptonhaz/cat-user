@@ -1,5 +1,6 @@
-import React from "react"
+import React, { useState } from "react"
 import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio, Button, Divider } from "@mui/material"
+import { TextIncrease, TextDecrease } from "@mui/icons-material"
 import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import { useExamMutation } from "@/mutations/exam.mutation"
 import { formatTime } from "@/utils/timer"
@@ -24,6 +25,7 @@ const SoalPertanyaanPilgan = ({
   selectedAnswer: answer | null
   remainingTime: number
 }) => {
+  const [fontSize, setFontSize] = useState(22)
   const { finishExamMutation } = useExamMutation()
   const examMutation = finishExamMutation()
 
@@ -81,6 +83,14 @@ const SoalPertanyaanPilgan = ({
     }
   }
 
+  const onIncreaseFont = () => {
+    setFontSize(fontSize + 1)
+  }
+
+  const onDecreaseFont = () => {
+    setFontSize(fontSize - 1)
+  }
+
   return (
     <>
       <Card
@@ -99,22 +109,30 @@ const SoalPertanyaanPilgan = ({
         <CardContent>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
-            <Button color="warning">Instruksi</Button>
+            <Box sx={{ width: "250px", display: "flex", justifyContent: "space-between" }}>
+              <Button color="warning">Instruksi</Button>
+              <Box display={"flex"} justifyContent={"space-between"} width={140}>
+                <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />
+                <Button color="primary" startIcon={<TextIncrease />} variant="outlined" onClick={onIncreaseFont} />
+              </Box>
+            </Box>
           </Box>
 
           <Divider sx={{ my: 3 }} />
           <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-            <Typography variant="h6" sx={{ mr: 2, minWidth: "30px" }}>
+            <Typography variant="h6" sx={{ mr: 2, minWidth: "30px", fontSize: fontSize }}>
               {soal.question_order}.
             </Typography>
             {questionType === "SoalExam" ? (
-              <Typography variant="h6">{soal.question_content}</Typography>
+              <Typography variant="h6" sx={{ fontSize: fontSize }}>
+                {soal.question_content}
+              </Typography>
             ) : (
               <Box>
                 <Typography
                   variant="h6"
                   dangerouslySetInnerHTML={{ __html: soal.question_content }}
-                  sx={{ "& p": { margin: 0 } }}
+                  sx={{ "& p": { margin: 0, fontSize: fontSize }, fontSize: fontSize }}
                 />
                 <br />
                 {(soal as SoalExamLS1).image_path_cat && (
@@ -157,7 +175,7 @@ const SoalPertanyaanPilgan = ({
                     value={answer.value}
                     control={<Radio size="small" />}
                     label={answer.content}
-                    sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+                    sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 0.5, fontSize: fontSize }, fontSize: fontSize }}
                   />
                 ))
               ) : questionType === "SoalExamLS1" ? (
@@ -170,7 +188,7 @@ const SoalPertanyaanPilgan = ({
                       <>
                         <Typography
                           dangerouslySetInnerHTML={{ __html: answer.content }}
-                          sx={{ "& img": { width: "50%", height: "50%" } }}
+                          sx={{ "& img": { width: "50%", height: "50%", fontSize: fontSize }, fontSize: fontSize }}
                         />
                         {answer.image_path_cat && (
                           <img
@@ -201,7 +219,7 @@ const SoalPertanyaanPilgan = ({
                           borderRadius: "4px",
                         }}
                       >
-                        <Typography variant="h6" sx={{ color: "black" }}>
+                        <Typography variant="h6" sx={{ color: "black", fontSize: fontSize }}>
                           {(soal as SoalExamPPI).answer_data.option_one_content}
                         </Typography>
                       </Box>
@@ -223,7 +241,7 @@ const SoalPertanyaanPilgan = ({
                           borderRadius: "4px",
                         }}
                       >
-                        <Typography variant="h6" sx={{ color: "black" }}>
+                        <Typography variant="h6" sx={{ color: "black", fontSize: fontSize }}>
                           {(soal as SoalExamPPI).answer_data.option_two_content}
                         </Typography>
                       </Box>
