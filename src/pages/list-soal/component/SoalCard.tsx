@@ -1,6 +1,8 @@
 import { useExamMutation } from "@/mutations/exam.mutation"
 import { Button, Card, CardActions, CardContent, Typography } from "@mui/material"
 import { neutral, info, danger, success } from "@/theme/ts/colors"
+import { useState } from "react"
+import ModalConfirm from "@/ui/modal/ModalConfirm"
 
 interface ujianSchema {
   Uuid: string
@@ -19,6 +21,19 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
   const { startExamMutation } = useExamMutation()
   const examMutation = startExamMutation()
   const sedangDikerjakanStage = [1, 2, 3, 4, 5, 6, 7]
+  const [modalConfirm, setModalConfirm] = useState({
+    open: false,
+    title: "",
+    message: "",
+  })
+
+  const onActionCard = () => {
+    setModalConfirm({
+      ...modalConfirm,
+      open: true,
+      title: "Apakah Anda yakin ingin memulai ujian ini?",
+    })
+  }
 
   const handleStartExam = (model: string, examToolModelUuid: string, examModelId: number) => {
     examMutation.mutate({
@@ -94,16 +109,7 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
             <Typography variant="h6">{ujian.module_data.module_name}</Typography>
           </CardContent>
           <CardActions>
-            <Button
-              disabled={ujian.activity_stage === 9}
-              onClick={() =>
-                handleStartExam(
-                  ujian.exam_type_name,
-                  ujian.module_data.exam_tool_model_uuid,
-                  ujian.module_data.exam_tool_model_id
-                )
-              }
-            >
+            <Button disabled={ujian.activity_stage === 9} onClick={onActionCard}>
               {ujian.activity_stage === 0
                 ? "Mulai"
                 : sedangDikerjakanStage.includes(ujian.activity_stage)
@@ -113,6 +119,19 @@ const SoalCard = ({ ujian }: { ujian: ujianSchema }) => {
           </CardActions>
         </>
       </Card>
+      <ModalConfirm
+        open={!!modalConfirm.open}
+        onClose={() => setModalConfirm({ ...modalConfirm, open: false })}
+        title={modalConfirm.title}
+        message={modalConfirm.message}
+        onConfirm={() =>
+          handleStartExam(
+            ujian.exam_type_name,
+            ujian.module_data.exam_tool_model_uuid,
+            ujian.module_data.exam_tool_model_id
+          )
+        }
+      />
     </>
   )
 }
