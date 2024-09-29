@@ -716,3 +716,26 @@ export interface IQuestionResponseByActivityResponse {
     total_page: number
   }
 }
+
+export interface IQuestionInstructionByModuleResponse {
+  code: number
+  data: {
+    ID: number
+    CreatedAt: string
+    UpdatedAt: string
+    DeletedAt: string | null
+    Uuid: string
+    exam_tool_id: number
+    exam_tool_uuid: string
+    exam_tool_name: string
+    image_path_admin: string
+    image_path_cat: string
+    image_position: number
+    content: string
+    is_has_time: boolean
+    timer: number
+    is_active: boolean
+    created_by: string
+  }
+  message: string
+}

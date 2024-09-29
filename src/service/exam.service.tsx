@@ -11,6 +11,7 @@ import {
   ITimerUjianResponse,
   ISubmitAnswerResponse,
   IQuestionResponseByActivityResponse,
+  IQuestionInstructionByModuleResponse,
 } from "@/interfaces/exam.interface"
 import API from "./base.service"
 import { setRiwayatUjianParams } from "@/pages/riwayat-ujian"
@@ -185,6 +186,15 @@ export const getQuestionResponseByActivity = async (
 ): Promise<IQuestionResponseByActivityResponse> => {
   const { data } = await API().request<IQuestionResponseByActivityResponse>({
     url: `/v1/cat+apps/exam/question/response/by+activity/${activityUuid}`,
+    method: "GET",
+  })
+
+  return data
+}
+
+export const getInstructionByTestModule = async (testModule: string): Promise<IQuestionInstructionByModuleResponse> => {
+  const { data } = await API().request<IQuestionInstructionByModuleResponse>({
+    url: `/v1/cat+apps/exam/instruction/${testModule}`,
     method: "GET",
   })
 

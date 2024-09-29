@@ -7,16 +7,17 @@ import classes from "../styles/Modal.module.scss"
 export interface IModalFooterProps extends PropsWithChildren, StackProps {
   onCancel?: () => void
   divider?: boolean
+  cancelLabel?: string
 }
 export const Footer: React.FC<IModalFooterProps> = (rootProps) => {
-  const { direction = "row", spacing = 1, onCancel, divider, ...props } = rootProps
+  const { direction = "row", spacing = 1, onCancel, divider, cancelLabel, ...props } = rootProps
 
   return (
     <Box className={combineClasses([classes.Modal_Footer, divider && classes.Divider])}>
       <Stack direction={direction} spacing={spacing} {...props}>
         <Render in={!!onCancel}>
           <Button variant="outlined" color="inherit" onClick={onCancel}>
-            Cancel
+            {cancelLabel || "Cancel"}
           </Button>
         </Render>
         {props.children}

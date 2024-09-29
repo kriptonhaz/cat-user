@@ -9,6 +9,7 @@ import { useExamMutation } from "@/mutations/exam.mutation"
 import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import TimerAndWebcam from "./component/timerAndWebcam"
 import ExamExample from "./component/examExample"
+import ModalInstruction from "./component/ModalInstruction"
 
 const LembarUjian = () => {
   const location = useLocation()
@@ -21,14 +22,26 @@ const LembarUjian = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<{ content: string; value: number } | null>(null)
   const [remainingTime, setRemainingTime] = useState(0)
   const [timerSoal, setTimerSoal] = useState(0)
+  const [modalInstruction, setModalInstruction] = useState({
+    open: false,
+    onClose: () => null,
+    title: "",
+    message: "",
+    onConfirm: () => null,
+  })
 
   const { leftExamBeforeFinishMutation, finishExamMutation, submitJawabanMutation } = useExamMutation()
   const examMutation = leftExamBeforeFinishMutation()
   const finishMutation = finishExamMutation()
   const submitMutation = submitJawabanMutation()
 
-  const { queryActivityExam, queryGetSoalExamByModule, queryGetTimerUjian, queryGetQuestionResponseByActivity } =
-    useExamHooks()
+  const {
+    queryActivityExam,
+    queryGetSoalExamByModule,
+    queryGetTimerUjian,
+    queryGetQuestionResponseByActivity,
+    queryGetInstructionByTestModule,
+  } = useExamHooks()
   const { data: activityExam, isLoading: isLoadingActivity } = queryActivityExam(params.examId, params.moduleId)
   const { data: soalExamAvailable, isLoading: isLoadingSoal } = queryGetSoalExamByModule(params.moduleId)
   const { data: timerUjian, isLoading: isLoadingTimer } = queryGetTimerUjian({
@@ -40,6 +53,7 @@ const LembarUjian = () => {
     refetch: refetchQuestionResponseByActivity,
     isLoading: isLoadingQuestionResponse,
   } = queryGetQuestionResponseByActivity(params.activityId)
+  const { data: moduleInstruction } = queryGetInstructionByTestModule(params.model || "")
 
   const isSoalExamLS1 = (soal: SoalExam | SoalExamLS1 | SoalExamPPI | null): soal is SoalExamLS1 => {
     return soal !== null && "image_path_cat" in soal
@@ -275,6 +289,14 @@ const LembarUjian = () => {
                       selectedAnswer={selectedAnswer}
                       remainingTime={remainingTime}
                       timerUjian={timerUjian}
+                      showInstruction={() =>
+                        setModalInstruction({
+                          ...modalInstruction,
+                          open: true,
+                          title: "Instruksi",
+                          message: moduleInstruction?.data.content || "",
+                        })
+                      }
                     />
                   </>
                 ) : soal.question_type === 2 ? (
@@ -499,6 +521,13 @@ const LembarUjian = () => {
           </Box>
         </Grid>
       </Grid>
+      <ModalInstruction
+        open={modalInstruction.open}
+        onClose={() => setModalInstruction({ ...modalInstruction, open: false })}
+        title={modalInstruction.title}
+        message={modalInstruction.message}
+        onConfirm={() => null}
+      />
     </>
   )
 }

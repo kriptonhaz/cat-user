@@ -64,6 +64,13 @@ export const useExamHooks = () => {
       enabled: !!activityUuid,
     })
 
+  const queryGetInstructionByTestModule = (testModule: string) =>
+    useQuery({
+      queryKey: ["exam", "instruction", testModule],
+      queryFn: () => ExamService.getInstructionByTestModule(testModule),
+      enabled: !!testModule,
+    })
+
   return {
     queryExamAvailable,
     queryModuleExamAvailable,
@@ -74,5 +81,6 @@ export const useExamHooks = () => {
     queryGetRiwayatUjian,
     queryGetTimerUjian,
     queryGetQuestionResponseByActivity,
+    queryGetInstructionByTestModule,
   }
 }

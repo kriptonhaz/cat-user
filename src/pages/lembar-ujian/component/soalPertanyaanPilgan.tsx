@@ -18,6 +18,7 @@ const SoalPertanyaanPilgan = ({
   selectedAnswer,
   remainingTime,
   timerUjian,
+  showInstruction,
 }: {
   soal: SoalExam | SoalExamLS1 | SoalExamPPI
   isFinalQuestion: boolean
@@ -26,6 +27,7 @@ const SoalPertanyaanPilgan = ({
   selectedAnswer: answer | null
   remainingTime: number
   timerUjian?: ITimerUjianResponse
+  showInstruction: () => void
 }) => {
   const [fontSize, setFontSize] = useState(22)
   const { finishExamMutation } = useExamMutation()
@@ -118,7 +120,11 @@ const SoalPertanyaanPilgan = ({
                   : {}
               }
             >
-              {timerUjian?.data.timer_type === 2 && <Button color="warning">Instruksi</Button>}
+              {timerUjian?.data.timer_type === 2 && (
+                <Button color="warning" onClick={showInstruction}>
+                  Instruksi
+                </Button>
+              )}
               <Box display={"flex"} justifyContent={"space-between"} width={140}>
                 <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />
                 <Button color="primary" startIcon={<TextIncrease />} variant="outlined" onClick={onIncreaseFont} />
