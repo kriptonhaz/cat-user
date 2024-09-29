@@ -274,16 +274,21 @@ const LembarUjian = () => {
                       setAnswer={(answer: answer) => setSelectedAnswer(answer)}
                       selectedAnswer={selectedAnswer}
                       remainingTime={remainingTime}
+                      timerUjian={timerUjian}
                     />
                   </>
                 ) : soal.question_type === 2 ? (
-                  <ExamExample question={soal as SoalExamLS1} />
+                  <ExamExample question={soal as SoalExamLS1} remainingTime={remainingTime} />
                 ) : (
-                  <ExamInstruction content={soal.question_content} imageSrc={(soal as SoalExamLS1).image_path_cat} />
+                  <ExamInstruction
+                    content={soal.question_content}
+                    imageSrc={(soal as SoalExamLS1).image_path_cat}
+                    remainingTime={remainingTime}
+                  />
                 )}
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "98%" }}>
                   <Button color="info" onClick={handleJawab}>
-                    Simpan dan Lanjutkan{" "}
+                    {finalQuestion ? "Selesai" : "Simpan dan Lanjutkan"}
                   </Button>
                   {timerUjian?.data.timer_type === 2 && (
                     <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
