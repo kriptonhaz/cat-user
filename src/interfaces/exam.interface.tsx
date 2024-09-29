@@ -252,6 +252,7 @@ export interface SoalExam {
   Uuid: string
   question_type: number
   question_order: number
+  answer_showing_position: number //1 vertical - 2 horizontal
   question_content: string
   timer: number
   answer_data: {
@@ -284,6 +285,7 @@ export interface SoalExamLS1 {
   question_type: number
   showing_order: number
   question_order: number
+  answer_showing_position: number //1 vertical - 2 horizontal
   question_content: string
   image_path_admin: string
   image_path_cat: string
@@ -344,6 +346,7 @@ export interface SoalExamPPI {
   question_model_uuid: string
   question_type: number
   question_order: number
+  answer_showing_position: number //1 vertical - 2 horizontal
   question_content: string
   timer: number
   is_has_answer: boolean

@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio, Button, Divider } from "@mui/material"
 import { TextIncrease, TextDecrease } from "@mui/icons-material"
-import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
+import { ITimerUjianResponse, SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import { useExamMutation } from "@/mutations/exam.mutation"
 import { formatTime } from "@/utils/timer"
 
@@ -17,6 +17,7 @@ const SoalPertanyaanPilgan = ({
   setAnswer,
   selectedAnswer,
   remainingTime,
+  timerUjian,
 }: {
   soal: SoalExam | SoalExamLS1 | SoalExamPPI
   isFinalQuestion: boolean
@@ -24,6 +25,7 @@ const SoalPertanyaanPilgan = ({
   setAnswer: (answer: answer) => void
   selectedAnswer: answer | null
   remainingTime: number
+  timerUjian?: ITimerUjianResponse
 }) => {
   const [fontSize, setFontSize] = useState(22)
   const { finishExamMutation } = useExamMutation()
@@ -109,8 +111,14 @@ const SoalPertanyaanPilgan = ({
         <CardContent>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
-            <Box sx={{ width: "250px", display: "flex", justifyContent: "space-between" }}>
-              <Button color="warning">Instruksi</Button>
+            <Box
+              sx={
+                timerUjian?.data.timer_type === 2
+                  ? { width: "250px", display: "flex", justifyContent: "space-between" }
+                  : {}
+              }
+            >
+              {timerUjian?.data.timer_type === 2 && <Button color="warning">Instruksi</Button>}
               <Box display={"flex"} justifyContent={"space-between"} width={140}>
                 <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />
                 <Button color="primary" startIcon={<TextIncrease />} variant="outlined" onClick={onIncreaseFont} />
@@ -132,7 +140,13 @@ const SoalPertanyaanPilgan = ({
                 <Typography
                   variant="h6"
                   dangerouslySetInnerHTML={{ __html: soal.question_content }}
-                  sx={{ "& p": { margin: 0, fontSize: fontSize }, fontSize: fontSize }}
+                  sx={{
+                    "& p": { margin: 0, fontSize: fontSize },
+                    fontSize: fontSize,
+                    minHeight: "10px",
+                    height: "auto",
+                    textWrap: "wrap",
+                  }}
                 />
                 <br />
                 {(soal as SoalExamLS1).image_path_cat && (
@@ -142,6 +156,7 @@ const SoalPertanyaanPilgan = ({
                       maxWidth: "500px",
                       height: "100px",
                       maxHeight: "200px",
+                      marginBottom: 4,
                     }}
                   >
                     <img
@@ -154,8 +169,10 @@ const SoalPertanyaanPilgan = ({
               </Box>
             )}
           </Box>
+          <Divider sx={{ marginTop: 3, marginBottom: 3 }} />
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", mt: 4, pl: "35px" }}>
             <RadioGroup
+              row={soal.answer_showing_position === 1 ? false : true}
               key={soal.Uuid}
               aria-labelledby="demo-radio-buttons-group-label"
               name="radio-buttons-group"
@@ -175,7 +192,15 @@ const SoalPertanyaanPilgan = ({
                     value={answer.value}
                     control={<Radio size="small" />}
                     label={answer.content}
-                    sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 0.5, fontSize: fontSize }, fontSize: fontSize }}
+                    sx={{
+                      mr: 7,
+                      mb: 2,
+                      "& .MuiFormControlLabel-label": {
+                        ml: 0.5,
+                        fontSize: fontSize,
+                      },
+                      fontSize: fontSize,
+                    }}
                   />
                 ))
               ) : questionType === "SoalExamLS1" ? (
@@ -188,7 +213,12 @@ const SoalPertanyaanPilgan = ({
                       <>
                         <Typography
                           dangerouslySetInnerHTML={{ __html: answer.content }}
-                          sx={{ "& img": { width: "50%", height: "50%", fontSize: fontSize }, fontSize: fontSize }}
+                          sx={{
+                            "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                            "& p": { margin: 0 },
+                            "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                            fontSize: fontSize,
+                          }}
                         />
                         {answer.image_path_cat && (
                           <img
@@ -252,9 +282,6 @@ const SoalPertanyaanPilgan = ({
               )}
             </RadioGroup>
           </Box>
-          {isFinalQuestion && (
-            <Button onClick={() => examMutation.mutate({ activityUuid: activityId })}>Selesai</Button>
-          )}
         </CardContent>
       </Card>
     </>

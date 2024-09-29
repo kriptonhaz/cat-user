@@ -1,26 +1,66 @@
-import { Typography } from "@mui/material"
-import React from "react"
+import { formatTime } from "@/utils/timer"
+import { Box, Button, Card, Divider, Typography } from "@mui/material"
+import React, { useState } from "react"
+import { TextIncrease, TextDecrease } from "@mui/icons-material"
 
 interface ExamInstructionProps {
   content: string
   imageSrc: string
   imageAlt?: string
+  remainingTime: number
 }
 
 const ExamInstruction: React.FC<ExamInstructionProps> = ({
   content,
   imageSrc,
   imageAlt = "Exam instruction image",
+  remainingTime,
 }) => {
+  const [fontSize, setFontSize] = useState(22)
+
+  const onIncreaseFont = () => {
+    setFontSize(fontSize + 1)
+  }
+
+  const onDecreaseFont = () => {
+    setFontSize(fontSize - 1)
+  }
   return (
-    <div className="exam-instruction">
+    <Card
+      sx={{
+        width: "98%",
+        border: "0.5px solid #ccc",
+        boxShadow: 3,
+        borderRadius: 2,
+        transition: "0.3s",
+        "&:hover": {
+          boxShadow: 6,
+        },
+        mb: 5,
+        height: "560px",
+      }}
+    >
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
+        <Box>
+          <Box display={"flex"} justifyContent={"space-between"} width={140}>
+            <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />
+            <Button color="primary" startIcon={<TextIncrease />} variant="outlined" onClick={onIncreaseFont} />
+          </Box>
+        </Box>
+      </Box>
+      <Divider sx={{ my: 3 }} />
       <div className="content">
-        <Typography dangerouslySetInnerHTML={{ __html: content }} sx={{ "& p": { fontSize: "22px" } }} />
+        <Typography dangerouslySetInnerHTML={{ __html: content }} sx={{ "& p": { fontSize: fontSize } }} />
       </div>
-      <div className="image" style={{ height: "500px", maxHeight: "500px" }}>
-        <img src={import.meta.env.VITE_API_URL + imageSrc} alt={imageAlt} style={{ width: "auto", height: "50%" }} />
+      <div className="image" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <img
+          src={import.meta.env.VITE_API_URL + imageSrc}
+          alt={imageAlt}
+          style={{ width: "auto", height: "100%", maxHeight: "380px" }}
+        />
       </div>
-    </div>
+    </Card>
   )
 }
 
