@@ -8,6 +8,9 @@ interface ExamInstructionProps {
   imageSrc: string
   imageAlt?: string
   remainingTime: number
+  showInstructionLabel?: boolean
+  subtestNumber?: string
+  subtestName?: string
 }
 
 const ExamInstruction: React.FC<ExamInstructionProps> = ({
@@ -15,6 +18,9 @@ const ExamInstruction: React.FC<ExamInstructionProps> = ({
   imageSrc,
   imageAlt = "Exam instruction image",
   remainingTime,
+  showInstructionLabel = false,
+  subtestNumber,
+  subtestName,
 }) => {
   const [fontSize, setFontSize] = useState(22)
 
@@ -50,16 +56,28 @@ const ExamInstruction: React.FC<ExamInstructionProps> = ({
         </Box>
       </Box>
       <Divider sx={{ my: 3 }} />
+      {subtestNumber !== undefined && subtestName !== undefined && (
+        <Typography variant="h6" sx={{ fontSize: fontSize }}>
+          {subtestNumber} : {subtestName}
+        </Typography>
+      )}
+      {showInstructionLabel && (
+        <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: fontSize, my: 3 }}>
+          Petunjuk Pengerjaan
+        </Typography>
+      )}
       <div className="content">
         <Typography dangerouslySetInnerHTML={{ __html: content }} sx={{ "& p": { fontSize: fontSize } }} />
       </div>
-      <div className="image" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <img
-          src={import.meta.env.VITE_API_URL + imageSrc}
-          alt={imageAlt}
-          style={{ width: "auto", height: "100%", maxHeight: "380px" }}
-        />
-      </div>
+      {imageSrc !== "" && (
+        <div className="image" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <img
+            src={import.meta.env.VITE_API_URL + imageSrc}
+            alt={imageAlt}
+            style={{ width: "auto", height: "100%", maxHeight: "380px" }}
+          />
+        </div>
+      )}
     </Card>
   )
 }

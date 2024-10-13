@@ -179,6 +179,7 @@ interface ExamActivity {
   exam_attendance_uuid: string
   last_question_filled: number
   last_question_showed: number
+  last_question_subtest: string
   user_response_at: number
   total_consume_time: number
   activity_stage: number
@@ -269,6 +270,26 @@ export interface SoalExam {
       value: number
     }[]
   }
+  narrow_data: {
+    CreatedAt: string
+    DeletedAt: string | null
+    ID: number
+    UpdatedAt: string
+    Uuid: string
+    broad_data: {
+      CreatedAt: string
+      DeletedAt: null
+      ID: number
+      UpdatedAt: string
+      Uuid: string
+      create_by: string
+      name: string
+    }
+    broad_id: number
+    broad_uuid: string
+    create_by: string
+    name: string
+  }
 }
 
 export interface SoalExamLS1 {
@@ -277,6 +298,7 @@ export interface SoalExamLS1 {
   UpdatedAt: string
   DeletedAt: string | null
   Uuid: string
+  uuid: string
   question_model_id: number
   question_model_uuid: string
   sub_test_id: number
@@ -299,6 +321,7 @@ export interface SoalExamLS1 {
     UpdatedAt: string
     DeletedAt: string | null
     Uuid: string
+    uuid: string
     question_id: number
     question_uuid: string
     label: string
@@ -333,6 +356,28 @@ export interface SoalExamLS1 {
     subtest_number: number
     name: string
     create_by: string
+  }
+  subtest_model_id: number
+  subtest_model_uuid: string
+  narrow_data: {
+    CreatedAt: string
+    DeletedAt: string | null
+    ID: number
+    UpdatedAt: string
+    Uuid: string
+    broad_data: {
+      CreatedAt: string
+      DeletedAt: null
+      ID: number
+      UpdatedAt: string
+      Uuid: string
+      create_by: string
+      name: string
+    }
+    broad_id: number
+    broad_uuid: string
+    create_by: string
+    name: string
   }
 }
 
@@ -398,6 +443,26 @@ export interface SoalExamPPI {
       option_two_value: number
     }
     created_by: string
+  }
+  narrow_data: {
+    CreatedAt: string
+    DeletedAt: string | null
+    ID: number
+    UpdatedAt: string
+    Uuid: string
+    broad_data: {
+      CreatedAt: string
+      DeletedAt: null
+      ID: number
+      UpdatedAt: string
+      Uuid: string
+      create_by: string
+      name: string
+    }
+    broad_id: number
+    broad_uuid: string
+    create_by: string
+    name: string
   }
 }
 
@@ -540,6 +605,71 @@ export interface TimerUjian {
   create_by: string
 }
 
+interface BroadData {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  name: string
+  create_by: string
+}
+
+interface NarrowData {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  broad_id: number
+  broad_uuid: string
+  name: string
+  create_by: string
+  broad_data: BroadData
+}
+
+interface SubtestModelData {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  Uuid: string
+  narrow_id: number
+  narrow_uuid: string
+  name: string
+  timer_type: number
+  total_time: number
+  is_must_fill_all_question: boolean
+  added_time: number
+  can_go_back: boolean
+  create_by: string
+  narrow_data: NarrowData
+}
+export interface TkkData {
+  ID: number
+  CreatedAt: string
+  UpdatedAt: string
+  DeletedAt: string | null
+  uuid: string
+  name: string
+  create_by: string
+  detail_data: Array<{
+    ID: number
+    CreatedAt: string
+    UpdatedAt: string
+    DeletedAt: string | null
+    uuid: string
+    question_template_id: number
+    question_template_uuid: string
+    name: string
+    subtest_model_id: number
+    subtest_model_uuid: string
+    order: number
+    create_by: string
+    subtest_model_data: SubtestModelData
+  }>
+}
+
 interface SubmitAnswer {
   ID: number
   CreatedAt: string
@@ -671,6 +801,12 @@ export interface ITimerUjianResponse {
   code: number
 }
 
+export interface ITkkDataResponse {
+  data: TkkData
+  message: string
+  code: number
+}
+
 export interface ISubmitAnswerResponse {
   data: SubmitAnswer
   message: string
@@ -701,6 +837,7 @@ export interface IQuestionResponseByActivityResponse {
     question_id: number
     question_uuid: string
     question_order: number
+    subtest_uuid: string
     user_response_content: string
     user_response_value: number
     user_response_at_second: number

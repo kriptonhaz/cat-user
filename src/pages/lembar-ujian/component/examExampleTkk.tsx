@@ -4,7 +4,7 @@ import { Cancel, Check, TextIncrease, TextDecrease } from "@mui/icons-material" 
 import { Box, Button, Card, Divider, Typography } from "@mui/material"
 import { formatTime } from "@/utils/timer"
 
-interface ExamExampleProps {
+interface ExamExampleTkkProps {
   question: SoalExamLS1
   remainingTime: number
   showExampleLabel?: boolean
@@ -12,7 +12,7 @@ interface ExamExampleProps {
   subtestName?: string
 }
 
-const ExamExample: React.FC<ExamExampleProps> = ({
+const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
   question,
   remainingTime,
   showExampleLabel = false,
@@ -84,15 +84,15 @@ const ExamExample: React.FC<ExamExampleProps> = ({
               id={`question-${question.ID}-answer-${index}`}
               name={`question-${question.ID}`}
               style={{ marginRight: "15px" }}
-              value={answer.Uuid}
-              onChange={() => onAnswerSelect(answer.Uuid, answer.is_question_answer)}
+              value={answer.uuid}
+              onChange={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
             />
             <label
               htmlFor={`question-${question.ID}-answer-${index}`}
               style={{ display: "flex", alignItems: "center" }}
             >
               <span dangerouslySetInnerHTML={{ __html: answer.content }} style={{ fontSize: fontSize }} />
-              {selectedAnswer === answer.Uuid &&
+              {selectedAnswer === answer.uuid &&
                 (isCorrect ? (
                   <Check style={{ marginLeft: "5px", color: "green" }} />
                 ) : (
@@ -106,4 +106,4 @@ const ExamExample: React.FC<ExamExampleProps> = ({
   )
 }
 
-export default ExamExample
+export default ExamExampleTkk

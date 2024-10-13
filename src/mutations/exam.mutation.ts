@@ -26,15 +26,27 @@ export function useExamMutation() {
       },
       onSuccess: (data, variables, context) => {
         if (data) {
-          navigate(
-            `/lembar-ujian/${variables.examUuid}/module/${variables.moduleUuid}/activity/${data.activity.Uuid}/model/${variables.model}/examTool/${variables.examToolUuid}`,
-            {
-              state: {
-                question_model_id: variables.examModelId,
-                question_model_uuid: variables.examToolUuid,
-              },
-            }
-          )
+          if (variables.model === "TKK") {
+            navigate(
+              `/lembar-ujian-tkk/${variables.examUuid}/module/${variables.moduleUuid}/activity/${data.activity.Uuid}/model/${variables.model}/examTool/${variables.examToolUuid}`,
+              {
+                state: {
+                  question_model_id: variables.examModelId,
+                  question_model_uuid: variables.examToolUuid,
+                },
+              }
+            )
+          } else {
+            navigate(
+              `/lembar-ujian/${variables.examUuid}/module/${variables.moduleUuid}/activity/${data.activity.Uuid}/model/${variables.model}/examTool/${variables.examToolUuid}`,
+              {
+                state: {
+                  question_model_id: variables.examModelId,
+                  question_model_uuid: variables.examToolUuid,
+                },
+              }
+            )
+          }
         }
       },
     })

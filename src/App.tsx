@@ -6,6 +6,7 @@ import HomePage from "./pages/home"
 import ListSoal from "./pages/list-soal"
 import Navbar from "./components/navbar"
 import LembarUjian from "./pages/lembar-ujian/page"
+import LembarUjianTkk from "./pages/lembar-ujian-tkk/page"
 import useTokenStore from "./store/token.store"
 import RiwayatUjian from "./pages/riwayat-ujian"
 import Layout from "./pages/layout/Layout"
@@ -47,6 +48,12 @@ function App() {
               <Route
                 path={"/lembar-ujian/:examId/module/:moduleId/activity/:activityId/model/:model/examTool/:examToolId"}
                 element={<LembarUjian />}
+              />
+              <Route
+                path={
+                  "/lembar-ujian-tkk/:examId/module/:moduleId/activity/:activityId/model/:model/examTool/:examToolId"
+                }
+                element={<LembarUjianTkk />}
               />
               <Route path={"/riwayat-ujian"} element={<RiwayatUjian />} />
             </Route>
