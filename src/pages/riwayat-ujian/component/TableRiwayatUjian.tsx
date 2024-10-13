@@ -177,7 +177,7 @@ const TableRiwayatUjian = ({
             >
               <Grid container spacing={3} flexDirection={"row"}>
                 {(row.row.original.exam_data.test_module_data as ITestModuleData[]).map((data, index) => (
-                  <Grid item>
+                  <Grid item key={index}>
                     <Box
                       key={index}
                       sx={{
