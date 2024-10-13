@@ -12,6 +12,7 @@ import {
   ISubmitAnswerResponse,
   IQuestionResponseByActivityResponse,
   IQuestionInstructionByModuleResponse,
+  ITkkDataResponse,
 } from "@/interfaces/exam.interface"
 import API from "./base.service"
 import { setRiwayatUjianParams } from "@/pages/riwayat-ujian"
@@ -174,6 +175,21 @@ export const getTimerUjian = async ({
   examUuid?: string
 }): Promise<ITimerUjianResponse> => {
   const { data } = await API().request<ITimerUjianResponse>({
+    url: `/v1/cat+apps/exam/model/by+tool/${model}/and+model/${examUuid}`,
+    method: "GET",
+  })
+
+  return data
+}
+
+export const getDataTkk = async ({
+  model,
+  examUuid,
+}: {
+  model?: string
+  examUuid?: string
+}): Promise<ITkkDataResponse> => {
+  const { data } = await API().request<ITkkDataResponse>({
     url: `/v1/cat+apps/exam/model/by+tool/${model}/and+model/${examUuid}`,
     method: "GET",
   })

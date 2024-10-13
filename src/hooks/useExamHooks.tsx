@@ -57,6 +57,13 @@ export const useExamHooks = () => {
       enabled: !!model && !!examUuid,
     })
 
+  const queryGetDataTkk = ({ model, examUuid }: { model?: string; examUuid?: string }) =>
+    useQuery({
+      queryKey: ["exam", "dataTkk", model, examUuid],
+      queryFn: () => ExamService.getDataTkk({ model, examUuid }),
+      enabled: !!model && !!examUuid,
+    })
+
   const queryGetQuestionResponseByActivity = (activityUuid?: string) =>
     useQuery({
       queryKey: ["exam", "questionResponseByActivity", activityUuid],
@@ -80,6 +87,7 @@ export const useExamHooks = () => {
     queryGetSoalExamByModule,
     queryGetRiwayatUjian,
     queryGetTimerUjian,
+    queryGetDataTkk,
     queryGetQuestionResponseByActivity,
     queryGetInstructionByTestModule,
   }
