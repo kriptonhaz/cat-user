@@ -1,4 +1,12 @@
-import { startExam, leftExamBeforeFinish, finishExam, submitJawaban, SubmitJawabanParams } from "@/service/exam.service"
+import {
+  startExam,
+  leftExamBeforeFinish,
+  finishExam,
+  submitJawaban,
+  SubmitJawabanParams,
+  updateExamActivity,
+  IUpdateExamActivityParams,
+} from "@/service/exam.service"
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 
@@ -52,6 +60,25 @@ export function useExamMutation() {
     })
   }
 
+  const updateExamActivityMutation = (params?: IUpdateExamActivityParams) => {
+    return useMutation({
+      mutationKey: ["exam", "updateExamActivity"],
+      mutationFn: async (params: {
+        last_question_filled: number
+        last_question_subtest: string
+        uuidActivity: string
+      }) => {
+        const result = await updateExamActivity(params)
+        return result
+      },
+      onSuccess: (data, variables, context) => {
+        if (params?.onSuccess) {
+          params.onSuccess()
+        }
+      },
+    })
+  }
+
   const leftExamBeforeFinishMutation = () => {
     return useMutation({
       mutationKey: ["exam", "finishExamBeforeDone"],
@@ -89,5 +116,11 @@ export function useExamMutation() {
     })
   }
 
-  return { startExamMutation, leftExamBeforeFinishMutation, finishExamMutation, submitJawabanMutation }
+  return {
+    startExamMutation,
+    updateExamActivityMutation,
+    leftExamBeforeFinishMutation,
+    finishExamMutation,
+    submitJawabanMutation,
+  }
 }

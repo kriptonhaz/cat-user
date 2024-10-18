@@ -379,6 +379,25 @@ export interface SoalExamLS1 {
     create_by: string
     name: string
   }
+  total_answer_should_have_for_true: number
+  answer_type: number
+  intro_data: Array<{
+    ID: number
+    CreatedAt: string
+    UpdatedAt: string
+    DeletedAt: null | string
+    uuid: string
+    question_id: number
+    question_uuid: string
+    showing_order: number
+    timer: number
+    instruction: string
+    question_content: string
+    image_path_admin: string
+    image_path_cat: string
+    image_position: number
+    create_by: string
+  }>
 }
 
 export interface SoalExamPPI {

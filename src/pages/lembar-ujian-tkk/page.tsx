@@ -8,33 +8,30 @@ import ExamInstruction from "../lembar-ujian/component/examInstruction"
 import { useExamMutation } from "@/mutations/exam.mutation"
 import ExamExampleTkk from "../lembar-ujian/component/examExampleTkk"
 import SoalPertanyaanTkk, { answer } from "../lembar-ujian/component/soalPertanyaanTkk"
+import { getExamActivityByModule, getSoalExamByModule } from "@/service/exam.service"
 
 const LembarUjianTkk: React.FC = () => {
   const location = useLocation()
   const params = useParams()
-  const {
-    queryActivityExam,
-    queryGetSoalExamByModule,
-    queryGetDataTkk,
-    queryGetQuestionResponseByActivity,
-    queryGetInstructionByTestModule,
-  } = useExamHooks()
-  const { data: activityExam, isLoading: isLoadingActivity } = queryActivityExam(params.examId, params.moduleId)
+  const { queryActivityExam, queryGetSoalExamByModule, queryGetDataTkk, queryGetQuestionResponseByActivity } =
+    useExamHooks()
+  const { data: activityExam } = queryActivityExam(params.examId, params.moduleId)
   const { data: dataTkk, isLoading: isLoadingTimer } = queryGetDataTkk({
     model: params.model,
     examUuid: params.examToolId,
   })
-  const {
-    data: questionResponseByActivity,
-    refetch: refetchQuestionResponseByActivity,
-    isLoading: isLoadingQuestionResponse,
-  } = queryGetQuestionResponseByActivity(params.activityId)
-  const [indexSubtestActiveTkk, setIndexSubtestActiveTkk] = useState(0)
+  const { data: questionResponseByActivity, refetch: refetchQuestionResponseByActivity } =
+    queryGetQuestionResponseByActivity(params.activityId)
+  const [indexSubtestActiveTkk, setIndexSubtestActiveTkk] = useState<number | string>("")
   const {
     data: soalExamAvailable,
     isLoading: isLoadingSoal,
     refetch: refetchSoal,
-  } = queryGetSoalExamByModule(dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid)
+  } = queryGetSoalExamByModule(
+    (typeof indexSubtestActiveTkk === "number" &&
+      dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid) ||
+      ""
+  )
 
   const [timer, setTimer] = useState(0)
   const [timerSoal, setTimerSoal] = useState(0)
@@ -43,47 +40,23 @@ const LembarUjianTkk: React.FC = () => {
   const [soal, setSoal] = useState<SoalExam | SoalExamLS1 | SoalExamPPI | null>(null)
   const [finalQuestion, setFinalQuestion] = useState(false)
   const [selectedAnswer, setSelectedAnswer] = useState<{ content: string; value: number } | null>(null)
+  const [selectedMultipleAnswer, setSelectedMultipleAnswer] = useState<string[]>([])
 
-  const { leftExamBeforeFinishMutation, finishExamMutation, submitJawabanMutation } = useExamMutation()
+  const { leftExamBeforeFinishMutation, updateExamActivityMutation, finishExamMutation, submitJawabanMutation } =
+    useExamMutation()
   const examMutation = leftExamBeforeFinishMutation()
+  const examActivityMutation = updateExamActivityMutation()
   const finishMutation = finishExamMutation()
   const submitMutation = submitJawabanMutation()
 
   useEffect(() => {
-    if (activityExam?.data.last_question_subtest === "") {
-      setIndexSubtestActiveTkk(0)
-    } else {
-      const indexLastSubtestActivity =
-        dataTkk?.data.detail_data.findIndex(
-          (ar) => ar.subtest_model_uuid === activityExam?.data.last_question_subtest
-        ) || 0
-
-      if ((activityExam?.data.last_question_filled || 0) < (soalExamAvailable?.meta.total_data || 0)) {
-        setIndexSubtestActiveTkk(indexLastSubtestActivity)
-      } else {
-        setIndexSubtestActiveTkk(indexLastSubtestActivity + 1)
-      }
-    }
-  }, [activityExam])
-
-  useEffect(() => {
-    console.log("soal", soal)
-  }, [soal])
-
-  useEffect(() => {
-    console.log("indexSubtestActiveTkk", indexSubtestActiveTkk)
-    if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid) {
+    if (
+      typeof indexSubtestActiveTkk === "number" &&
+      dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid
+    ) {
       refetchSoal()
     }
   }, [indexSubtestActiveTkk])
-
-  useEffect(() => {
-    console.log("dataTkk", dataTkk)
-  }, [dataTkk])
-
-  useEffect(() => {
-    console.log("soalExamAvailable", soalExamAvailable)
-  }, [soalExamAvailable])
 
   useEffect(() => {
     if (!isLoadingTimer) {
@@ -96,17 +69,13 @@ const LembarUjianTkk: React.FC = () => {
   }, [isLoadingTimer])
 
   useEffect(() => {
-    if (!isLoadingTimer && timer > 0) {
+    if (!isLoadingTimer && timer > 0 && dataTkk?.data) {
       setRemainingTime(timer)
       const countdownTimer = setInterval(() => {
         setRemainingTime((prevTime) => {
           if (prevTime <= 0) {
-            if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1) {
-              handleNextQuestion()
-            } else {
-              // TODO: handle timer type 2
-            }
-            return timer
+            clearInterval(countdownTimer)
+            return 0
           }
           return prevTime - 1
         })
@@ -114,57 +83,89 @@ const LembarUjianTkk: React.FC = () => {
 
       return () => clearInterval(countdownTimer)
     }
-  }, [isLoadingTimer, timer, dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type])
+  }, [isLoadingTimer, timer, dataTkk])
 
   useEffect(() => {
-    if (soalExamAvailable?.data && soalExamAvailable.data.length > 0 && currentQuestionIndex === 0 && dataTkk) {
-      if (activityExam?.data) {
-        if (activityExam?.data.last_question_filled === 0) {
-          setSoal(soalExamAvailable.data[0])
-          setCurrentQuestionIndex(0)
-        } else {
-          const indexLastSubtestActivity =
-            dataTkk?.data.detail_data.findIndex(
-              (ar) => ar.subtest_model_uuid === activityExam?.data.last_question_subtest
-            ) || 0
+    if (remainingTime <= 0 && dataTkk?.data && typeof indexSubtestActiveTkk === "number") {
+      if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1) {
+        setTimer(0)
+        setTimeout(() => {
+          handleJawab()
+        }, 300)
+      } else {
+        // TODO: handle timer type 2
+      }
+    }
+  }, [remainingTime, dataTkk, indexSubtestActiveTkk])
 
-          if ((activityExam?.data.last_question_filled || 0) < (soalExamAvailable?.meta.total_data || 0)) {
-            setSoal(soalExamAvailable.data[activityExam?.data.last_question_filled])
-            setCurrentQuestionIndex(activityExam?.data.last_question_filled)
+  const checkQuestionAvailable = async () => {
+    const activityExamDirect = await getExamActivityByModule(params.examId, params.moduleId)
+    if (activityExamDirect?.data && dataTkk?.data) {
+      const currentSubtestIndexTkkActivity = dataTkk?.data.detail_data.findIndex(
+        (ar) => ar.subtest_model_uuid === activityExamDirect?.data.last_question_subtest
+      )
+      try {
+        const dataSubtestQuestion = await getSoalExamByModule(activityExamDirect?.data.last_question_subtest || "")
+        if (activityExamDirect?.data.last_question_filled >= dataSubtestQuestion.data.length) {
+          if (currentSubtestIndexTkkActivity >= dataTkk?.data.detail_data.length - 1) {
+            if (params.activityId) {
+              finishMutation.mutate({ activityUuid: params.activityId })
+            }
           } else {
-            setSoal(soalExamAvailable.data[0])
+            setIndexSubtestActiveTkk(currentSubtestIndexTkkActivity + 1)
             setCurrentQuestionIndex(0)
           }
+        } else {
+          setIndexSubtestActiveTkk(currentSubtestIndexTkkActivity)
+          setCurrentQuestionIndex(activityExamDirect?.data.last_question_filled)
         }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (currentQuestionIndex === 0 && dataTkk && activityExam?.data) {
+      if (activityExam?.data.last_question_filled === 0 || activityExam?.data.last_question_subtest === "") {
+        setIndexSubtestActiveTkk(0)
+        setCurrentQuestionIndex(0)
+      } else {
+        checkQuestionAvailable()
+
+        // NOTE: only for testing
+        // setIndexSubtestActiveTkk(9)
+        // setCurrentQuestionIndex(0)
       }
       // setFinalQuestion(false)
 
-      if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1) {
-        setTimer(soalExamAvailable.data[0].timer)
-      } else {
-        // setTimer(timerUjian?.data.total_time - (activityExam?.data.total_consume_time || 0))
-      }
+      // if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1) {
+      //   setTimer(soalExamAvailable.data[0].timer)
+      // } else {
+      //   // setTimer(timerUjian?.data.total_time - (activityExam?.data.total_consume_time || 0))
+      // }
 
-      // Set the initial selectedAnswer based on questionResponseByActivity
-      if (questionResponseByActivity?.data) {
-        const currentResponse = questionResponseByActivity.data.find(
-          (response) => response.question_order === currentQuestionIndex + 1
-        )
-        // if (currentResponse) {
-        //   setSelectedAnswer({
-        //     content: currentResponse.user_response_content,
-        //     value: currentResponse.user_response_value,
-        //   })
-        // } else {
-        //   setSelectedAnswer(null)
-        // }
-      }
+      // // Set the initial selectedAnswer based on questionResponseByActivity
+      // if (questionResponseByActivity?.data) {
+      //   const currentResponse = questionResponseByActivity.data.find(
+      //     (response) => response.question_order === currentQuestionIndex + 1
+      //   )
+      //   // TODO: handle multiple choice
+      //   // if (currentResponse) {
+      //   //   setSelectedAnswer({
+      //   //     content: currentResponse.user_response_content,
+      //   //     value: currentResponse.user_response_value,
+      //   //   })
+      //   // } else {
+      //   //   setSelectedAnswer(null)
+      //   // }
+      // }
     }
 
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      // if (params.activityId) {
-      //   examMutation.mutate({ activityUuid: params.activityId })
-      // }
+      if (params.activityId) {
+        examMutation.mutate({ activityUuid: params.activityId })
+      }
 
       event.preventDefault()
     }
@@ -174,9 +175,29 @@ const LembarUjianTkk: React.FC = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload)
     }
-  }, [soalExamAvailable, activityExam, questionResponseByActivity, indexSubtestActiveTkk, refetchSoal, dataTkk])
+  }, [activityExam, questionResponseByActivity, indexSubtestActiveTkk, refetchSoal, dataTkk])
+
+  useEffect(() => {
+    if (soalExamAvailable?.data && dataTkk?.data && typeof indexSubtestActiveTkk === "number") {
+      setSoal(soalExamAvailable.data[currentQuestionIndex])
+      if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1) {
+        setTimer(soalExamAvailable.data[0].timer)
+      } else {
+        setTimer(
+          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.total_time -
+            (activityExam?.data.total_consume_time || 0)
+        )
+      }
+    }
+  }, [soalExamAvailable, currentQuestionIndex, dataTkk])
 
   const handleNextQuestion = () => {
+    if (selectedAnswer) {
+      handleJawab()
+    } else {
+      nextQuestionAfterSubmit()
+    }
+
     // if (selectedAnswer) {
     //   handleJawab()
     // } else if (soalExamAvailable?.data) {
@@ -196,6 +217,7 @@ const LembarUjianTkk: React.FC = () => {
   }
 
   const handlePreviousQuestion = () => {
+    // TODO: handle logic here for TKK
     // if (soalExamAvailable?.data) {
     //   const nextIndex = currentQuestionIndex - 1
     //   if (nextIndex < soalExamAvailable.data.length) {
@@ -209,34 +231,36 @@ const LembarUjianTkk: React.FC = () => {
     // }
   }
 
-  const handleJawab = () => {
-    const nextQuestionAfterSubmit = () => {
-      if (soalExamAvailable?.data) {
-        const nextIndex = currentQuestionIndex + 1
-        console.log("nextIndex", nextIndex)
-        if (nextIndex < soalExamAvailable.data.length) {
-          setSoal(soalExamAvailable.data[nextIndex])
-          setCurrentQuestionIndex(nextIndex)
-          setFinalQuestion(nextIndex === soalExamAvailable.data.length - 1)
-          if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1) {
-            setTimer(soalExamAvailable.data[nextIndex].timer)
-          }
-          // Refetch after updating the state
-          refetchQuestionResponseByActivity()
-        } else if (nextIndex >= soalExamAvailable.data.length) {
-          // const totalSubtest = dataTkk?.data.detail_data.length || 0
-          // if (indexSubtestActiveTkk < totalSubtest - 1) {
-          //   setIndexSubtestActiveTkk(indexSubtestActiveTkk + 1)
-          // }
-        } else if (
-          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1 &&
-          params.activityId
+  const nextQuestionAfterSubmit = () => {
+    if (soalExamAvailable?.data) {
+      const soalIndex = soalExamAvailable.data.findIndex(
+        (ar) => (ar as SoalExamLS1).uuid === (soal as SoalExamLS1).uuid
+      )
+      const nextIndex = soalIndex + 1
+      if (nextIndex < soalExamAvailable.data.length) {
+        // condition when the next question is still in the same subtest
+        setSoal(soalExamAvailable.data[nextIndex])
+        setCurrentQuestionIndex(nextIndex)
+        setFinalQuestion(nextIndex === soalExamAvailable.data.length - 1)
+        if (
+          typeof indexSubtestActiveTkk === "number" &&
+          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1
         ) {
-          finishMutation.mutate({ activityUuid: params.activityId })
+          setTimer(soalExamAvailable.data[nextIndex].timer)
+        } else if (typeof indexSubtestActiveTkk === "number") {
+          console.log("timer_type 2", dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type)
         }
+        // Refetch after updating the state
+        refetchQuestionResponseByActivity()
+      } else if (nextIndex >= soalExamAvailable.data.length) {
+        // condition when the next question is in a new subtest
+        checkQuestionAvailable()
       }
     }
-    if (activityExam && selectedAnswer && soal && soal.question_type === 1) {
+  }
+
+  const handleJawab = () => {
+    if (activityExam && soal && soal.question_type === 1 && (selectedAnswer || selectedMultipleAnswer.length > 0)) {
       const body = {
         activity_id: activityExam.data.ID,
         activity_uuid: activityExam.data.Uuid,
@@ -245,8 +269,12 @@ const LembarUjianTkk: React.FC = () => {
         question_id: soal.ID,
         question_uuid: (soal as SoalExamLS1).uuid,
         question_order: (soal as SoalExamLS1).showing_order,
-        user_response_content: selectedAnswer.content,
-        user_response_value: selectedAnswer.value,
+        user_response_content:
+          (soal as SoalExamLS1).total_answer_should_have_for_true === 1
+            ? selectedAnswer && selectedAnswer.content
+            : JSON.stringify(selectedMultipleAnswer),
+        user_response_value:
+          (soal as SoalExamLS1).total_answer_should_have_for_true === 1 ? selectedAnswer && selectedAnswer.value : 0,
         user_response_at_second: timer - remainingTime,
         total_consume_time:
           activityExam.data.user_response_at === 0 ? timerSoal : timerSoal + activityExam.data.user_response_at,
@@ -254,10 +282,12 @@ const LembarUjianTkk: React.FC = () => {
         subtest_uuid: (soal as SoalExamLS1).subtest_model_uuid,
       }
       submitMutation.mutate(
+        // @ts-ignore
         { body },
         {
           onSuccess: () => {
             nextQuestionAfterSubmit()
+            setSelectedMultipleAnswer([])
           },
         }
       )
@@ -289,7 +319,11 @@ const LembarUjianTkk: React.FC = () => {
                       imageSrc={(soal as SoalExamLS1).image_path_cat}
                       remainingTime={remainingTime}
                       showInstructionLabel
-                      subtestNumber={dataTkk?.data.detail_data[indexSubtestActiveTkk].name}
+                      subtestNumber={
+                        (typeof indexSubtestActiveTkk === "number" &&
+                          dataTkk?.data.detail_data[indexSubtestActiveTkk].name) ||
+                        ""
+                      }
                       subtestName={soal.narrow_data.name}
                     />
                   )}
@@ -298,18 +332,41 @@ const LembarUjianTkk: React.FC = () => {
                       question={soal as SoalExamLS1}
                       remainingTime={remainingTime}
                       showExampleLabel
-                      subtestNumber={dataTkk?.data.detail_data[indexSubtestActiveTkk].name}
+                      subtestNumber={
+                        (typeof indexSubtestActiveTkk === "number" &&
+                          dataTkk?.data.detail_data[indexSubtestActiveTkk].name) ||
+                        ""
+                      }
                       subtestName={soal.narrow_data.name}
+                      nextQuestion={handleJawab}
                     />
                   )}
                   {soal.question_type === 1 && (
                     <SoalPertanyaanTkk
                       soal={soal}
-                      setAnswer={(answer: answer) => setSelectedAnswer(answer)}
+                      setAnswer={(answer: answer) => {
+                        if ((soal as SoalExamLS1).total_answer_should_have_for_true === 1) {
+                          setSelectedAnswer(answer)
+                        } else {
+                          if (selectedMultipleAnswer.filter((ar) => ar === answer.content).length > 0) {
+                            setSelectedMultipleAnswer(selectedMultipleAnswer.filter((ar) => ar !== answer.content))
+                          } else {
+                            setSelectedMultipleAnswer([...selectedMultipleAnswer, answer.content])
+                          }
+                        }
+                      }}
                       selectedAnswer={selectedAnswer}
                       remainingTime={remainingTime}
-                      timerType={dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type || 0}
-                      subtestNumber={dataTkk?.data.detail_data[indexSubtestActiveTkk].name}
+                      timerType={
+                        (typeof indexSubtestActiveTkk === "number" &&
+                          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type) ||
+                        0
+                      }
+                      subtestNumber={
+                        (typeof indexSubtestActiveTkk === "number" &&
+                          dataTkk?.data.detail_data[indexSubtestActiveTkk].name) ||
+                        ""
+                      }
                       subtestName={soal.narrow_data.name}
                     />
                   )}
@@ -323,20 +380,21 @@ const LembarUjianTkk: React.FC = () => {
                     ? "Selesai"
                     : "Simpan dan Lanjutkan"}
                 </Button>
-                {dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 2 && (
-                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button
-                      onClick={() => handlePreviousQuestion()}
-                      disabled={currentQuestionIndex === 0}
-                      sx={{ mr: 2 }}
-                    >
-                      Sebelumnya
-                    </Button>
-                    <Button onClick={() => handleNextQuestion()} disabled={finalQuestion}>
-                      Selanjutnya
-                    </Button>
-                  </Box>
-                )}
+                {typeof indexSubtestActiveTkk === "number" &&
+                  dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 2 && (
+                    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                      <Button
+                        onClick={() => handlePreviousQuestion()}
+                        disabled={currentQuestionIndex === 0}
+                        sx={{ mr: 2 }}
+                      >
+                        Sebelumnya
+                      </Button>
+                      <Button onClick={() => handleNextQuestion()} disabled={finalQuestion}>
+                        Selanjutnya
+                      </Button>
+                    </Box>
+                  )}
               </Box>
             </>
           </Box>
@@ -364,18 +422,20 @@ const LembarUjianTkk: React.FC = () => {
                 }}
               >
                 <CardContent>
-                  {!isLoadingSoal && dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type && (
-                    <TimerAndWebcam
-                      tipeTimer={dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type}
-                      waktu={timer}
-                      nextQuestion={handleNextQuestion}
-                      questionIndex={currentQuestionIndex}
-                      isLoadingTimer={isLoadingSoal}
-                      handleJawab={handleJawab}
-                      total_consume_time={activityExam?.data.total_consume_time || 0}
-                      remainingTime={remainingTime}
-                    />
-                  )}
+                  {!isLoadingSoal &&
+                    typeof indexSubtestActiveTkk === "number" &&
+                    dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type && (
+                      <TimerAndWebcam
+                        tipeTimer={dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type}
+                        waktu={timer}
+                        nextQuestion={handleNextQuestion}
+                        questionIndex={currentQuestionIndex}
+                        isLoadingTimer={isLoadingSoal}
+                        handleJawab={handleJawab}
+                        total_consume_time={activityExam?.data.total_consume_time || 0}
+                        remainingTime={remainingTime}
+                      />
+                    )}
                 </CardContent>
               </Card>
               <Card
@@ -418,6 +478,8 @@ const LembarUjianTkk: React.FC = () => {
                       >
                         {/* @ts-ignore */}
                         {soalExamAvailable &&
+                          typeof indexSubtestActiveTkk === "number" &&
+                          // @ts-ignore
                           soalExamAvailable?.data.filter((ar) => ar.question_type === 1).length -
                             (questionResponseByActivity?.data?.filter(
                               (ar) =>
@@ -440,10 +502,12 @@ const LembarUjianTkk: React.FC = () => {
                           ml: 2,
                         }}
                       >
-                        {questionResponseByActivity?.data?.filter(
-                          (ar) =>
-                            ar.subtest_uuid === dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid
-                        ).length || 0}
+                        {(typeof indexSubtestActiveTkk === "number" &&
+                          questionResponseByActivity?.data?.filter(
+                            (ar) =>
+                              ar.subtest_uuid === dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid
+                          ).length) ||
+                          0}
                       </Button>
                     </Typography>
                   </Box>
@@ -455,75 +519,76 @@ const LembarUjianTkk: React.FC = () => {
                   }}
                 >
                   <Grid container spacing={3} gap={2}>
-                    {soalExamAvailable?.data
-                      // @ts-ignore
-                      ?.filter((ar) => ar.question_type === 1)
-                      // @ts-ignore
-                      .map((item, index) => {
-                        const answeredExam = questionResponseByActivity?.data.filter(
-                          (ar) =>
-                            ar.subtest_uuid === dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid
-                        )
-                        return (
-                          <Grid item key={index} xs={2} sm={1}>
-                            <Button
-                              variant="contained"
-                              key={index}
-                              sx={{
-                                width: "100%",
-                                minWidth: 30,
-                                height: 30,
-                                borderRadius: 0,
-                                fontSize: "0.875rem",
-                                padding: 0,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                backgroundColor:
-                                  answeredExam &&
-                                  answeredExam?.filter(
-                                    (ar) => ar.question_order === (item as SoalExamLS1).showing_order
-                                  ).length > 0
-                                    ? "#4828A3" //answered exam LS1
-                                    : currentQuestionIndex + 1 <= (item as SoalExamLS1).showing_order
-                                    ? "white" //the exam that still not answered yet LS1
-                                    : (item as SoalExamLS1).subtest_model_uuid !==
-                                      activityExam?.data.last_question_subtest
-                                    ? "white"
-                                    : "red", //the exam that's not being answered item but already getting pass through LS1
-                                color:
-                                  answeredExam &&
-                                  answeredExam?.filter(
-                                    (ar) => ar.question_order === (item as SoalExamLS1).showing_order
-                                  ).length > 0
-                                    ? "white" //answered exam LS1
-                                    : currentQuestionIndex + 1 <= (item as SoalExamLS1).showing_order
-                                    ? "#4828A3" //the exam that still not answered yet LS1
-                                    : (item as SoalExamLS1).subtest_model_uuid !==
-                                      activityExam?.data.last_question_subtest
-                                    ? "#4828A3"
-                                    : "white", //the exam that's not being answered item but already getting pass through LS1
-                                border: "1px solid #4828A3",
-                              }}
-                              onClick={() => {
-                                // @ts-ignore
-                                // const onlyExam = soalExamAvailable.data.filter((ar) => ar.question_type === 1)
-                                // if (timerUjian?.data.timer_type !== 1) {
-                                // setSoal(onlyExam[index])
-                                // setCurrentQuestionIndex(onlyExam[index].question_order - 1) // Update current question index
-                                //   if (index === soalExamAvailable.meta.total_data - 1) {
-                                //     setFinalQuestion(true)
-                                //   } else {
-                                //     setFinalQuestion(false)
-                                //   }
-                                // }
-                              }}
-                            >
-                              {index + 1}
-                            </Button>
-                          </Grid>
-                        )
-                      })}
+                    {typeof indexSubtestActiveTkk === "number" &&
+                      soalExamAvailable?.data
+                        // @ts-ignore
+                        ?.filter((ar) => ar.question_type === 1)
+                        // @ts-ignore
+                        .map((item, index) => {
+                          const answeredExam = questionResponseByActivity?.data.filter(
+                            (ar) =>
+                              ar.subtest_uuid === dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid
+                          )
+                          return (
+                            <Grid item key={index} xs={2} sm={1}>
+                              <Button
+                                variant="contained"
+                                key={index}
+                                sx={{
+                                  width: "100%",
+                                  minWidth: 30,
+                                  height: 30,
+                                  borderRadius: 0,
+                                  fontSize: "0.875rem",
+                                  padding: 0,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  backgroundColor:
+                                    answeredExam &&
+                                    answeredExam?.filter(
+                                      (ar) => ar.question_order === (item as SoalExamLS1).showing_order
+                                    ).length > 0
+                                      ? "#4828A3" //answered exam LS1
+                                      : currentQuestionIndex + 1 <= (item as SoalExamLS1).showing_order
+                                      ? "white" //the exam that still not answered yet LS1
+                                      : (item as SoalExamLS1).subtest_model_uuid !==
+                                        activityExam?.data.last_question_subtest
+                                      ? "white"
+                                      : "red", //the exam that's not being answered item but already getting pass through LS1
+                                  color:
+                                    answeredExam &&
+                                    answeredExam?.filter(
+                                      (ar) => ar.question_order === (item as SoalExamLS1).showing_order
+                                    ).length > 0
+                                      ? "white" //answered exam LS1
+                                      : currentQuestionIndex + 1 <= (item as SoalExamLS1).showing_order
+                                      ? "#4828A3" //the exam that still not answered yet LS1
+                                      : (item as SoalExamLS1).subtest_model_uuid !==
+                                        activityExam?.data.last_question_subtest
+                                      ? "#4828A3"
+                                      : "white", //the exam that's not being answered item but already getting pass through LS1
+                                  border: "1px solid #4828A3",
+                                }}
+                                onClick={() => {
+                                  // @ts-ignore
+                                  // const onlyExam = soalExamAvailable.data.filter((ar) => ar.question_type === 1)
+                                  // if (timerUjian?.data.timer_type !== 1) {
+                                  // setSoal(onlyExam[index])
+                                  // setCurrentQuestionIndex(onlyExam[index].question_order - 1) // Update current question index
+                                  //   if (index === soalExamAvailable.meta.total_data - 1) {
+                                  //     setFinalQuestion(true)
+                                  //   } else {
+                                  //     setFinalQuestion(false)
+                                  //   }
+                                  // }
+                                }}
+                              >
+                                {index + 1}
+                              </Button>
+                            </Grid>
+                          )
+                        })}
                   </Grid>
                 </CardContent>
               </Card>

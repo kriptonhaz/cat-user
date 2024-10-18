@@ -56,6 +56,23 @@ export const getExamActivityByModule = async (
   return data
 }
 
+export interface IUpdateExamActivityParams {
+  last_question_filled: number
+  last_question_subtest: string
+  uuidActivity: string
+  onSuccess?: () => void
+}
+
+export const updateExamActivity = async (params: IUpdateExamActivityParams): Promise<IExamActivityResponse> => {
+  const { data } = await API().request<IExamActivityResponse>({
+    url: `/v1/cat+apps/exam/activity/${params.uuidActivity}`,
+    method: "PUT",
+    data: params,
+  })
+
+  return data
+}
+
 export const startExam = async (
   uuidExam?: string,
   uuidModule?: string,

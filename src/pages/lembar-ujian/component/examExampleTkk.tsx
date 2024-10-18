@@ -1,7 +1,19 @@
 import { SoalExamLS1 } from "@/interfaces/exam.interface"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Cancel, Check, TextIncrease, TextDecrease } from "@mui/icons-material" // Import icons from Material-UI
-import { Box, Button, Card, Divider, Typography } from "@mui/material"
+import {
+  Box,
+  Button,
+  Card,
+  Checkbox,
+  Divider,
+  FormControlLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+} from "@mui/material"
 import { formatTime } from "@/utils/timer"
 
 interface ExamExampleTkkProps {
@@ -10,6 +22,7 @@ interface ExamExampleTkkProps {
   showExampleLabel?: boolean
   subtestNumber?: string
   subtestName?: string
+  nextQuestion: () => void
 }
 
 const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
@@ -18,14 +31,60 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
   showExampleLabel = false,
   subtestNumber,
   subtestName,
+  nextQuestion,
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
+  const [selectedAnswerMultiple, setSelectedAnswerMultiple] = useState<
+    Array<{ uuid: string; isCorrectAnswer: boolean }>
+  >([])
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [fontSize, setFontSize] = useState(22)
+  const [startTimer, setStartTimer] = useState(false)
+  const [indexMemorySpan, setIndexMemorySpan] = useState(0)
+  const [timerMemorySpan, setTimerMemorySpan] = useState(0)
+  const [startAnswer, setStartAnswer] = useState(false)
+
+  useEffect(() => {
+    if (question.answer_type === 3) {
+      setTimerMemorySpan(question.intro_data[indexMemorySpan].timer)
+      setStartTimer(true)
+      const timerSoal = setInterval(() => {
+        setTimerMemorySpan((prevSeconds) => prevSeconds - 1)
+      }, 1000)
+
+      return () => {
+        clearInterval(timerSoal)
+        setStartTimer(false)
+      }
+    }
+  }, [indexMemorySpan, question])
+
+  useEffect(() => {
+    if (question.answer_type === 3 && timerMemorySpan === 0 && startTimer) {
+      const maxMemory = question.intro_data.length
+      if (indexMemorySpan < maxMemory - 1) {
+        setIndexMemorySpan(indexMemorySpan + 1)
+        setTimerMemorySpan(question.intro_data[indexMemorySpan + 1].timer)
+      } else if (startAnswer === false) {
+        setStartAnswer(true)
+        setTimerMemorySpan(question.timer)
+      } else if (startAnswer === true) {
+        nextQuestion()
+      }
+    }
+  }, [timerMemorySpan, question, startTimer])
 
   const onAnswerSelect = (uuid: string, isCorrectAnswer: boolean) => {
-    setSelectedAnswer(uuid)
-    setIsCorrect(isCorrectAnswer)
+    if (question.total_answer_should_have_for_true === 1) {
+      setSelectedAnswer(uuid)
+      setIsCorrect(isCorrectAnswer)
+    } else if (question.total_answer_should_have_for_true === 2) {
+      if (selectedAnswerMultiple.filter((ar) => ar.uuid === uuid).length > 0) {
+        setSelectedAnswerMultiple(selectedAnswerMultiple.filter((answer) => answer.uuid !== uuid))
+      } else {
+        setSelectedAnswerMultiple([...selectedAnswerMultiple, { uuid: uuid, isCorrectAnswer: isCorrectAnswer }])
+      }
+    }
   }
 
   const onIncreaseFont = () => {
@@ -53,7 +112,9 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
+        <Typography variant="h6">
+          Sisa Waktu: {formatTime(question.answer_type === 3 ? timerMemorySpan : remainingTime)}
+        </Typography>
         <Box>
           <Box display={"flex"} justifyContent={"space-between"} width={140}>
             <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />
@@ -72,36 +133,125 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
           Contoh Soal
         </Typography>
       )}
-      <h3
-        dangerouslySetInnerHTML={{ __html: question.question_content }}
-        style={{ fontSize: fontSize, marginLeft: 40 }}
-      />
-      <div className="answer-options">
-        {question.answer_data.map((answer, index) => (
-          <div key={index} style={{ display: "flex", alignItems: "center", height: "40px", marginLeft: 40 }}>
-            <input
-              type="radio"
-              id={`question-${question.ID}-answer-${index}`}
-              name={`question-${question.ID}`}
-              style={{ marginRight: "15px" }}
-              value={answer.uuid}
-              onChange={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
-            />
-            <label
-              htmlFor={`question-${question.ID}-answer-${index}`}
-              style={{ display: "flex", alignItems: "center" }}
+      {question.answer_type !== 3 && (
+        <h3
+          dangerouslySetInnerHTML={{ __html: question.question_content }}
+          style={{ fontSize: fontSize, marginLeft: 40 }}
+        />
+      )}
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", mt: 4, pl: "35px" }}>
+        {(question as SoalExamLS1).total_answer_should_have_for_true === 1 &&
+          (question as SoalExamLS1).answer_type !== 3 && (
+            <RadioGroup
+              row={question.answer_showing_position === 1 ? false : true}
+              key={question.Uuid}
+              aria-labelledby="demo-radio-buttons-group-label"
+              name="radio-buttons-group"
             >
-              <span dangerouslySetInnerHTML={{ __html: answer.content }} style={{ fontSize: fontSize }} />
-              {selectedAnswer === answer.uuid &&
-                (isCorrect ? (
-                  <Check style={{ marginLeft: "5px", color: "green" }} />
-                ) : (
-                  <Cancel style={{ marginLeft: "5px", color: "red" }} />
-                ))}
-            </label>
-          </div>
-        ))}
-      </div>
+              {(question as SoalExamLS1).answer_data.map((answer, index) => (
+                <FormControlLabel
+                  key={index}
+                  value={answer.uuid}
+                  control={<Radio size="small" />}
+                  onChange={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
+                  label={
+                    <>
+                      <Box flexDirection={"row"} display={"flex"}>
+                        <>
+                          <Typography
+                            dangerouslySetInnerHTML={{ __html: answer.content }}
+                            sx={{
+                              "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                              "& p": { margin: 0 },
+                              "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                              fontSize: fontSize,
+                            }}
+                          />
+                          {answer.image_path_cat && (
+                            <img
+                              src={import.meta.env.VITE_API_URL + answer.image_path_cat}
+                              alt={`Answer ${index + 1} image`}
+                              style={{ maxWidth: "50%", marginTop: "8px", width: "50%", height: "50%" }}
+                            />
+                          )}
+                        </>
+                        {question.total_answer_should_have_for_true === 1 &&
+                          selectedAnswer === answer.uuid &&
+                          (isCorrect ? (
+                            <Check style={{ marginLeft: "5px", color: "green" }} />
+                          ) : (
+                            <Cancel style={{ marginLeft: "5px", color: "red" }} />
+                          ))}
+                      </Box>
+                    </>
+                  }
+                  sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+                />
+              ))}
+            </RadioGroup>
+          )}
+        {(question as SoalExamLS1).total_answer_should_have_for_true === 2 &&
+          (question as SoalExamLS1).answer_type !== 3 &&
+          (question as SoalExamLS1).answer_data.map((answer) => (
+            <FormControlLabel
+              key={answer.uuid}
+              value={answer.uuid}
+              control={<Checkbox size="small" />}
+              onChange={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
+              label={
+                <Box display={"flex"} flexDirection={"row"}>
+                  <Typography
+                    dangerouslySetInnerHTML={{ __html: answer.content }}
+                    sx={{
+                      "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                      "& p": { margin: 0 },
+                      "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                      fontSize: fontSize,
+                    }}
+                  />
+                  {question.total_answer_should_have_for_true === 2 &&
+                    ((selectedAnswerMultiple.filter((ar) => ar.uuid === answer.uuid && ar.isCorrectAnswer === true)
+                      .length > 0 && <Check style={{ marginLeft: "5px", color: "green" }} />) ||
+                      (selectedAnswerMultiple.filter((ar) => ar.uuid === answer.uuid && ar.isCorrectAnswer === false)
+                        .length > 0 && <Cancel style={{ marginLeft: "5px", color: "red" }} />))}
+                </Box>
+              }
+            />
+          ))}
+        {(question as SoalExamLS1).answer_type === 3 && (
+          <>
+            <Typography
+              variant="h6"
+              dangerouslySetInnerHTML={{
+                __html: startAnswer ? question.question_content : question.intro_data[indexMemorySpan].instruction,
+              }}
+              sx={{
+                "& p": { margin: 0, fontSize: fontSize },
+                fontSize: fontSize,
+                minHeight: "10px",
+                height: "auto",
+                textWrap: "wrap",
+              }}
+            />
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              {startAnswer === false ? (
+                <span
+                  dangerouslySetInnerHTML={{ __html: question.intro_data[indexMemorySpan].question_content }}
+                  style={{ fontSize: fontSize + 5, fontWeight: "bold", alignSelf: "center" }}
+                />
+              ) : (
+                <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} gap={3}>
+                  {(question as SoalExamLS1).intro_data.map((answer, index) => (
+                    <Grid item sx={{ display: "flex", alignItems: "center" }} key={index}>
+                      <TextField variant="filled" inputProps={{ "data-state": answer.showing_order }} />
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
+            </div>
+          </>
+        )}
+      </Box>
     </Card>
   )
 }

@@ -1,5 +1,18 @@
-import React, { useState } from "react"
-import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio, Button, Divider } from "@mui/material"
+import React, { useEffect, useState } from "react"
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Button,
+  Divider,
+  Checkbox,
+  Grid,
+  TextField,
+} from "@mui/material"
 import { TextIncrease, TextDecrease } from "@mui/icons-material"
 import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import { formatTime } from "@/utils/timer"
@@ -27,6 +40,42 @@ const SoalPertanyaanTkk = ({
   subtestName?: string
 }) => {
   const [fontSize, setFontSize] = useState(22)
+  const [answerMemorySpan, setAnswerMemorySpan] = useState<Array<{ order: number; content: string }>>([])
+  const [startTimer, setStartTimer] = useState(false)
+  const [indexMemorySpan, setIndexMemorySpan] = useState(0)
+  const [timerMemorySpan, setTimerMemorySpan] = useState(0)
+  const [startAnswer, setStartAnswer] = useState(false)
+
+  useEffect(() => {
+    if ((soal as SoalExamLS1).answer_type === 3) {
+      setTimerMemorySpan((soal as SoalExamLS1).intro_data[indexMemorySpan].timer)
+      setStartTimer(true)
+      const timerSoal = setInterval(() => {
+        setTimerMemorySpan((prevSeconds) => prevSeconds - 1)
+      }, 1000)
+
+      return () => {
+        clearInterval(timerSoal)
+        setStartTimer(false)
+      }
+    }
+  }, [indexMemorySpan, soal])
+
+  useEffect(() => {
+    if ((soal as SoalExamLS1).answer_type === 3 && timerMemorySpan === 0 && startTimer) {
+      const maxMemory = (soal as SoalExamLS1).intro_data.length
+      if (indexMemorySpan < maxMemory - 1) {
+        setIndexMemorySpan(indexMemorySpan + 1)
+        setTimerMemorySpan((soal as SoalExamLS1).intro_data[indexMemorySpan + 1].timer)
+      } else if (startAnswer === false) {
+        setStartAnswer(true)
+        setTimerMemorySpan(soal.timer)
+      } else if (startAnswer === true) {
+        // TODO:
+        console.log("ngapain yak")
+      }
+    }
+  }, [timerMemorySpan, soal, startTimer])
 
   const isSoalExamLS1 = (soal: SoalExam | SoalExamLS1 | SoalExamPPI): soal is SoalExamLS1 => {
     return "image_path_cat" in soal
@@ -51,6 +100,30 @@ const SoalPertanyaanTkk = ({
     })
   }
 
+  const handleEditMemorySpan = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (answerMemorySpan.length === 0) {
+      setAnswerMemorySpan([
+        ...answerMemorySpan,
+        { order: Number(event.target.dataset.state), content: event.target.value },
+      ])
+    } else if (answerMemorySpan.filter((ar) => ar.order === Number(event.target.dataset.state)).length > 0) {
+      const newAnswerMemorySpan = answerMemorySpan.map((ar) =>
+        ar.order === Number(event.target.dataset.state) ? { order: ar.order, content: event.target.value } : ar
+      )
+      setAnswerMemorySpan(newAnswerMemorySpan)
+    } else {
+      setAnswerMemorySpan([
+        ...answerMemorySpan,
+        { order: Number(event.target.dataset.state), content: event.target.value },
+      ])
+    }
+  }
+
+  useEffect(() => {
+    const formattedAnswer = answerMemorySpan.sort((a, b) => a.order - b.order)
+    setAnswer({ content: formattedAnswer.map((ar) => ar.content).join(""), value: 0 })
+  }, [answerMemorySpan])
+
   const onIncreaseFont = () => {
     setFontSize(fontSize + 1)
   }
@@ -72,11 +145,14 @@ const SoalPertanyaanTkk = ({
             boxShadow: 6,
           },
           mb: 5,
+          minHeight: "525px",
         }}
       >
         <CardContent>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
+            <Typography variant="h6">
+              Sisa Waktu: {formatTime((soal as SoalExamLS1).answer_type === 3 ? timerMemorySpan : remainingTime)}
+            </Typography>
             <Box sx={timerType === 2 ? { width: "250px", display: "flex", justifyContent: "space-between" } : {}}>
               <Box display={"flex"} justifyContent={"space-between"} width={140}>
                 <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />
@@ -101,17 +177,36 @@ const SoalPertanyaanTkk = ({
               </Typography>
             ) : (
               <Box>
-                <Typography
-                  variant="h6"
-                  dangerouslySetInnerHTML={{ __html: soal.question_content }}
-                  sx={{
-                    "& p": { margin: 0, fontSize: fontSize },
-                    fontSize: fontSize,
-                    minHeight: "10px",
-                    height: "auto",
-                    textWrap: "wrap",
-                  }}
-                />
+                {(soal as SoalExamLS1).answer_type === 3 ? (
+                  <Typography
+                    variant="h6"
+                    dangerouslySetInnerHTML={{
+                      __html: startAnswer
+                        ? soal.question_content
+                        : (soal as SoalExamLS1).intro_data[indexMemorySpan].instruction,
+                    }}
+                    sx={{
+                      "& p": { margin: 0, fontSize: fontSize },
+                      fontSize: fontSize,
+                      minHeight: "10px",
+                      height: "auto",
+                      textWrap: "wrap",
+                    }}
+                  />
+                ) : (
+                  <Typography
+                    variant="h6"
+                    dangerouslySetInnerHTML={{ __html: soal.question_content }}
+                    sx={{
+                      "& p": { margin: 0, fontSize: fontSize },
+                      fontSize: fontSize,
+                      minHeight: "10px",
+                      height: "auto",
+                      textWrap: "wrap",
+                    }}
+                  />
+                )}
+
                 <br />
                 {(soal as SoalExamLS1).image_path_cat && (
                   <div
@@ -135,25 +230,86 @@ const SoalPertanyaanTkk = ({
           </Box>
           <Divider sx={{ marginTop: 3, marginBottom: 3 }} />
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", mt: 4, pl: "35px" }}>
-            <RadioGroup
-              row={soal.answer_showing_position === 1 ? false : true}
-              key={soal.Uuid}
-              aria-labelledby="demo-radio-buttons-group-label"
-              name="radio-buttons-group"
-              onChange={handleChoose}
-              value={
-                selectedAnswer
-                  ? questionType === "SoalExam" || questionType === "SoalExamPPI"
-                    ? selectedAnswer.value
-                    : selectedAnswer.content
-                  : ""
-              }
-            >
-              {(soal as SoalExamLS1).answer_data.map((answer, index) => (
+            {(soal as SoalExamLS1).answer_type === 3 && (
+              <>
+                <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} gap={3}>
+                  {startAnswer === false ? (
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: (soal as SoalExamLS1).intro_data[indexMemorySpan].question_content,
+                      }}
+                      style={{ fontSize: fontSize + 5, fontWeight: "bold", alignSelf: "center" }}
+                    />
+                  ) : (
+                    (soal as SoalExamLS1).intro_data.map((answer, index) => (
+                      <Grid item sx={{ display: "flex", alignItems: "center" }} key={index}>
+                        <TextField
+                          variant="filled"
+                          title={"urutan" + answer.showing_order.toString()}
+                          inputProps={{ "data-state": answer.showing_order }}
+                          onChange={handleEditMemorySpan}
+                        />
+                      </Grid>
+                    ))
+                  )}
+                </Grid>
+              </>
+            )}
+            {(soal as SoalExamLS1).total_answer_should_have_for_true === 1 &&
+              (soal as SoalExamLS1).answer_type !== 3 && (
+                <RadioGroup
+                  row={soal.answer_showing_position === 1 ? false : true}
+                  key={soal.Uuid}
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  name="radio-buttons-group"
+                  onChange={handleChoose}
+                  value={
+                    selectedAnswer
+                      ? questionType === "SoalExam" || questionType === "SoalExamPPI"
+                        ? selectedAnswer.value
+                        : selectedAnswer.content
+                      : ""
+                  }
+                >
+                  {(soal as SoalExamLS1).answer_data.map((answer, index) => (
+                    <FormControlLabel
+                      key={index}
+                      value={answer.uuid}
+                      control={<Radio size="small" />}
+                      label={
+                        <>
+                          <Typography
+                            dangerouslySetInnerHTML={{ __html: answer.content }}
+                            sx={{
+                              "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                              "& p": { margin: 0 },
+                              "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                              fontSize: fontSize,
+                            }}
+                          />
+                          {answer.image_path_cat && (
+                            <img
+                              src={import.meta.env.VITE_API_URL + answer.image_path_cat}
+                              alt={`Answer ${index + 1} image`}
+                              style={{ maxWidth: "50%", marginTop: "8px", width: "50%", height: "50%" }}
+                            />
+                          )}
+                        </>
+                      }
+                      sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+                    />
+                  ))}
+                </RadioGroup>
+              )}
+            {(soal as SoalExamLS1).total_answer_should_have_for_true === 2 &&
+              (soal as SoalExamLS1).answer_type !== 3 &&
+              (soal as SoalExamLS1).answer_data.map((answer) => (
                 <FormControlLabel
-                  key={index}
+                  key={answer.uuid}
                   value={answer.uuid}
-                  control={<Radio size="small" />}
+                  control={<Checkbox size="small" />}
+                  // @ts-ignore
+                  onChange={handleChoose}
                   label={
                     <>
                       <Typography
@@ -165,19 +321,10 @@ const SoalPertanyaanTkk = ({
                           fontSize: fontSize,
                         }}
                       />
-                      {answer.image_path_cat && (
-                        <img
-                          src={import.meta.env.VITE_API_URL + answer.image_path_cat}
-                          alt={`Answer ${index + 1} image`}
-                          style={{ maxWidth: "50%", marginTop: "8px", width: "50%", height: "50%" }}
-                        />
-                      )}
                     </>
                   }
-                  sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
                 />
               ))}
-            </RadioGroup>
           </Box>
         </CardContent>
       </Card>
