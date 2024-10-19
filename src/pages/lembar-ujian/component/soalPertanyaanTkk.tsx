@@ -16,6 +16,7 @@ import {
 import { TextIncrease, TextDecrease } from "@mui/icons-material"
 import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import { formatTime } from "@/utils/timer"
+import { ExamData } from "./exam-data"
 
 export interface answer {
   content: string
@@ -100,6 +101,13 @@ const SoalPertanyaanTkk = ({
     })
   }
 
+  const selectAnswerInduction = (answerUuid: string) => {
+    setAnswer({
+      content: answerUuid || "",
+      value: 0,
+    })
+  }
+
   const handleEditMemorySpan = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (answerMemorySpan.length === 0) {
       setAnswerMemorySpan([
@@ -167,8 +175,25 @@ const SoalPertanyaanTkk = ({
               {subtestNumber} : {subtestName}
             </Typography>
           )}
-          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-            <Typography variant="h6" sx={{ mr: 2, minWidth: "30px", fontSize: fontSize }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems:
+                (soal as SoalExamLS1).subtest_model_uuid ===
+                ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+                  ? "center"
+                  : "flex-start",
+              flexDirection:
+                (soal as SoalExamLS1).subtest_model_uuid ===
+                ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+                  ? "column"
+                  : "row",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ mr: 2, minWidth: "30px", fontSize: fontSize, textAlign: "left", alignSelf: "flex-start" }}
+            >
               {soal.question_order}.
             </Typography>
             {questionType === "SoalExam" ? (
@@ -176,7 +201,7 @@ const SoalPertanyaanTkk = ({
                 {soal.question_content}
               </Typography>
             ) : (
-              <Box>
+              <Box sx={{ margin: 0, display: "flex" }}>
                 {(soal as SoalExamLS1).answer_type === 3 ? (
                   <Typography
                     variant="h6"
@@ -199,6 +224,7 @@ const SoalPertanyaanTkk = ({
                     dangerouslySetInnerHTML={{ __html: soal.question_content }}
                     sx={{
                       "& p": { margin: 0, fontSize: fontSize },
+                      "& figure": { margin: 0, marginRight: "0px" },
                       fontSize: fontSize,
                       minHeight: "10px",
                       height: "auto",
@@ -229,7 +255,19 @@ const SoalPertanyaanTkk = ({
             )}
           </Box>
           <Divider sx={{ marginTop: 3, marginBottom: 3 }} />
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", mt: 4, pl: "35px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems:
+                (soal as SoalExamLS1).subtest_model_uuid ===
+                ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+                  ? "center"
+                  : "flex-start",
+              mt: 4,
+              pl: "35px",
+            }}
+          >
             {(soal as SoalExamLS1).answer_type === 3 && (
               <>
                 <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} gap={3}>
@@ -275,18 +313,50 @@ const SoalPertanyaanTkk = ({
                     <FormControlLabel
                       key={index}
                       value={answer.uuid}
-                      control={<Radio size="small" />}
+                      control={
+                        (soal as SoalExamLS1).subtest_model_uuid ===
+                        ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
+                          <></>
+                        ) : (
+                          <Radio size="small" />
+                        )
+                      }
                       label={
                         <>
-                          <Typography
-                            dangerouslySetInnerHTML={{ __html: answer.content }}
-                            sx={{
-                              "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                              "& p": { margin: 0 },
-                              "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
-                              fontSize: fontSize,
-                            }}
-                          />
+                          {(soal as SoalExamLS1).subtest_model_uuid ===
+                          ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
+                            <Box
+                              flexDirection={"column"}
+                              display={"flex"}
+                              justifyContent={"space-between"}
+                              alignItems={"center"}
+                              sx={{ backgroundColor: selectedAnswer?.content === answer.uuid ? "#c5e89e" : undefined }}
+                              width={"12vw"}
+                              height={"16vh"}
+                              onClick={() => selectAnswerInduction(answer.uuid)}
+                            >
+                              <Typography
+                                dangerouslySetInnerHTML={{ __html: answer.content }}
+                                sx={{
+                                  "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                  "& p": { margin: 0 },
+                                  "& figure": { margin: 0, marginRight: "0px", maxWidth: "100px" },
+                                  fontSize: fontSize,
+                                }}
+                              />
+                              {(soal as SoalExamLS1).is_need_answer_label && <Typography>{answer.label}</Typography>}
+                            </Box>
+                          ) : (
+                            <Typography
+                              dangerouslySetInnerHTML={{ __html: answer.content }}
+                              sx={{
+                                "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                "& p": { margin: 0 },
+                                "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                fontSize: fontSize,
+                              }}
+                            />
+                          )}
                           {answer.image_path_cat && (
                             <img
                               src={import.meta.env.VITE_API_URL + answer.image_path_cat}

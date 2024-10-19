@@ -15,6 +15,7 @@ import {
   Typography,
 } from "@mui/material"
 import { formatTime } from "@/utils/timer"
+import { ExamData } from "./exam-data"
 
 interface ExamExampleTkkProps {
   question: SoalExamLS1
@@ -136,10 +137,36 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
       {question.answer_type !== 3 && (
         <h3
           dangerouslySetInnerHTML={{ __html: question.question_content }}
-          style={{ fontSize: fontSize, marginLeft: 40 }}
+          style={{
+            fontSize: fontSize,
+            marginLeft:
+              (question as SoalExamLS1).subtest_model_uuid ===
+              ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+                ? 0
+                : 40,
+            display: "flex",
+            justifyContent:
+              (question as SoalExamLS1).subtest_model_uuid ===
+              ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+                ? "center"
+                : "flex-start",
+          }}
         />
       )}
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", mt: 4, pl: "35px" }}>
+      <Divider sx={{ my: 3 }} />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems:
+            (question as SoalExamLS1).subtest_model_uuid ===
+            ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+              ? "center"
+              : "flex-start",
+          mt: 4,
+          pl: "35px",
+        }}
+      >
         {(question as SoalExamLS1).total_answer_should_have_for_true === 1 &&
           (question as SoalExamLS1).answer_type !== 3 && (
             <RadioGroup
@@ -152,21 +179,71 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                 <FormControlLabel
                   key={index}
                   value={answer.uuid}
-                  control={<Radio size="small" />}
+                  control={
+                    (question as SoalExamLS1).subtest_model_uuid ===
+                    ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
+                      <></>
+                    ) : (
+                      <Radio size="small" />
+                    )
+                  }
                   onChange={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
                   label={
                     <>
                       <Box flexDirection={"row"} display={"flex"}>
                         <>
-                          <Typography
-                            dangerouslySetInnerHTML={{ __html: answer.content }}
-                            sx={{
-                              "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                              "& p": { margin: 0 },
-                              "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
-                              fontSize: fontSize,
-                            }}
-                          />
+                          {(question as SoalExamLS1).subtest_model_uuid ===
+                          ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
+                            <Box
+                              flexDirection={"column"}
+                              display={"flex"}
+                              justifyContent={"space-between"}
+                              alignItems={"center"}
+                              sx={{ backgroundColor: selectedAnswer === answer.uuid ? "#c5e89e" : undefined }}
+                              width={"12vw"}
+                              height={"20vh"}
+                              onClick={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
+                            >
+                              <Typography
+                                dangerouslySetInnerHTML={{ __html: answer.content }}
+                                sx={{
+                                  "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                  "& p": { margin: 0 },
+                                  "& figure": { margin: 0, marginRight: "0px", maxWidth: "100px" },
+                                  fontSize: fontSize,
+                                }}
+                              />
+                              <Box
+                                display={"flex"}
+                                flexDirection={"column"}
+                                justifyContent={"flex-start"}
+                                alignItems={"center"}
+                                height={"30%"}
+                              >
+                                {(question as SoalExamLS1).is_need_answer_label && (
+                                  <Typography>{answer.label}</Typography>
+                                )}
+                                {question.total_answer_should_have_for_true === 1 &&
+                                  selectedAnswer === answer.uuid &&
+                                  (isCorrect ? (
+                                    <Check style={{ color: "green" }} />
+                                  ) : (
+                                    <Cancel style={{ color: "red" }} />
+                                  ))}
+                              </Box>
+                            </Box>
+                          ) : (
+                            <Typography
+                              dangerouslySetInnerHTML={{ __html: answer.content }}
+                              sx={{
+                                "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                "& p": { margin: 0 },
+                                "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                fontSize: fontSize,
+                              }}
+                            />
+                          )}
+
                           {answer.image_path_cat && (
                             <img
                               src={import.meta.env.VITE_API_URL + answer.image_path_cat}
@@ -175,13 +252,13 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                             />
                           )}
                         </>
-                        {question.total_answer_should_have_for_true === 1 &&
+                        {/* {question.total_answer_should_have_for_true === 1 &&
                           selectedAnswer === answer.uuid &&
                           (isCorrect ? (
                             <Check style={{ marginLeft: "5px", color: "green" }} />
                           ) : (
                             <Cancel style={{ marginLeft: "5px", color: "red" }} />
-                          ))}
+                          ))} */}
                       </Box>
                     </>
                   }

@@ -380,6 +380,7 @@ export interface SoalExamLS1 {
     name: string
   }
   total_answer_should_have_for_true: number
+  is_need_answer_label: boolean
   answer_type: number
   intro_data: Array<{
     ID: number
