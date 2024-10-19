@@ -201,7 +201,18 @@ const SoalPertanyaanTkk = ({
                 {soal.question_content}
               </Typography>
             ) : (
-              <Box sx={{ margin: 0, display: "flex" }}>
+              <Box
+                sx={{
+                  margin: 0,
+                  display: "flex",
+                  width: "100%",
+                  flexDirection:
+                    (soal as SoalExamLS1).subtest_model_uuid ===
+                    ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
+                      ? "column"
+                      : "row",
+                }}
+              >
                 {(soal as SoalExamLS1).answer_type === 3 ? (
                   <Typography
                     variant="h6"
@@ -235,13 +246,18 @@ const SoalPertanyaanTkk = ({
 
                 <br />
                 {(soal as SoalExamLS1).image_path_cat && (
-                  <div
-                    style={{
+                  <Box
+                    sx={{
                       width: "100%",
-                      maxWidth: "500px",
-                      height: "100px",
+                      height: "145px",
                       maxHeight: "200px",
                       marginBottom: 4,
+                      display: "flex",
+                      justifyContent:
+                        (soal as SoalExamLS1).subtest_model_uuid ===
+                        ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
+                          ? "center"
+                          : "flex-start",
                     }}
                   >
                     <img
@@ -249,7 +265,7 @@ const SoalPertanyaanTkk = ({
                       alt={"Answer image"}
                       style={{ marginTop: "8px", width: "auto", height: "100%" }}
                     />
-                  </div>
+                  </Box>
                 )}
               </Box>
             )}
@@ -372,29 +388,42 @@ const SoalPertanyaanTkk = ({
                 </RadioGroup>
               )}
             {(soal as SoalExamLS1).total_answer_should_have_for_true === 2 &&
-              (soal as SoalExamLS1).answer_type !== 3 &&
-              (soal as SoalExamLS1).answer_data.map((answer) => (
-                <FormControlLabel
-                  key={answer.uuid}
-                  value={answer.uuid}
-                  control={<Checkbox size="small" />}
-                  // @ts-ignore
-                  onChange={handleChoose}
-                  label={
-                    <>
-                      <Typography
-                        dangerouslySetInnerHTML={{ __html: answer.content }}
-                        sx={{
-                          "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                          "& p": { margin: 0 },
-                          "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
-                          fontSize: fontSize,
-                        }}
-                      />
-                    </>
+              (soal as SoalExamLS1).answer_type !== 3 && (
+                <Box
+                  display={"flex"}
+                  flexDirection={soal.answer_showing_position === 1 ? "column" : "row"}
+                  justifyContent={
+                    (soal as SoalExamLS1).subtest_model_uuid ===
+                    ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
+                      ? "space-between"
+                      : "flex-start"
                   }
-                />
-              ))}
+                  sx={{ width: "100%" }}
+                >
+                  {(soal as SoalExamLS1).answer_data.map((answer) => (
+                    <FormControlLabel
+                      key={answer.uuid}
+                      value={answer.uuid}
+                      control={<Checkbox size="small" />}
+                      // @ts-ignore
+                      onChange={handleChoose}
+                      label={
+                        <>
+                          <Typography
+                            dangerouslySetInnerHTML={{ __html: answer.content }}
+                            sx={{
+                              "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                              "& p": { margin: 0 },
+                              "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                              fontSize: fontSize,
+                            }}
+                          />
+                        </>
+                      }
+                    />
+                  ))}
+                </Box>
+              )}
           </Box>
         </CardContent>
       </Card>
