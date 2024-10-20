@@ -154,6 +154,11 @@ const SoalPertanyaanTkk = ({
           },
           mb: 5,
           minHeight: "525px",
+          maxHeight:
+            (soal as SoalExamLS1).subtest_model_uuid ===
+            ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid
+              ? "82vh"
+              : undefined,
         }}
       >
         <CardContent>
@@ -208,7 +213,9 @@ const SoalPertanyaanTkk = ({
                   width: "100%",
                   flexDirection:
                     (soal as SoalExamLS1).subtest_model_uuid ===
-                    ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
+                      ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid ||
+                    (soal as SoalExamLS1).subtest_model_uuid ===
+                      ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid
                       ? "column"
                       : "row",
                 }}
@@ -245,186 +252,255 @@ const SoalPertanyaanTkk = ({
                 )}
 
                 <br />
-                {(soal as SoalExamLS1).image_path_cat && (
-                  <Box
-                    sx={{
-                      width: "100%",
-                      height: "145px",
-                      maxHeight: "200px",
-                      marginBottom: 4,
-                      display: "flex",
-                      justifyContent:
-                        (soal as SoalExamLS1).subtest_model_uuid ===
-                        ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
-                          ? "center"
-                          : "flex-start",
-                    }}
-                  >
-                    <img
-                      src={import.meta.env.VITE_API_URL + (soal as SoalExamLS1).image_path_cat}
-                      alt={"Answer image"}
-                      style={{ marginTop: "8px", width: "auto", height: "100%" }}
-                    />
-                  </Box>
-                )}
+                {(soal as SoalExamLS1).image_path_cat &&
+                  (soal as SoalExamLS1).subtest_model_uuid ===
+                    ExamData.filter((ar) => ar.examName !== "Visualization")[0].examUuid && (
+                    <Box
+                      sx={{
+                        width: "100%",
+                        height: "145px",
+                        maxHeight: "200px",
+                        marginBottom: 4,
+                        display: "flex",
+                        justifyContent:
+                          (soal as SoalExamLS1).subtest_model_uuid ===
+                          ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
+                            ? "center"
+                            : "flex-start",
+                      }}
+                    >
+                      <img
+                        src={import.meta.env.VITE_API_URL + (soal as SoalExamLS1).image_path_cat}
+                        alt={"Answer image"}
+                        style={{ marginTop: "8px", width: "auto", height: "100%" }}
+                      />
+                    </Box>
+                  )}
               </Box>
             )}
           </Box>
-          <Divider sx={{ marginTop: 3, marginBottom: 3 }} />
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems:
-                (soal as SoalExamLS1).subtest_model_uuid ===
-                ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
-                  ? "center"
-                  : "flex-start",
-              mt: 4,
-              pl: "35px",
-            }}
-          >
-            {(soal as SoalExamLS1).answer_type === 3 && (
-              <>
-                <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} gap={3}>
-                  {startAnswer === false ? (
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: (soal as SoalExamLS1).intro_data[indexMemorySpan].question_content,
-                      }}
-                      style={{ fontSize: fontSize + 5, fontWeight: "bold", alignSelf: "center" }}
-                    />
-                  ) : (
-                    (soal as SoalExamLS1).intro_data.map((answer, index) => (
-                      <Grid item sx={{ display: "flex", alignItems: "center" }} key={index}>
-                        <TextField
-                          variant="filled"
-                          title={"urutan" + answer.showing_order.toString()}
-                          inputProps={{ "data-state": answer.showing_order }}
-                          onChange={handleEditMemorySpan}
-                        />
-                      </Grid>
-                    ))
-                  )}
-                </Grid>
-              </>
-            )}
-            {(soal as SoalExamLS1).total_answer_should_have_for_true === 1 &&
-              (soal as SoalExamLS1).answer_type !== 3 && (
-                <RadioGroup
-                  row={soal.answer_showing_position === 1 ? false : true}
-                  key={soal.Uuid}
-                  aria-labelledby="demo-radio-buttons-group-label"
-                  name="radio-buttons-group"
-                  onChange={handleChoose}
-                  value={
-                    selectedAnswer
-                      ? questionType === "SoalExam" || questionType === "SoalExamPPI"
-                        ? selectedAnswer.value
-                        : selectedAnswer.content
-                      : ""
-                  }
+          {(soal as SoalExamLS1).subtest_model_uuid ===
+          ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid ? (
+            <Box display={"flex"} flexDirection={"row"}>
+              {(soal as SoalExamLS1).image_path_cat && (
+                <Box
+                  sx={{
+                    width: "25%",
+                    height: "45vh",
+                    marginBottom: 4,
+                    display: "flex",
+                    justifyContent:
+                      (soal as SoalExamLS1).subtest_model_uuid ===
+                      ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
+                        ? "center"
+                        : "flex-start",
+                  }}
                 >
-                  {(soal as SoalExamLS1).answer_data.map((answer, index) => (
-                    <FormControlLabel
-                      key={index}
-                      value={answer.uuid}
-                      control={
-                        (soal as SoalExamLS1).subtest_model_uuid ===
-                        ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
-                          <></>
-                        ) : (
-                          <Radio size="small" />
-                        )
+                  <img
+                    src={import.meta.env.VITE_API_URL + (soal as SoalExamLS1).image_path_cat}
+                    alt={"Answer image"}
+                    style={{ marginTop: "8px", width: "100%", height: "100%" }}
+                  />
+                </Box>
+              )}
+              <Divider orientation="vertical" flexItem sx={{ mx: 5 }} />
+              <Grid container gap={2} mt={2} columnGap={8}>
+                {(soal as SoalExamLS1).answer_data.map((answer, index) => (
+                  <Grid key={index} item xs={12} md={6} lg={3}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        flexDirection: "column",
+                        cursor: "pointer",
+                        minHeight: "27vh",
+                        backgroundColor: selectedAnswer?.content === answer.uuid ? "#c5e89e" : undefined,
+                      }}
+                      onClick={() => {
+                        selectAnswerInduction(answer.uuid)
+                      }}
+                    >
+                      {(soal as SoalExamLS1).is_need_answer_label && <Typography>{answer.label}</Typography>}
+
+                      <img
+                        src={import.meta.env.VITE_API_URL + answer.image_path_cat}
+                        alt={"Answer image"}
+                        style={{
+                          marginTop: "8px",
+                          width: "90%",
+                          height: "90%",
+                          alignSelf: "center",
+                          marginBottom: "8px",
+                        }}
+                      />
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          ) : (
+            <>
+              <Divider sx={{ marginTop: 3, marginBottom: 3 }} />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems:
+                    (soal as SoalExamLS1).subtest_model_uuid ===
+                    ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+                      ? "center"
+                      : "flex-start",
+                  mt: 4,
+                  pl: "35px",
+                }}
+              >
+                {(soal as SoalExamLS1).answer_type === 3 && (
+                  <>
+                    <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} gap={3}>
+                      {startAnswer === false ? (
+                        <span
+                          dangerouslySetInnerHTML={{
+                            __html: (soal as SoalExamLS1).intro_data[indexMemorySpan].question_content,
+                          }}
+                          style={{ fontSize: fontSize + 5, fontWeight: "bold", alignSelf: "center" }}
+                        />
+                      ) : (
+                        (soal as SoalExamLS1).intro_data.map((answer, index) => (
+                          <Grid item sx={{ display: "flex", alignItems: "center" }} key={index}>
+                            <TextField
+                              variant="filled"
+                              title={"urutan" + answer.showing_order.toString()}
+                              inputProps={{ "data-state": answer.showing_order }}
+                              onChange={handleEditMemorySpan}
+                            />
+                          </Grid>
+                        ))
+                      )}
+                    </Grid>
+                  </>
+                )}
+                {(soal as SoalExamLS1).total_answer_should_have_for_true === 1 &&
+                  (soal as SoalExamLS1).answer_type !== 3 && (
+                    <RadioGroup
+                      row={soal.answer_showing_position === 1 ? false : true}
+                      key={soal.Uuid}
+                      aria-labelledby="demo-radio-buttons-group-label"
+                      name="radio-buttons-group"
+                      onChange={handleChoose}
+                      value={
+                        selectedAnswer
+                          ? questionType === "SoalExam" || questionType === "SoalExamPPI"
+                            ? selectedAnswer.value
+                            : selectedAnswer.content
+                          : ""
                       }
-                      label={
-                        <>
-                          {(soal as SoalExamLS1).subtest_model_uuid ===
-                          ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
-                            <Box
-                              flexDirection={"column"}
-                              display={"flex"}
-                              justifyContent={"space-between"}
-                              alignItems={"center"}
-                              sx={{ backgroundColor: selectedAnswer?.content === answer.uuid ? "#c5e89e" : undefined }}
-                              width={"12vw"}
-                              height={"16vh"}
-                              onClick={() => selectAnswerInduction(answer.uuid)}
-                            >
+                    >
+                      {(soal as SoalExamLS1).answer_data.map((answer, index) => (
+                        <FormControlLabel
+                          key={index}
+                          value={answer.uuid}
+                          control={
+                            (soal as SoalExamLS1).subtest_model_uuid ===
+                            ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
+                              <></>
+                            ) : (
+                              <Radio size="small" />
+                            )
+                          }
+                          label={
+                            <>
+                              {(soal as SoalExamLS1).subtest_model_uuid ===
+                              ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
+                                <Box
+                                  flexDirection={"column"}
+                                  display={"flex"}
+                                  justifyContent={"space-between"}
+                                  alignItems={"center"}
+                                  sx={{
+                                    backgroundColor: selectedAnswer?.content === answer.uuid ? "#c5e89e" : undefined,
+                                  }}
+                                  width={"12vw"}
+                                  height={"16vh"}
+                                  onClick={() => selectAnswerInduction(answer.uuid)}
+                                >
+                                  <Typography
+                                    dangerouslySetInnerHTML={{ __html: answer.content }}
+                                    sx={{
+                                      "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                      "& p": { margin: 0 },
+                                      "& figure": { margin: 0, marginRight: "0px", maxWidth: "100px" },
+                                      fontSize: fontSize,
+                                    }}
+                                  />
+                                  {(soal as SoalExamLS1).is_need_answer_label && (
+                                    <Typography>{answer.label}</Typography>
+                                  )}
+                                </Box>
+                              ) : (
+                                <Typography
+                                  dangerouslySetInnerHTML={{ __html: answer.content }}
+                                  sx={{
+                                    "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                    "& p": { margin: 0 },
+                                    "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                    fontSize: fontSize,
+                                  }}
+                                />
+                              )}
+                              {answer.image_path_cat && (
+                                <img
+                                  src={import.meta.env.VITE_API_URL + answer.image_path_cat}
+                                  alt={`Answer ${index + 1} image`}
+                                  style={{ maxWidth: "50%", marginTop: "8px", width: "50%", height: "50%" }}
+                                />
+                              )}
+                            </>
+                          }
+                          sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+                        />
+                      ))}
+                    </RadioGroup>
+                  )}
+                {(soal as SoalExamLS1).total_answer_should_have_for_true === 2 &&
+                  (soal as SoalExamLS1).answer_type !== 3 && (
+                    <Box
+                      display={"flex"}
+                      flexDirection={soal.answer_showing_position === 1 ? "column" : "row"}
+                      justifyContent={
+                        (soal as SoalExamLS1).subtest_model_uuid ===
+                        ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
+                          ? "space-between"
+                          : "flex-start"
+                      }
+                      sx={{ width: "100%" }}
+                    >
+                      {(soal as SoalExamLS1).answer_data.map((answer) => (
+                        <FormControlLabel
+                          key={answer.uuid}
+                          value={answer.uuid}
+                          control={<Checkbox size="small" />}
+                          // @ts-ignore
+                          onChange={handleChoose}
+                          label={
+                            <>
                               <Typography
                                 dangerouslySetInnerHTML={{ __html: answer.content }}
                                 sx={{
                                   "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
                                   "& p": { margin: 0 },
-                                  "& figure": { margin: 0, marginRight: "0px", maxWidth: "100px" },
+                                  "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
                                   fontSize: fontSize,
                                 }}
                               />
-                              {(soal as SoalExamLS1).is_need_answer_label && <Typography>{answer.label}</Typography>}
-                            </Box>
-                          ) : (
-                            <Typography
-                              dangerouslySetInnerHTML={{ __html: answer.content }}
-                              sx={{
-                                "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                                "& p": { margin: 0 },
-                                "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
-                                fontSize: fontSize,
-                              }}
-                            />
-                          )}
-                          {answer.image_path_cat && (
-                            <img
-                              src={import.meta.env.VITE_API_URL + answer.image_path_cat}
-                              alt={`Answer ${index + 1} image`}
-                              style={{ maxWidth: "50%", marginTop: "8px", width: "50%", height: "50%" }}
-                            />
-                          )}
-                        </>
-                      }
-                      sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
-                    />
-                  ))}
-                </RadioGroup>
-              )}
-            {(soal as SoalExamLS1).total_answer_should_have_for_true === 2 &&
-              (soal as SoalExamLS1).answer_type !== 3 && (
-                <Box
-                  display={"flex"}
-                  flexDirection={soal.answer_showing_position === 1 ? "column" : "row"}
-                  justifyContent={
-                    (soal as SoalExamLS1).subtest_model_uuid ===
-                    ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
-                      ? "space-between"
-                      : "flex-start"
-                  }
-                  sx={{ width: "100%" }}
-                >
-                  {(soal as SoalExamLS1).answer_data.map((answer) => (
-                    <FormControlLabel
-                      key={answer.uuid}
-                      value={answer.uuid}
-                      control={<Checkbox size="small" />}
-                      // @ts-ignore
-                      onChange={handleChoose}
-                      label={
-                        <>
-                          <Typography
-                            dangerouslySetInnerHTML={{ __html: answer.content }}
-                            sx={{
-                              "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                              "& p": { margin: 0 },
-                              "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
-                              fontSize: fontSize,
-                            }}
-                          />
-                        </>
-                      }
-                    />
-                  ))}
-                </Box>
-              )}
-          </Box>
+                            </>
+                          }
+                        />
+                      ))}
+                    </Box>
+                  )}
+              </Box>
+            </>
+          )}
         </CardContent>
       </Card>
     </>

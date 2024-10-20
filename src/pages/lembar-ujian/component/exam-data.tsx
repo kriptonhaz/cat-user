@@ -25,4 +25,8 @@ export const ExamData: IExamData[] = [
     examName: "Flexibility of Closure",
     examUuid: "b6b33e0f-cfd1-4568-ba5b-677e242e5158",
   },
+  {
+    examName: "Visualization",
+    examUuid: "c0ee45a2-54d2-4d0f-ba98-88dab74c39ae",
+  },
 ]
