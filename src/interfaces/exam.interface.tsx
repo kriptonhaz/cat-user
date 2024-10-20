@@ -394,6 +394,7 @@ export interface SoalExamLS1 {
     timer: number
     instruction: string
     question_content: string
+    intro_type: number
     image_path_admin: string
     image_path_cat: string
     image_position: number

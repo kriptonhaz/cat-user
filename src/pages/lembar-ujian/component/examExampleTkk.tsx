@@ -24,6 +24,7 @@ interface ExamExampleTkkProps {
   subtestNumber?: string
   subtestName?: string
   nextQuestion: () => void
+  setDisableNextButton?: (val: boolean) => void
 }
 
 const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
@@ -33,6 +34,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
   subtestNumber,
   subtestName,
   nextQuestion,
+  setDisableNextButton,
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [selectedAnswerMultiple, setSelectedAnswerMultiple] = useState<
@@ -74,6 +76,16 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
       }
     }
   }, [timerMemorySpan, question, startTimer])
+
+  useEffect(() => {
+    if (question.answer_type === 3) {
+      if (startAnswer === true) {
+        setDisableNextButton && setDisableNextButton(false)
+      } else {
+        setDisableNextButton && setDisableNextButton(true)
+      }
+    }
+  }, [question, startAnswer])
 
   const onAnswerSelect = (uuid: string, isCorrectAnswer: boolean) => {
     if (question.total_answer_should_have_for_true === 1) {
@@ -431,7 +443,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                     textWrap: "wrap",
                   }}
                 />
-                <div style={{ display: "flex", justifyContent: "center" }}>
+                <div style={{ display: "flex", justifyContent: "center", width: "100%", alignItems: "center" }}>
                   {startAnswer === false ? (
                     <span
                       dangerouslySetInnerHTML={{ __html: question.intro_data[indexMemorySpan].question_content }}
@@ -439,11 +451,16 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                     />
                   ) : (
                     <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} gap={3}>
-                      {(question as SoalExamLS1).intro_data.map((answer, index) => (
-                        <Grid item sx={{ display: "flex", alignItems: "center" }} key={index}>
-                          <TextField variant="filled" inputProps={{ "data-state": answer.showing_order }} />
-                        </Grid>
-                      ))}
+                      {(question as SoalExamLS1).intro_data
+                        .filter((ar) => ar.intro_type !== 2)
+                        .map((answer, index) => (
+                          <Grid item sx={{ display: "flex", alignItems: "center" }} key={index}>
+                            <TextField
+                              variant="filled"
+                              inputProps={{ "data-state": answer.showing_order, style: { textTransform: "uppercase" } }}
+                            />
+                          </Grid>
+                        ))}
                     </Grid>
                   )}
                 </div>

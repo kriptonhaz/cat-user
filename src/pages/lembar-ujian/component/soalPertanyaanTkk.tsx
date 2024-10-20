@@ -31,6 +31,7 @@ const SoalPertanyaanTkk = ({
   timerType,
   subtestNumber,
   subtestName,
+  setDisableNextButton,
 }: {
   soal: SoalExam | SoalExamLS1 | SoalExamPPI
   setAnswer: (answer: answer) => void
@@ -39,6 +40,7 @@ const SoalPertanyaanTkk = ({
   timerType: number
   subtestNumber?: string
   subtestName?: string
+  setDisableNextButton?: (val: boolean) => void
 }) => {
   const [fontSize, setFontSize] = useState(22)
   const [answerMemorySpan, setAnswerMemorySpan] = useState<Array<{ order: number; content: string }>>([])
@@ -77,6 +79,16 @@ const SoalPertanyaanTkk = ({
       }
     }
   }, [timerMemorySpan, soal, startTimer])
+
+  useEffect(() => {
+    if ((soal as SoalExamLS1).answer_type === 3) {
+      if (startAnswer === true) {
+        setDisableNextButton && setDisableNextButton(false)
+      } else {
+        setDisableNextButton && setDisableNextButton(true)
+      }
+    }
+  }, [soal, startAnswer])
 
   const isSoalExamLS1 = (soal: SoalExam | SoalExamLS1 | SoalExamPPI): soal is SoalExamLS1 => {
     return "image_path_cat" in soal
@@ -197,7 +209,14 @@ const SoalPertanyaanTkk = ({
           >
             <Typography
               variant="h6"
-              sx={{ mr: 2, minWidth: "30px", fontSize: fontSize, textAlign: "left", alignSelf: "flex-start" }}
+              sx={{
+                mr: 2,
+                minWidth: "30px",
+                fontSize: fontSize,
+                textAlign: "left",
+                alignSelf: "flex-start",
+                display: (soal as SoalExamLS1).answer_type === 3 && startAnswer === false ? "none" : "block",
+              }}
             >
               {soal.question_order}.
             </Typography>
@@ -239,6 +258,7 @@ const SoalPertanyaanTkk = ({
                       minHeight: "10px",
                       height: "auto",
                       textWrap: "wrap",
+                      display: startAnswer ? "block" : "none",
                     }}
                   />
                 ) : (
@@ -351,7 +371,13 @@ const SoalPertanyaanTkk = ({
             </Box>
           ) : (
             <>
-              <Divider sx={{ marginTop: 3, marginBottom: 3 }} />
+              <Divider
+                sx={{
+                  marginTop: 3,
+                  marginBottom: 3,
+                  display: (soal as SoalExamLS1).answer_type === 3 ? "none" : "block",
+                }}
+              />
               <Box
                 sx={{
                   display: "flex",
@@ -371,21 +397,29 @@ const SoalPertanyaanTkk = ({
                       {startAnswer === false ? (
                         <span
                           dangerouslySetInnerHTML={{
-                            __html: (soal as SoalExamLS1).intro_data[indexMemorySpan].question_content,
+                            __html:
+                              (soal as SoalExamLS1).intro_data[indexMemorySpan].intro_type !== 2
+                                ? (soal as SoalExamLS1).intro_data[indexMemorySpan].question_content
+                                : (soal as SoalExamLS1).intro_data[indexMemorySpan].instruction,
                           }}
                           style={{ fontSize: fontSize + 5, fontWeight: "bold", alignSelf: "center" }}
                         />
                       ) : (
-                        (soal as SoalExamLS1).intro_data.map((answer, index) => (
-                          <Grid item sx={{ display: "flex", alignItems: "center" }} key={index}>
-                            <TextField
-                              variant="filled"
-                              title={"urutan" + answer.showing_order.toString()}
-                              inputProps={{ "data-state": answer.showing_order }}
-                              onChange={handleEditMemorySpan}
-                            />
-                          </Grid>
-                        ))
+                        (soal as SoalExamLS1).intro_data
+                          .filter((ar) => ar.intro_type !== 2)
+                          .map((answer, index) => (
+                            <Grid item sx={{ display: "flex", alignItems: "center" }} key={index}>
+                              <TextField
+                                variant="filled"
+                                title={"urutan" + answer.showing_order.toString()}
+                                inputProps={{
+                                  "data-state": answer.showing_order,
+                                  style: { textTransform: "uppercase" },
+                                }}
+                                onChange={handleEditMemorySpan}
+                              />
+                            </Grid>
+                          ))
                       )}
                     </Grid>
                   </>

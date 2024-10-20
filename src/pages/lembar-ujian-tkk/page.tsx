@@ -41,6 +41,7 @@ const LembarUjianTkk: React.FC = () => {
   const [finalQuestion, setFinalQuestion] = useState(false)
   const [selectedAnswer, setSelectedAnswer] = useState<{ content: string; value: number } | null>(null)
   const [selectedMultipleAnswer, setSelectedMultipleAnswer] = useState<string[]>([])
+  const [disabledNextButton, setDisabledNextButton] = useState(false)
 
   const { leftExamBeforeFinishMutation, updateExamActivityMutation, finishExamMutation, submitJawabanMutation } =
     useExamMutation()
@@ -134,7 +135,7 @@ const LembarUjianTkk: React.FC = () => {
         checkQuestionAvailable()
 
         // NOTE: only for testing
-        // setIndexSubtestActiveTkk(9)
+        // setIndexSubtestActiveTkk(0)
         // setCurrentQuestionIndex(0)
       }
       // setFinalQuestion(false)
@@ -339,6 +340,9 @@ const LembarUjianTkk: React.FC = () => {
                       }
                       subtestName={soal.narrow_data.name}
                       nextQuestion={handleJawab}
+                      setDisableNextButton={(val) => {
+                        setDisabledNextButton(val)
+                      }}
                     />
                   )}
                   {soal.question_type === 1 && (
@@ -368,12 +372,19 @@ const LembarUjianTkk: React.FC = () => {
                         ""
                       }
                       subtestName={soal.narrow_data.name}
+                      setDisableNextButton={(val) => {
+                        setDisabledNextButton(val)
+                      }}
                     />
                   )}
                 </>
               )}
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "98%" }}>
-                <Button color="info" onClick={handleJawab}>
+                <Button
+                  color={disabledNextButton ? "primary" : "info"}
+                  onClick={handleJawab}
+                  disabled={disabledNextButton}
+                >
                   {soal?.question_type === 2 || soal?.question_type === 3
                     ? "Lanjutkan"
                     : finalQuestion
