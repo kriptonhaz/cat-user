@@ -29,4 +29,8 @@ export const ExamData: IExamData[] = [
     examName: "Visualization",
     examUuid: "c0ee45a2-54d2-4d0f-ba98-88dab74c39ae",
   },
+  {
+    examName: "Language Development",
+    examUuid: "c0f4d42d-e462-4b09-82d6-58d06bae7bac",
+  },
 ]

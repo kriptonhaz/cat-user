@@ -151,6 +151,11 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                 ? 0
                 : 40,
             display: "flex",
+            flexDirection:
+              (question as SoalExamLS1).subtest_model_uuid ===
+              ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+                ? "row"
+                : "column",
             justifyContent:
               (question as SoalExamLS1).subtest_model_uuid ===
               ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid

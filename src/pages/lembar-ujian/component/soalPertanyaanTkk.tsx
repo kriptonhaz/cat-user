@@ -247,6 +247,12 @@ const SoalPertanyaanTkk = ({
                       minHeight: "10px",
                       height: "auto",
                       textWrap: "wrap",
+                      display: "flex",
+                      flexDirection:
+                        (soal as SoalExamLS1).subtest_model_uuid ===
+                        ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+                          ? "row"
+                          : "column",
                     }}
                   />
                 )}
