@@ -218,6 +218,11 @@ const SoalPertanyaanTkk = ({
                       ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid
                       ? "column"
                       : "row",
+                  justifyContent:
+                    (soal as SoalExamLS1).subtest_model_uuid ===
+                    ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+                      ? "center"
+                      : "flex-start",
                 }}
               >
                 {(soal as SoalExamLS1).answer_type === 3 ? (
