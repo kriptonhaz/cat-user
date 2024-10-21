@@ -65,7 +65,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
   useEffect(() => {
     if (question.answer_type === 3 && timerMemorySpan === 0 && startTimer) {
       const maxMemory = question.intro_data.length
-      if (indexMemorySpan < maxMemory - 1) {
+      if (indexMemorySpan < maxMemory - 1 && startAnswer === false) {
         setIndexMemorySpan(indexMemorySpan + 1)
         setTimerMemorySpan(question.intro_data[indexMemorySpan + 1].timer)
       } else if (startAnswer === false) {
