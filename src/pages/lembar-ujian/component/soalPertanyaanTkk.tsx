@@ -284,8 +284,8 @@ const SoalPertanyaanTkk = ({
 
                 <br />
                 {(soal as SoalExamLS1).image_path_cat &&
-                  (soal as SoalExamLS1).subtest_model_uuid ===
-                    ExamData.filter((ar) => ar.examName !== "Visualization")[0].examUuid && (
+                  (soal as SoalExamLS1).subtest_model_uuid !==
+                    ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid && (
                     <Box
                       sx={{
                         width: "100%",
