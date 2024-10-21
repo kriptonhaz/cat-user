@@ -358,8 +358,8 @@ const SoalPertanyaanTkk = ({
                         alt={"Answer image"}
                         style={{
                           marginTop: "8px",
-                          width: "90%",
-                          height: "90%",
+                          width: "auto",
+                          height: "20vh",
                           alignSelf: "center",
                           marginBottom: "8px",
                         }}
