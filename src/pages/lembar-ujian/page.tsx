@@ -222,7 +222,7 @@ const LembarUjian = () => {
           }
           // Refetch after updating the state
           refetchQuestionResponseByActivity()
-        } else if (timerUjian?.data.timer_type === 1 && params.activityId) {
+        } else if (params.activityId) {
           finishMutation.mutate({ activityUuid: params.activityId })
         }
       }
