@@ -239,6 +239,7 @@ const LembarUjian = () => {
           let notAnsweredQuestion = 0
           if (soalExamAvailable?.data) {
             notAnsweredQuestion =
+              // @ts-ignore
               soalExamAvailable.data.filter((ar) => ar.question_type === 1).length -
               (questionResponseByActivity?.data?.length || 0)
           }
