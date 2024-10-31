@@ -327,37 +327,49 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
             </Box>
             {(soal as SoalExamLS1).subtest_model_uuid ===
             ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid ? (
-              <Box display={"flex"} flexDirection={"row"}>
-                {(soal as SoalExamLS1).image_path_cat && (
-                  <Box
-                    sx={{
-                      // width: `${20 * (fontSize / 22)}%`,
-                      objectFit: "contain",
-                      height: "auto",
-                      marginBottom: 4,
-                      display: "flex",
-                      justifyContent:
-                        (soal as SoalExamLS1).subtest_model_uuid ===
-                        ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
-                          ? "center"
-                          : "flex-start",
-                    }}
-                  >
-                    <img
-                      src={import.meta.env.VITE_API_URL + (soal as SoalExamLS1).image_path_cat}
-                      alt={"Answer image"}
-                      style={{
-                        marginTop: "8px",
-                        width: "100%",
+              <Grid container spacing={2} sx={{ overflow: "hidden", mt: 4 }}>
+                <Grid item xs={12} lg={4}>
+                  {(soal as SoalExamLS1).image_path_cat && (
+                    <Box
+                      sx={{
+                        // width: `${20 * (fontSize / 22)}%`,
                         objectFit: "contain",
+                        height: "auto",
+                        marginBottom: 4,
+                        display: "flex",
+                        borderRight: "1px solid #ccc",
+                        justifyContent:
+                          (soal as SoalExamLS1).subtest_model_uuid ===
+                          ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
+                            ? "center"
+                            : "flex-start",
                       }}
-                    />
-                  </Box>
-                )}
-                <Divider orientation="vertical" flexItem sx={{ mx: 5 }} />
-                <Grid container gap={2} mt={2} columnGap={8} sx={{ height: "auto", overflow: "scroll" }}>
+                    >
+                      <img
+                        src={import.meta.env.VITE_API_URL + (soal as SoalExamLS1).image_path_cat}
+                        alt={"Answer image"}
+                        style={{
+                          marginTop: "8px",
+                          width: "100%",
+                          objectFit: "contain",
+                          transform: `scale(${(1 * fontSize) / 22})`,
+                        }}
+                      />
+                    </Box>
+                  )}
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  lg={8}
+                  container
+                  gap={2}
+                  mt={2}
+                  columnSpacing={8}
+                  sx={{ height: "auto", overflow: "scroll" }}
+                >
                   {(soal as SoalExamLS1).answer_data.map((answer, index) => (
-                    <Grid key={index} item xs={12} md={6 * (fontSize / 22)} lg={3 * (fontSize / 22)}>
+                    <Grid key={index} item xs={12} md={6 * (fontSize / 22)} lg={3.5 * (fontSize / 22)}>
                       <Box
                         sx={{
                           width: "100%",
@@ -390,7 +402,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                     </Grid>
                   ))}
                 </Grid>
-              </Box>
+              </Grid>
             ) : (
               <>
                 {(soal as SoalExamLS1).subtest_model_uuid !==

@@ -207,32 +207,47 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
         )}
       {(question as SoalExamLS1).subtest_model_uuid ===
       ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid ? (
-        <Box display={"flex"} flexDirection={"row"}>
-          {(question as SoalExamLS1).image_path_cat && (
-            <Box
-              sx={{
-                width: `${20 * (fontSize / 22)}%`,
-                height: "auto",
-                marginBottom: 4,
-                display: "flex",
-                justifyContent:
-                  (question as SoalExamLS1).subtest_model_uuid ===
-                  ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
-                    ? "center"
-                    : "flex-start",
-              }}
-            >
-              <img
-                src={import.meta.env.VITE_API_URL + (question as SoalExamLS1).image_path_cat}
-                alt={"Answer image"}
-                style={{ marginTop: "8px", width: "100%", height: "100%" }}
-              />
-            </Box>
-          )}
-          <Divider orientation="vertical" flexItem sx={{ mx: 5 }} />
-          <Grid container gap={2} mt={2} columnGap={8} sx={{ height: "auto", overflow: "scroll" }}>
+        <Grid container spacing={2} sx={{ overflow: "hidden", mt: 4 }}>
+          <Grid item xs={12} lg={4}>
+            {(question as SoalExamLS1).image_path_cat && (
+              <Box
+                sx={{
+                  height: "auto",
+                  marginBottom: 4,
+                  display: "flex",
+                  borderRight: "1px solid #ccc",
+                  justifyContent:
+                    (question as SoalExamLS1).subtest_model_uuid ===
+                    ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
+                      ? "center"
+                      : "flex-start",
+                }}
+              >
+                <img
+                  src={import.meta.env.VITE_API_URL + (question as SoalExamLS1).image_path_cat}
+                  alt={"Answer image"}
+                  style={{
+                    width: "80%",
+                    margin: "8px auto",
+                    height: "100%",
+                    transform: `scale(${(1 * fontSize) / 22})`,
+                  }}
+                />
+              </Box>
+            )}
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            lg={8}
+            container
+            gap={2}
+            mt={2}
+            columnSpacing={8}
+            sx={{ height: "auto", overflow: "scroll" }}
+          >
             {(question as SoalExamLS1).answer_data.map((answer, index) => (
-              <Grid key={index} item xs={12} md={6} lg={3 * (fontSize / 22)}>
+              <Grid key={index} item xs={12} md={6} lg={3.5 * (fontSize / 22)}>
                 <Box
                   sx={{
                     width: "100%",
@@ -270,7 +285,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
               </Grid>
             ))}
           </Grid>
-        </Box>
+        </Grid>
       ) : (
         <>
           <Divider sx={{ my: 3 }} />

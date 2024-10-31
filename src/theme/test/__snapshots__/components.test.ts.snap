@@ -616,69 +616,6 @@ exports[`Theme Component > should match snapshot 1`] = `
       },
     },
   },
-  "MuiTableBody": {
-    "styleOverrides": {
-      "root": {
-        "& .MuiTableRow-root .MuiTableCell-root": {
-          "color": "#44403c",
-        },
-        "& .MuiTableRow-root .MuiTableCell-root svg": {
-          "width": "17px",
-        },
-        "&.hoverable .MuiTableRow-root:hover": {
-          "& .MuiTableCell-root": {
-            "color": "#1c1917",
-          },
-          "backgroundColor": "#d9fcfc",
-          "cursor": "pointer",
-        },
-      },
-    },
-  },
-  "MuiTableCell": {
-    "styleOverrides": {
-      "root": {
-        "& .MuiIconButton-root.MuiButtonBase-root": {
-          "& svg": {
-            "color": "#78716c",
-            "left": "50%",
-            "position": "absolute",
-            "top": "50%",
-            "transform": "translate(-50%, -50%) scale(.9)",
-          },
-          "borderRadius": "4px",
-          "height": "28px",
-          "padding": "0",
-          "width": "28px",
-        },
-        "& .MuiIconButton-root.MuiButtonBase-root:hover": {
-          "& svg": {
-            "color": "#0077AA",
-          },
-          "background": "#C8F9FA",
-        },
-        "& a": {
-          "color": "#44403c",
-        },
-        "borderBottom": "1px solid #e7e5e4",
-        "fontSize": "14px",
-        "fontWeight": 500,
-        "height": "54px",
-        "padding": "0px 16px",
-      },
-    },
-  },
-  "MuiTableHead": {
-    "styleOverrides": {
-      "root": {
-        "& .MuiTableRow-root .MuiTableCell-root": {
-          "borderTop": "1px solid #e7e5e4",
-          "color": "#44403c",
-          "fontSize": "12px",
-        },
-      },
-    },
-  },
   "MuiTextField": {
     "styleOverrides": {
       "root": {
