@@ -24,7 +24,7 @@ const CardTimer = ({
         width: "98%",
         border: "0.5px solid #ccc",
         boxShadow: 3,
-        borderRadius: 2,
+        borderRadius: 0,
         transition: "0.3s",
         "&:hover": {
           boxShadow: 6,
