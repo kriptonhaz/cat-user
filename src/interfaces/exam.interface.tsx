@@ -665,6 +665,8 @@ interface SubtestModelData {
   can_go_back: boolean
   create_by: string
   narrow_data: NarrowData
+  show_countdown_timer: boolean
+  show_usage_timer: boolean
 }
 export interface TkkData {
   ID: number

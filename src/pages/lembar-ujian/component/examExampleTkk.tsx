@@ -25,6 +25,7 @@ interface ExamExampleTkkProps {
   subtestName?: string
   nextQuestion: () => void
   setDisableNextButton?: (val: boolean) => void
+  showTimer?: boolean
 }
 
 const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
@@ -35,6 +36,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
   subtestName,
   nextQuestion,
   setDisableNextButton,
+  showTimer = true,
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [selectedAnswerMultiple, setSelectedAnswerMultiple] = useState<
@@ -131,9 +133,11 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Typography variant="h6">
-          Sisa Waktu: {formatTime(question.answer_type === 3 ? timerMemorySpan : remainingTime)}
-        </Typography>
+        {showTimer && (
+          <Typography variant="h6">
+            Sisa Waktu: {formatTime(question.answer_type === 3 ? timerMemorySpan : remainingTime)}
+          </Typography>
+        )}
         <Box>
           <Box display={"flex"} justifyContent={"space-between"} width={140}>
             <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />

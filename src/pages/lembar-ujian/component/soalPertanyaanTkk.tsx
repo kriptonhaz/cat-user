@@ -35,6 +35,7 @@ export interface ISoalPertanyaanTkk {
   fontSize: number
   onIncreaseFont: () => void
   onDecreaseFont: () => void
+  showTimer?: boolean
 }
 
 const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDivElement, ISoalPertanyaanTkk>(
@@ -51,6 +52,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
       fontSize,
       onIncreaseFont,
       onDecreaseFont,
+      showTimer = true,
     } = props
     const [answerMemorySpan, setAnswerMemorySpan] = useState<Array<{ order: number; content: string }>>([])
     const [startTimer, setStartTimer] = useState(false)
@@ -184,9 +186,11 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
             {(soal as SoalExamLS1).subtest_model_uuid !==
               ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid && (
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Typography variant="h6">
-                  Sisa Waktu: {formatTime((soal as SoalExamLS1).answer_type === 3 ? timerMemorySpan : remainingTime)}
-                </Typography>
+                {showTimer && (
+                  <Typography variant="h6">
+                    Sisa Waktu: {formatTime((soal as SoalExamLS1).answer_type === 3 ? timerMemorySpan : remainingTime)}
+                  </Typography>
+                )}
                 <Box sx={timerType === 2 ? { width: "250px", display: "flex", justifyContent: "space-between" } : {}}>
                   <Box display={"flex"} justifyContent={"space-between"} width={140}>
                     <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />
