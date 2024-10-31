@@ -550,6 +550,10 @@ const LembarUjianTkk: React.FC = () => {
                         handleJawab={handleJawab}
                         total_consume_time={activityExam?.data.total_consume_time || 0}
                         remainingTime={remainingTime}
+                        showTimer={
+                          typeof indexSubtestActiveTkk === "number" &&
+                          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_usage_timer
+                        }
                       />
                     )}
                 </CardContent>

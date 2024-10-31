@@ -14,6 +14,7 @@ const TimerAndWebcam = ({
   handleJawab,
   total_consume_time,
   remainingTime,
+  showTimer = true,
 }: {
   tipeTimer: number
   waktu: number
@@ -23,6 +24,7 @@ const TimerAndWebcam = ({
   handleJawab: () => void
   total_consume_time: number
   remainingTime: number
+  showTimer?: boolean
 }) => {
   const [isWebcamError, setIsWebcamError] = useState(true)
   const [elapsedTime, setElapsedTime] = useState(total_consume_time)
@@ -108,9 +110,11 @@ const TimerAndWebcam = ({
           />
         </Box>
       </Box>
-      <Box sx={{ display: "flex", mt: 5, justifyContent: "right" }}>
-        <Typography variant="subtitle1">Waktu yang digunakan: {formatTime(elapsedTime)}</Typography>
-      </Box>
+      {showTimer && (
+        <Box sx={{ display: "flex", mt: 5, justifyContent: "right" }}>
+          <Typography variant="subtitle1">Waktu yang digunakan: {formatTime(elapsedTime)}</Typography>
+        </Box>
+      )}
     </>
   )
 }
