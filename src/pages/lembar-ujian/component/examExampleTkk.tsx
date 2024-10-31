@@ -127,6 +127,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
           ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid
             ? "82vh"
             : undefined,
+        overflow: "scroll !important",
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -182,8 +183,8 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
           <Box
             sx={{
               width: "100%",
-              height: "145px",
-              maxHeight: "200px",
+              // height: "auto",
+              // maxHeight: "200px",
               marginBottom: 4,
               display: "flex",
               justifyContent:
@@ -196,7 +197,11 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
             <img
               src={import.meta.env.VITE_API_URL + (question as SoalExamLS1).image_path_cat}
               alt={"Answer image"}
-              style={{ marginTop: "8px", width: "auto", height: "100%" }}
+              style={{
+                marginTop: "8px",
+                width: "auto",
+                height: "auto",
+              }}
             />
           </Box>
         )}
@@ -206,8 +211,8 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
           {(question as SoalExamLS1).image_path_cat && (
             <Box
               sx={{
-                width: "25%",
-                height: "45vh",
+                width: `${20 * (fontSize / 22)}%`,
+                height: "auto",
                 marginBottom: 4,
                 display: "flex",
                 justifyContent:
@@ -225,11 +230,12 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
             </Box>
           )}
           <Divider orientation="vertical" flexItem sx={{ mx: 5 }} />
-          <Grid container gap={2} mt={2} columnGap={8}>
+          <Grid container gap={2} mt={2} columnGap={8} sx={{ height: "auto", overflow: "scroll" }}>
             {(question as SoalExamLS1).answer_data.map((answer, index) => (
-              <Grid key={index} item xs={12} md={6} lg={3}>
+              <Grid key={index} item xs={12} md={6} lg={3 * (fontSize / 22)}>
                 <Box
                   sx={{
+                    width: "100%",
                     display: "flex",
                     alignItems: "flex-start",
                     flexDirection: "column",
@@ -252,7 +258,13 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                   <img
                     src={import.meta.env.VITE_API_URL + answer.image_path_cat}
                     alt={"Answer image"}
-                    style={{ marginTop: "8px", width: "90%", height: "90%", alignSelf: "center", marginBottom: "8px" }}
+                    style={{
+                      marginTop: "8px",
+                      width: "90%",
+                      height: "90%",
+                      alignSelf: "center",
+                      marginBottom: "8px",
+                    }}
                   />
                 </Box>
               </Grid>

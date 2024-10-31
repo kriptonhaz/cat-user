@@ -177,11 +177,12 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid
                 ? "82vh"
                 : undefined,
+            overflow: "scroll !important",
           }}
         >
           <CardContent>
-            {(soal as SoalExamLS1).subtest_model_uuid ===
-              ExamData.filter((ar) => ar.examName !== "Number Facility")[0].examUuid && (
+            {(soal as SoalExamLS1).subtest_model_uuid !==
+              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid && (
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Typography variant="h6">
                   Sisa Waktu: {formatTime((soal as SoalExamLS1).answer_type === 3 ? timerMemorySpan : remainingTime)}
@@ -195,11 +196,11 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               </Box>
             )}
 
-            {(soal as SoalExamLS1).subtest_model_uuid ===
-              ExamData.filter((ar) => ar.examName !== "Number Facility")[0].examUuid && <Divider sx={{ my: 3 }} />}
+            {(soal as SoalExamLS1).subtest_model_uuid !==
+              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid && <Divider sx={{ my: 3 }} />}
 
-            {(soal as SoalExamLS1).subtest_model_uuid ===
-              ExamData.filter((ar) => ar.examName !== "Number Facility")[0].examUuid &&
+            {(soal as SoalExamLS1).subtest_model_uuid !==
+              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid &&
               subtestNumber !== undefined &&
               subtestName !== undefined && (
                 <Typography variant="h6" sx={{ fontSize: fontSize, mb: 3 }}>
@@ -330,8 +331,9 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                 {(soal as SoalExamLS1).image_path_cat && (
                   <Box
                     sx={{
-                      width: "25%",
-                      height: "45vh",
+                      // width: `${20 * (fontSize / 22)}%`,
+                      objectFit: "contain",
+                      height: "auto",
                       marginBottom: 4,
                       display: "flex",
                       justifyContent:
@@ -344,21 +346,26 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                     <img
                       src={import.meta.env.VITE_API_URL + (soal as SoalExamLS1).image_path_cat}
                       alt={"Answer image"}
-                      style={{ marginTop: "8px", width: "100%", height: "100%" }}
+                      style={{
+                        marginTop: "8px",
+                        width: "100%",
+                        objectFit: "contain",
+                      }}
                     />
                   </Box>
                 )}
                 <Divider orientation="vertical" flexItem sx={{ mx: 5 }} />
-                <Grid container gap={2} mt={2} columnGap={8}>
+                <Grid container gap={2} mt={2} columnGap={8} sx={{ height: "auto", overflow: "scroll" }}>
                   {(soal as SoalExamLS1).answer_data.map((answer, index) => (
-                    <Grid key={index} item xs={12} md={6} lg={3}>
+                    <Grid key={index} item xs={12} md={6 * (fontSize / 22)} lg={3 * (fontSize / 22)}>
                       <Box
                         sx={{
+                          width: "100%",
                           display: "flex",
                           alignItems: "flex-start",
                           flexDirection: "column",
                           cursor: "pointer",
-                          minHeight: "27vh",
+                          // minHeight: "27vh",
                           backgroundColor: selectedAnswer?.content === answer.uuid ? "#c5e89e" : undefined,
                         }}
                         onClick={() => {
@@ -372,10 +379,11 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                           alt={"Answer image"}
                           style={{
                             marginTop: "8px",
-                            width: "auto",
-                            height: "20vh",
+                            width: "100%",
+                            // height: "90%",
                             alignSelf: "center",
                             marginBottom: "8px",
+                            objectFit: "contain",
                           }}
                         />
                       </Box>
@@ -385,8 +393,8 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               </Box>
             ) : (
               <>
-                {(soal as SoalExamLS1).subtest_model_uuid ===
-                  ExamData.filter((ar) => ar.examName !== "Number Facility")[0].examUuid && (
+                {(soal as SoalExamLS1).subtest_model_uuid !==
+                  ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid && (
                   <Divider
                     sx={{
                       marginTop: 3,
