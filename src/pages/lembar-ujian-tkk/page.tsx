@@ -2,17 +2,20 @@ import { useExamHooks } from "@/hooks/useExamHooks"
 import { Box, Button, Card, CardContent, Grid, Typography } from "@mui/material"
 import { useLocation, useParams } from "react-router-dom"
 import TimerAndWebcam from "../lembar-ujian/component/timerAndWebcam"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import ExamInstruction from "../lembar-ujian/component/examInstruction"
 import { useExamMutation } from "@/mutations/exam.mutation"
 import ExamExampleTkk from "../lembar-ujian/component/examExampleTkk"
 import SoalPertanyaanTkk, { answer } from "../lembar-ujian/component/soalPertanyaanTkk"
 import { getExamActivityByModule, getSoalExamByModule } from "@/service/exam.service"
+import CardTimer from "../lembar-ujian/component/cardTimer"
+import { ExamData } from "../lembar-ujian/component/exam-data"
 
 const LembarUjianTkk: React.FC = () => {
   const location = useLocation()
   const params = useParams()
+  const ref = useRef<HTMLDivElement>(null)
   const { queryActivityExam, queryGetSoalExamByModule, queryGetDataTkk, queryGetQuestionResponseByActivity } =
     useExamHooks()
   const { data: activityExam } = queryActivityExam(params.examId, params.moduleId)
@@ -42,6 +45,8 @@ const LembarUjianTkk: React.FC = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<{ content: string; value: number } | null>(null)
   const [selectedMultipleAnswer, setSelectedMultipleAnswer] = useState<string[]>([])
   const [disabledNextButton, setDisabledNextButton] = useState(false)
+  const [fontSize, setFontSize] = useState(22)
+  const [selectedQuestionNumber, setSelectedQuestionNumber] = useState<string | null>(null)
 
   const { leftExamBeforeFinishMutation, updateExamActivityMutation, finishExamMutation, submitJawabanMutation } =
     useExamMutation()
@@ -192,29 +197,20 @@ const LembarUjianTkk: React.FC = () => {
     }
   }, [soalExamAvailable, currentQuestionIndex, dataTkk])
 
+  const onIncreaseFont = () => {
+    setFontSize(fontSize + 1)
+  }
+
+  const onDecreaseFont = () => {
+    setFontSize(fontSize - 1)
+  }
+
   const handleNextQuestion = () => {
     if (selectedAnswer) {
       handleJawab()
     } else {
       nextQuestionAfterSubmit()
     }
-
-    // if (selectedAnswer) {
-    //   handleJawab()
-    // } else if (soalExamAvailable?.data) {
-    //   const nextIndex = currentQuestionIndex + 1
-    //   if (nextIndex < soalExamAvailable.data.length) {
-    //     setSoal(soalExamAvailable.data[nextIndex])
-    //     setCurrentQuestionIndex(nextIndex)
-    //     setFinalQuestion(nextIndex === soalExamAvailable.data.length - 1)
-    //     if (timerUjian?.data.timer_type === 1) {
-    //       setTimer(soalExamAvailable.data[nextIndex].timer)
-    //     }
-    //   }
-    //   if (timerUjian?.data.timer_type === 1 && nextIndex === soalExamAvailable.data.length && params.activityId) {
-    //     finishMutation.mutate({ activityUuid: params.activityId })
-    //   }
-    // }
   }
 
   const handlePreviousQuestion = () => {
@@ -346,20 +342,9 @@ const LembarUjianTkk: React.FC = () => {
                     />
                   )}
                   {soal.question_type === 1 && (
-                    <SoalPertanyaanTkk
-                      soal={soal}
-                      setAnswer={(answer: answer) => {
-                        if ((soal as SoalExamLS1).total_answer_should_have_for_true === 1) {
-                          setSelectedAnswer(answer)
-                        } else {
-                          if (selectedMultipleAnswer.filter((ar) => ar === answer.content).length > 0) {
-                            setSelectedMultipleAnswer(selectedMultipleAnswer.filter((ar) => ar !== answer.content))
-                          } else {
-                            setSelectedMultipleAnswer([...selectedMultipleAnswer, answer.content])
-                          }
-                        }
-                      }}
-                      selectedAnswer={selectedAnswer}
+                    <CardTimer
+                      onIncreaseFont={onIncreaseFont}
+                      onDecreaseFont={onDecreaseFont}
                       remainingTime={remainingTime}
                       timerType={
                         (typeof indexSubtestActiveTkk === "number" &&
@@ -372,11 +357,94 @@ const LembarUjianTkk: React.FC = () => {
                         ""
                       }
                       subtestName={soal.narrow_data.name}
-                      setDisableNextButton={(val) => {
-                        setDisabledNextButton(val)
-                      }}
                     />
                   )}
+                  {(soal as SoalExamLS1).subtest_model_uuid ===
+                    ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid &&
+                    soal.question_type === 1 &&
+                    soalExamAvailable?.data
+                      .filter((ar) => ar.question_type === 1)
+                      .map((item) => {
+                        return (
+                          <>
+                            <SoalPertanyaanTkk
+                              key={(item as SoalExamLS1).uuid}
+                              // @ts-ignore
+                              ref={selectedQuestionNumber === (item as SoalExamLS1).uuid ? ref : undefined}
+                              soal={item}
+                              fontSize={fontSize}
+                              onIncreaseFont={onIncreaseFont}
+                              onDecreaseFont={onDecreaseFont}
+                              setAnswer={(answer: answer) => {
+                                if ((soal as SoalExamLS1).total_answer_should_have_for_true === 1) {
+                                  setSelectedAnswer(answer)
+                                } else {
+                                  if (selectedMultipleAnswer.filter((ar) => ar === answer.content).length > 0) {
+                                    setSelectedMultipleAnswer(
+                                      selectedMultipleAnswer.filter((ar) => ar !== answer.content)
+                                    )
+                                  } else {
+                                    setSelectedMultipleAnswer([...selectedMultipleAnswer, answer.content])
+                                  }
+                                }
+                              }}
+                              selectedAnswer={selectedAnswer}
+                              remainingTime={remainingTime}
+                              timerType={
+                                (typeof indexSubtestActiveTkk === "number" &&
+                                  dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type) ||
+                                0
+                              }
+                              subtestNumber={
+                                (typeof indexSubtestActiveTkk === "number" &&
+                                  dataTkk?.data.detail_data[indexSubtestActiveTkk].name) ||
+                                ""
+                              }
+                              subtestName={soal.narrow_data.name}
+                              setDisableNextButton={(val) => {
+                                setDisabledNextButton(val)
+                              }}
+                            />
+                          </>
+                        )
+                      })}
+                  {(soal as SoalExamLS1).subtest_model_uuid ===
+                    ExamData.filter((ar) => ar.examName !== "Number Facility")[0].examUuid &&
+                    soal.question_type === 1 && (
+                      <SoalPertanyaanTkk
+                        soal={soal}
+                        fontSize={fontSize}
+                        onIncreaseFont={onIncreaseFont}
+                        onDecreaseFont={onDecreaseFont}
+                        setAnswer={(answer: answer) => {
+                          if ((soal as SoalExamLS1).total_answer_should_have_for_true === 1) {
+                            setSelectedAnswer(answer)
+                          } else {
+                            if (selectedMultipleAnswer.filter((ar) => ar === answer.content).length > 0) {
+                              setSelectedMultipleAnswer(selectedMultipleAnswer.filter((ar) => ar !== answer.content))
+                            } else {
+                              setSelectedMultipleAnswer([...selectedMultipleAnswer, answer.content])
+                            }
+                          }
+                        }}
+                        selectedAnswer={selectedAnswer}
+                        remainingTime={remainingTime}
+                        timerType={
+                          (typeof indexSubtestActiveTkk === "number" &&
+                            dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type) ||
+                          0
+                        }
+                        subtestNumber={
+                          (typeof indexSubtestActiveTkk === "number" &&
+                            dataTkk?.data.detail_data[indexSubtestActiveTkk].name) ||
+                          ""
+                        }
+                        subtestName={soal.narrow_data.name}
+                        setDisableNextButton={(val) => {
+                          setDisabledNextButton(val)
+                        }}
+                      />
+                    )}
                 </>
               )}
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "98%" }}>
@@ -387,7 +455,10 @@ const LembarUjianTkk: React.FC = () => {
                 >
                   {soal?.question_type === 2 || soal?.question_type === 3
                     ? "Lanjutkan"
-                    : finalQuestion
+                    : finalQuestion ||
+                      (soal &&
+                        (soal as SoalExamLS1).subtest_model_uuid ===
+                          ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid)
                     ? "Selesai"
                     : "Simpan dan Lanjutkan"}
                 </Button>
@@ -410,7 +481,23 @@ const LembarUjianTkk: React.FC = () => {
             </>
           </Box>
         </Grid>
-        <Grid item xs={12} md={3} sx={{ mt: 10, height: "90vh", overflow: "auto" }}>
+        <Grid
+          item
+          xs={12}
+          md={3}
+          sx={{
+            mt: 10,
+            height: "90vh",
+            overflow: "auto",
+            position:
+              soal &&
+              (soal as SoalExamLS1).subtest_model_uuid ===
+                ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+                ? "sticky"
+                : "relative",
+            top: "70px",
+          }}
+        >
           <Box>
             <Grid
               sx={{
@@ -582,6 +669,21 @@ const LembarUjianTkk: React.FC = () => {
                                   border: "1px solid #4828A3",
                                 }}
                                 onClick={() => {
+                                  if (
+                                    (soal as SoalExamLS1).subtest_model_uuid ===
+                                    ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+                                  ) {
+                                    setSelectedQuestionNumber((item as SoalExamLS1).uuid)
+                                    setTimeout(() => {
+                                      if (ref) {
+                                        ref?.current?.scrollIntoView({
+                                          behavior: "smooth",
+                                          block: "center",
+                                          inline: "nearest",
+                                        })
+                                      }
+                                    }, 500)
+                                  }
                                   // @ts-ignore
                                   // const onlyExam = soalExamAvailable.data.filter((ar) => ar.question_type === 1)
                                   // if (timerUjian?.data.timer_type !== 1) {
