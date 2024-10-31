@@ -11,6 +11,7 @@ interface ExamInstructionProps {
   showInstructionLabel?: boolean
   subtestNumber?: string
   subtestName?: string
+  showTimer?: boolean
 }
 
 const ExamInstruction: React.FC<ExamInstructionProps> = ({
@@ -21,6 +22,7 @@ const ExamInstruction: React.FC<ExamInstructionProps> = ({
   showInstructionLabel = false,
   subtestNumber,
   subtestName,
+  showTimer = true,
 }) => {
   const [fontSize, setFontSize] = useState(22)
 
@@ -47,7 +49,7 @@ const ExamInstruction: React.FC<ExamInstructionProps> = ({
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
+        {showTimer && <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>}
         <Box>
           <Box display={"flex"} justifyContent={"space-between"} width={140}>
             <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />

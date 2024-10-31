@@ -322,6 +322,10 @@ const LembarUjianTkk: React.FC = () => {
                         ""
                       }
                       subtestName={soal.narrow_data.name}
+                      showTimer={
+                        typeof indexSubtestActiveTkk === "number" &&
+                        dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_countdown_timer
+                      }
                     />
                   )}
                   {soal.question_type === 2 && (
@@ -339,6 +343,10 @@ const LembarUjianTkk: React.FC = () => {
                       setDisableNextButton={(val) => {
                         setDisabledNextButton(val)
                       }}
+                      showTimer={
+                        typeof indexSubtestActiveTkk === "number" &&
+                        dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_countdown_timer
+                      }
                     />
                   )}
                   {soal.question_type === 1 &&
@@ -406,6 +414,10 @@ const LembarUjianTkk: React.FC = () => {
                               setDisableNextButton={(val) => {
                                 setDisabledNextButton(val)
                               }}
+                              showTimer={
+                                typeof indexSubtestActiveTkk === "number" &&
+                                dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_countdown_timer
+                              }
                             />
                           </>
                         )
@@ -445,6 +457,10 @@ const LembarUjianTkk: React.FC = () => {
                         setDisableNextButton={(val) => {
                           setDisabledNextButton(val)
                         }}
+                        showTimer={
+                          typeof indexSubtestActiveTkk === "number" &&
+                          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_countdown_timer
+                        }
                       />
                     )}
                 </>
@@ -534,6 +550,10 @@ const LembarUjianTkk: React.FC = () => {
                         handleJawab={handleJawab}
                         total_consume_time={activityExam?.data.total_consume_time || 0}
                         remainingTime={remainingTime}
+                        showTimer={
+                          typeof indexSubtestActiveTkk === "number" &&
+                          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_usage_timer
+                        }
                       />
                     )}
                 </CardContent>
