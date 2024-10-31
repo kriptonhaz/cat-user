@@ -341,24 +341,26 @@ const LembarUjianTkk: React.FC = () => {
                       }}
                     />
                   )}
-                  {soal.question_type === 1 && (
-                    <CardTimer
-                      onIncreaseFont={onIncreaseFont}
-                      onDecreaseFont={onDecreaseFont}
-                      remainingTime={remainingTime}
-                      timerType={
-                        (typeof indexSubtestActiveTkk === "number" &&
-                          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type) ||
-                        0
-                      }
-                      subtestNumber={
-                        (typeof indexSubtestActiveTkk === "number" &&
-                          dataTkk?.data.detail_data[indexSubtestActiveTkk].name) ||
-                        ""
-                      }
-                      subtestName={soal.narrow_data.name}
-                    />
-                  )}
+                  {soal.question_type === 1 &&
+                    (soal as SoalExamLS1).subtest_model_uuid ===
+                      ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid && (
+                      <CardTimer
+                        onIncreaseFont={onIncreaseFont}
+                        onDecreaseFont={onDecreaseFont}
+                        remainingTime={remainingTime}
+                        timerType={
+                          (typeof indexSubtestActiveTkk === "number" &&
+                            dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type) ||
+                          0
+                        }
+                        subtestNumber={
+                          (typeof indexSubtestActiveTkk === "number" &&
+                            dataTkk?.data.detail_data[indexSubtestActiveTkk].name) ||
+                          ""
+                        }
+                        subtestName={soal.narrow_data.name}
+                      />
+                    )}
                   {(soal as SoalExamLS1).subtest_model_uuid ===
                     ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid &&
                     soal.question_type === 1 &&
@@ -408,8 +410,8 @@ const LembarUjianTkk: React.FC = () => {
                           </>
                         )
                       })}
-                  {(soal as SoalExamLS1).subtest_model_uuid ===
-                    ExamData.filter((ar) => ar.examName !== "Number Facility")[0].examUuid &&
+                  {(soal as SoalExamLS1).subtest_model_uuid !==
+                    ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid &&
                     soal.question_type === 1 && (
                       <SoalPertanyaanTkk
                         soal={soal}
