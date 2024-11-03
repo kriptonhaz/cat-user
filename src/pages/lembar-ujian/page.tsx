@@ -236,37 +236,38 @@ const LembarUjian = () => {
           // Refetch after updating the state
           refetchQuestionResponseByActivity()
         } else if (params.activityId) {
-          let notAnsweredQuestion = 0
           if (soalExamAvailable?.data) {
-            notAnsweredQuestion =
-              // @ts-ignore
-              soalExamAvailable.data.filter((ar) => ar.question_type === 1).length -
-              (questionResponseByActivity?.data?.length || 0)
-          }
-          if (timerUjian?.data.is_must_fill_all_question === true && notAnsweredQuestion > 0) {
-            setModalConfirm({
-              ...modalConfirm,
-              open: true,
-              title: "Anda belum menjawab semua pertanyaan, harap isi semua pertanyaan sebelum menyelesaikan ujian!",
-              onConfirm: () => {
+            refetchQuestionResponseByActivity().then((res) => {
+              const totalAnswer = res.data?.data.length || 0
+              const notAnsweredQuestion =
+                soalExamAvailable.data.filter((ar) => ar.question_type === 1).length - totalAnswer
+              if (timerUjian?.data.is_must_fill_all_question === true && notAnsweredQuestion > 0) {
                 setModalConfirm({
                   ...modalConfirm,
-                  open: false,
-                  title: "",
-                  onConfirm: () => null,
+                  open: true,
+                  title:
+                    "Anda belum menjawab semua pertanyaan, harap isi semua pertanyaan sebelum menyelesaikan ujian!",
+                  onConfirm: () => {
+                    setModalConfirm({
+                      ...modalConfirm,
+                      open: false,
+                      title: "",
+                      onConfirm: () => null,
+                    })
+                  },
                 })
-              },
-            })
-          } else {
-            setModalConfirm({
-              ...modalConfirm,
-              open: true,
-              title: "Apa anda yakin ingin menyelesaikan ujian ini?",
-              onConfirm: () => {
-                if (params.activityId) {
-                  finishMutation.mutate({ activityUuid: params.activityId })
-                }
-              },
+              } else {
+                setModalConfirm({
+                  ...modalConfirm,
+                  open: true,
+                  title: "Apa anda yakin ingin menyelesaikan ujian ini?",
+                  onConfirm: () => {
+                    if (params.activityId) {
+                      finishMutation.mutate({ activityUuid: params.activityId })
+                    }
+                  },
+                })
+              }
             })
           }
         }
