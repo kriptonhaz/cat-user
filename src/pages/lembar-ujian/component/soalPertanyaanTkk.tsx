@@ -179,7 +179,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid
                 ? "82vh"
                 : undefined,
-            overflow: "scroll !important",
+            overflow: "auto !important",
           }}
         >
           <CardContent>

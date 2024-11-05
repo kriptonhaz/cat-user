@@ -129,7 +129,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
           ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid
             ? "82vh"
             : undefined,
-        overflow: "scroll !important",
+        overflow: "auto !important",
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

@@ -1,5 +1,5 @@
 import { useExamHooks } from "@/hooks/useExamHooks"
-import { Box, Button, Card, CardContent, Grid, Typography } from "@mui/material"
+import { Box, Button, Card, CardContent, Grid, Typography, SxProps } from "@mui/material"
 import { useLocation, useParams } from "react-router-dom"
 import TimerAndWebcam from "../lembar-ujian/component/timerAndWebcam"
 import { useEffect, useRef, useState } from "react"
@@ -43,6 +43,9 @@ const LembarUjianTkk: React.FC = () => {
   const [soal, setSoal] = useState<SoalExam | SoalExamLS1 | SoalExamPPI | null>(null)
   const [finalQuestion, setFinalQuestion] = useState(false)
   const [selectedAnswer, setSelectedAnswer] = useState<{ content: string; value: number } | null>(null)
+  const [multipleSelectedAnswer, setMultipleSelectedAnswer] = useState<
+    { questionUuid: string; answer: { content: string; value: number } }[] | null
+  >(null)
   const [selectedMultipleAnswer, setSelectedMultipleAnswer] = useState<string[]>([])
   const [disabledNextButton, setDisabledNextButton] = useState(false)
   const [fontSize, setFontSize] = useState(22)
@@ -64,7 +67,7 @@ const LembarUjianTkk: React.FC = () => {
     }
   }, [indexSubtestActiveTkk])
 
-  useEffect(() => {
+  /*  useEffect(() => {
     if (!isLoadingTimer) {
       const timerSoal = setInterval(() => {
         setTimerSoal((prevSeconds) => prevSeconds + 1)
@@ -89,7 +92,7 @@ const LembarUjianTkk: React.FC = () => {
 
       return () => clearInterval(countdownTimer)
     }
-  }, [isLoadingTimer, timer, dataTkk])
+  }, [isLoadingTimer, timer, dataTkk]) */
 
   useEffect(() => {
     if (remainingTime <= 0 && dataTkk?.data && typeof indexSubtestActiveTkk === "number") {
@@ -137,11 +140,11 @@ const LembarUjianTkk: React.FC = () => {
         setIndexSubtestActiveTkk(0)
         setCurrentQuestionIndex(0)
       } else {
-        checkQuestionAvailable()
+        // checkQuestionAvailable()
 
         // NOTE: only for testing
-        // setIndexSubtestActiveTkk(9)
-        // setCurrentQuestionIndex(0)
+        setIndexSubtestActiveTkk(1)
+        setCurrentQuestionIndex(0)
       }
       // setFinalQuestion(false)
 
@@ -256,7 +259,53 @@ const LembarUjianTkk: React.FC = () => {
     }
   }
 
-  const handleJawab = () => {
+  const handleJawab = (answer?: { content: string; value: number }, question?: SoalExamLS1) => {
+    if (activityExam && soal && soal.question_type === 1 && (selectedAnswer || selectedMultipleAnswer.length > 0)) {
+      const body = {
+        activity_id: activityExam.data.ID,
+        activity_uuid: activityExam.data.Uuid,
+        question_model_id: location.state.question_model_id,
+        question_model_uuid: location.state.question_model_uuid,
+        question_id: soal.ID,
+        question_uuid: question?.uuid || (soal as SoalExamLS1).uuid,
+        question_order: question?.uuid || (soal as SoalExamLS1).showing_order,
+        user_response_content:
+          (soal as SoalExamLS1).total_answer_should_have_for_true === 1
+            ? !!answer
+              ? answer.content
+              : selectedAnswer && selectedAnswer.content
+            : JSON.stringify(selectedMultipleAnswer),
+        user_response_value:
+          (soal as SoalExamLS1).total_answer_should_have_for_true === 1
+            ? !!answer
+              ? answer.value
+              : selectedAnswer && selectedAnswer.value
+            : 0,
+        user_response_at_second: timer - remainingTime,
+        total_consume_time:
+          activityExam.data.user_response_at === 0 ? timerSoal : timerSoal + activityExam.data.user_response_at,
+        subtest_id: (soal as SoalExamLS1).subtest_model_id,
+        subtest_uuid: (soal as SoalExamLS1).subtest_model_uuid,
+      }
+      submitMutation.mutate(
+        // @ts-ignore
+        { body },
+        {
+          onSuccess: () => {
+            const curentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
+            const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+            if (curentUuid !== numberFacilityUuid) {
+              nextQuestionAfterSubmit()
+              setSelectedMultipleAnswer([])
+            }
+          },
+        }
+      )
+    } else {
+      nextQuestionAfterSubmit()
+    }
+  }
+  const handleMultipleAnswer = () => {
     if (activityExam && soal && soal.question_type === 1 && (selectedAnswer || selectedMultipleAnswer.length > 0)) {
       const body = {
         activity_id: activityExam.data.ID,
@@ -283,8 +332,12 @@ const LembarUjianTkk: React.FC = () => {
         { body },
         {
           onSuccess: () => {
-            nextQuestionAfterSubmit()
-            setSelectedMultipleAnswer([])
+            const curentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
+            const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+            if (curentUuid !== numberFacilityUuid) {
+              nextQuestionAfterSubmit()
+              setSelectedMultipleAnswer([])
+            }
           },
         }
       )
@@ -386,19 +439,49 @@ const LembarUjianTkk: React.FC = () => {
                               onIncreaseFont={onIncreaseFont}
                               onDecreaseFont={onDecreaseFont}
                               setAnswer={(answer: answer) => {
-                                if ((soal as SoalExamLS1).total_answer_should_have_for_true === 1) {
-                                  setSelectedAnswer(answer)
+                                const currentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
+                                const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0]
+                                  .examUuid
+                                if (currentUuid === numberFacilityUuid) {
+                                  // TODO[Latif]: handle answer scoring here
+                                  handleJawab(answer, item as SoalExamLS1)
+                                  // @ts-ignore
+                                  const questionUuid = item.uuid
+                                  // @ts-ignore
+                                  setMultipleSelectedAnswer((prev) => {
+                                    const isExist = prev?.find((i) => i.questionUuid === questionUuid)
+                                    if (isExist) {
+                                      return prev
+                                        ?.filter((i) => !!i.questionUuid)
+                                        .map((i) =>
+                                          i.questionUuid === questionUuid ? { questionUuid: questionUuid, answer } : i
+                                        )
+                                    }
+                                    return [
+                                      ...(prev?.filter((i) => !!i.answer.content) || []),
+                                      { questionUuid: questionUuid, answer },
+                                    ]
+                                  })
                                 } else {
-                                  if (selectedMultipleAnswer.filter((ar) => ar === answer.content).length > 0) {
-                                    setSelectedMultipleAnswer(
-                                      selectedMultipleAnswer.filter((ar) => ar !== answer.content)
-                                    )
+                                  if ((soal as SoalExamLS1).total_answer_should_have_for_true === 1) {
+                                    setSelectedAnswer(answer)
                                   } else {
-                                    setSelectedMultipleAnswer([...selectedMultipleAnswer, answer.content])
+                                    if (selectedMultipleAnswer.filter((ar) => ar === answer.content).length > 0) {
+                                      setSelectedMultipleAnswer(
+                                        selectedMultipleAnswer.filter((ar) => ar !== answer.content)
+                                      )
+                                    } else {
+                                      setSelectedMultipleAnswer([...selectedMultipleAnswer, answer.content])
+                                    }
                                   }
                                 }
                               }}
-                              selectedAnswer={selectedAnswer}
+                              selectedAnswer={
+                                (soal as SoalExamLS1)?.subtest_model_uuid ===
+                                ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+                                  ? multipleSelectedAnswer?.find((i) => i.questionUuid === item?.uuid)?.answer
+                                  : selectedAnswer
+                              }
                               remainingTime={remainingTime}
                               timerType={
                                 (typeof indexSubtestActiveTkk === "number" &&
@@ -731,6 +814,7 @@ const LembarUjianTkk: React.FC = () => {
           </Box>
         </Grid>
       </Grid>
+      {/* !TODO[Latif]: Add modal */}
     </>
   )
 }
