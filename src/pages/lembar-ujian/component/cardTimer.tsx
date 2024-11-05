@@ -10,6 +10,7 @@ const CardTimer = ({
   subtestName,
   onIncreaseFont,
   onDecreaseFont,
+  showTimer = true,
 }: {
   remainingTime: number
   timerType: number
@@ -17,6 +18,7 @@ const CardTimer = ({
   subtestName?: string
   onIncreaseFont: () => void
   onDecreaseFont: () => void
+  showTimer?: boolean
 }) => {
   return (
     <Card
@@ -37,7 +39,7 @@ const CardTimer = ({
     >
       <CardContent sx={{ padding: 0, paddingBottom: "0px !important" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
+          {showTimer && <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>}
           <Box sx={timerType === 2 ? { width: "250px", display: "flex", justifyContent: "space-between" } : {}}>
             <Box display={"flex"} justifyContent={"space-between"} width={140}>
               <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />

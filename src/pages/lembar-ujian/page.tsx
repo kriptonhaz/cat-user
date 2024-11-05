@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react"
-import { Grid, Box, Card, Button, CardContent, Typography, keyframes } from "@mui/material"
+import { Grid, Box, Card, Button, CardContent, Typography } from "@mui/material"
 import SoalPertanyaanPilgan, { answer } from "./component/soalPertanyaanPilgan"
 import ExamInstruction from "./component/examInstruction"
-import SoalPertanyaanEssay from "./component/soalPertanyaanEssay"
 import { useExamHooks } from "@/hooks/useExamHooks"
 import { useLocation, useParams } from "react-router-dom"
 import { useExamMutation } from "@/mutations/exam.mutation"
@@ -10,6 +9,7 @@ import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import TimerAndWebcam from "./component/timerAndWebcam"
 import ExamExample from "./component/examExample"
 import ModalInstruction from "./component/ModalInstruction"
+import ModalConfirm from "@/ui/modal/ModalConfirm"
 
 const LembarUjian = () => {
   const location = useLocation()
@@ -28,6 +28,14 @@ const LembarUjian = () => {
     title: "",
     message: "",
     onConfirm: () => null,
+  })
+  const [modalConfirm, setModalConfirm] = useState({
+    open: false,
+    title: "",
+    message: "",
+    onConfirm: () => {
+      null
+    },
   })
 
   const { leftExamBeforeFinishMutation, finishExamMutation, submitJawabanMutation } = useExamMutation()
@@ -80,8 +88,13 @@ const LembarUjian = () => {
           setSoal(soalExamAvailable.data[0])
           setCurrentQuestionIndex(0)
         } else {
-          setSoal(soalExamAvailable.data[activityExam?.data.last_question_filled])
-          setCurrentQuestionIndex(activityExam?.data.last_question_filled)
+          if (soalExamAvailable.data.length > activityExam?.data.last_question_filled) {
+            setSoal(soalExamAvailable.data[activityExam?.data.last_question_filled])
+            setCurrentQuestionIndex(activityExam?.data.last_question_filled)
+          } else {
+            setSoal(soalExamAvailable.data[activityExam?.data.last_question_filled - 1])
+            setCurrentQuestionIndex(activityExam?.data.last_question_filled - 1)
+          }
         }
       }
       setFinalQuestion(false)
@@ -223,7 +236,40 @@ const LembarUjian = () => {
           // Refetch after updating the state
           refetchQuestionResponseByActivity()
         } else if (params.activityId) {
-          finishMutation.mutate({ activityUuid: params.activityId })
+          if (soalExamAvailable?.data) {
+            refetchQuestionResponseByActivity().then((res) => {
+              const totalAnswer = res.data?.data.length || 0
+              const notAnsweredQuestion =
+                soalExamAvailable.data.filter((ar) => ar.question_type === 1).length - totalAnswer
+              if (timerUjian?.data.is_must_fill_all_question === true && notAnsweredQuestion > 0) {
+                setModalConfirm({
+                  ...modalConfirm,
+                  open: true,
+                  title:
+                    "Anda belum menjawab semua pertanyaan, harap isi semua pertanyaan sebelum menyelesaikan ujian!",
+                  onConfirm: () => {
+                    setModalConfirm({
+                      ...modalConfirm,
+                      open: false,
+                      title: "",
+                      onConfirm: () => null,
+                    })
+                  },
+                })
+              } else {
+                setModalConfirm({
+                  ...modalConfirm,
+                  open: true,
+                  title: "Apa anda yakin ingin menyelesaikan ujian ini?",
+                  onConfirm: () => {
+                    if (params.activityId) {
+                      finishMutation.mutate({ activityUuid: params.activityId })
+                    }
+                  },
+                })
+              }
+            })
+          }
         }
       }
     }
@@ -527,6 +573,13 @@ const LembarUjian = () => {
         title={modalInstruction.title}
         message={modalInstruction.message}
         onConfirm={() => null}
+      />
+      <ModalConfirm
+        open={!!modalConfirm.open}
+        onClose={() => setModalConfirm({ ...modalConfirm, open: false })}
+        title={modalConfirm.title}
+        message={modalConfirm.message}
+        onConfirm={modalConfirm.onConfirm}
       />
     </>
   )

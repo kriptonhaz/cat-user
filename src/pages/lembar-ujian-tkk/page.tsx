@@ -420,13 +420,19 @@ const LembarUjianTkk: React.FC = () => {
                           ""
                         }
                         subtestName={soal.narrow_data.name}
+                        showTimer={
+                          typeof indexSubtestActiveTkk === "number" &&
+                          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_countdown_timer
+                        }
                       />
                     )}
                   {(soal as SoalExamLS1).subtest_model_uuid ===
                     ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid &&
                     soal.question_type === 1 &&
                     soalExamAvailable?.data
+                      // @ts-ignore
                       .filter((ar) => ar.question_type === 1)
+                      // @ts-ignore
                       .map((item) => {
                         return (
                           <>
