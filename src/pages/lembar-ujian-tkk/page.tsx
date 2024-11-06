@@ -127,6 +127,12 @@ const LembarUjianTkk: React.FC = () => {
         } else {
           setIndexSubtestActiveTkk(currentSubtestIndexTkkActivity)
           setCurrentQuestionIndex(activityExamDirect?.data.last_question_filled)
+          if (
+            activityExamDirect?.data.last_question_filled + 1 ===
+            (dataSubtestQuestion.data[dataSubtestQuestion.data.length - 1] as SoalExamLS1).showing_order
+          ) {
+            setFinalQuestion(true)
+          }
         }
       } catch (error) {
         console.log(error)
@@ -136,16 +142,23 @@ const LembarUjianTkk: React.FC = () => {
 
   useEffect(() => {
     if (currentQuestionIndex === 0 && dataTkk && activityExam?.data) {
-      if (activityExam?.data.last_question_filled === 0 || activityExam?.data.last_question_subtest === "") {
-        setIndexSubtestActiveTkk(0)
-        setCurrentQuestionIndex(0)
-      } else {
-        // checkQuestionAvailable()
+      const checkActivity = async () => {
+        const activityExamDirect = await getExamActivityByModule(params.examId, params.moduleId)
+        if (
+          activityExamDirect?.data.last_question_filled === 0 ||
+          activityExamDirect?.data.last_question_subtest === ""
+        ) {
+          setIndexSubtestActiveTkk(0)
+          setCurrentQuestionIndex(0)
+        } else {
+          checkQuestionAvailable()
 
-        // NOTE: only for testing
-        setIndexSubtestActiveTkk(1)
-        setCurrentQuestionIndex(0)
+          // NOTE: only for testing
+          // setIndexSubtestActiveTkk(0)
+          // setCurrentQuestionIndex(0)
+        }
       }
+      checkActivity()
       // setFinalQuestion(false)
 
       // if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1) {
