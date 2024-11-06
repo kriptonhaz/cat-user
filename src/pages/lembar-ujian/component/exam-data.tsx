@@ -37,4 +37,8 @@ export const ExamData: IExamData[] = [
     examName: "Number Facility",
     examUuid: "a1c807f9-a668-4509-bc9f-030b1734cd93",
   },
+  {
+    examName: "Perceptual Speed – comparison",
+    examUuid: "444161ec-64a6-46c7-a044-e4df8c2cbd95",
+  },
 ]
