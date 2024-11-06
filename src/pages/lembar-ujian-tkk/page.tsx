@@ -123,10 +123,7 @@ const LembarUjianTkk: React.FC = () => {
 
   const checkQuestionAvailable = async () => {
     console.log("--- check question available ---")
-    const currentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
-    const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
-    console.log("1st current uuid  => ", currentUuid)
-
+    // TODO: Handle next question
     const activityExamDirect = await getExamActivityByModule(params.examId, params.moduleId)
     if (activityExamDirect?.data && dataTkk?.data) {
       const currentSubtestIndexTkkActivity = dataTkk?.data.detail_data.findIndex(
@@ -176,11 +173,11 @@ const LembarUjianTkk: React.FC = () => {
           setIndexSubtestActiveTkk(0)
           setCurrentQuestionIndex(0)
         } else {
-          checkQuestionAvailable()
+          // checkQuestionAvailable()
 
           // NOTE: only for testing
-          // setIndexSubtestActiveTkk(0)
-          // setCurrentQuestionIndex(0)
+          setIndexSubtestActiveTkk(0)
+          setCurrentQuestionIndex(0)
         }
       }
       checkActivity()
@@ -270,24 +267,17 @@ const LembarUjianTkk: React.FC = () => {
   }
 
   const nextQuestionAfterSubmit = () => {
-    console.log("------- next question after submit -----")
     const curentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
     const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
 
-    console.log(
-      "1st condition => ",
-      soalExamAvailable?.data && curentUuid !== numberFacilityUuid && soal.question_type !== 1,
-      soalExamAvailable?.data,
-      soal.question_type !== 1 && curentUuid !== numberFacilityUuid
-    )
     if (soalExamAvailable?.data || (soal.question_type !== 1 && curentUuid !== numberFacilityUuid)) {
       const soalIndex = soalExamAvailable.data.findIndex(
         (ar) => (ar as SoalExamLS1).uuid === (soal as SoalExamLS1).uuid
       )
       const nextIndex = soalIndex + 1
-      if (nextIndex < soalExamAvailable.data.length) {
+      if (nextIndex < soalExamAvailable?.data.length) {
         // condition when the next question is still in the same subtest
-        setSoal(soalExamAvailable.data[nextIndex])
+        setSoal(soalExamAvailable?.data[nextIndex])
         setCurrentQuestionIndex(nextIndex)
         setFinalQuestion(nextIndex === soalExamAvailable.data.length - 1)
         if (
@@ -302,7 +292,6 @@ const LembarUjianTkk: React.FC = () => {
         refetchQuestionResponseByActivity()
       } else if (nextIndex >= soalExamAvailable?.data.length || curentUuid === numberFacilityUuid) {
         // condition when the next question is in a new subtest
-        console.log("---- else next question after submit ----")
         checkQuestionAvailable()
       }
     }
@@ -341,8 +330,6 @@ const LembarUjianTkk: React.FC = () => {
         subtest_id: (soal as SoalExamLS1).subtest_model_id,
         subtest_uuid: (soal as SoalExamLS1).subtest_model_uuid,
       }
-      console.log("------ submit answer body --------")
-      console.log(body)
       submitMutation.mutate(
         // @ts-ignore
         { body },
@@ -356,7 +343,6 @@ const LembarUjianTkk: React.FC = () => {
               setSelectedMultipleAnswer([])
             } else {
               refetchQuestionResponseByActivity().then((res) => {
-                console.log("---- after refetch ----")
                 if (soalExamAvailable?.data && !answer) {
                   const totalAnswer = res.data?.data.length || 0
                   const notAnsweredQuestion =
@@ -402,7 +388,6 @@ const LembarUjianTkk: React.FC = () => {
         }
       )
     } else {
-      console.log("skip")
       nextQuestionAfterSubmit()
     }
   }
