@@ -11,7 +11,6 @@ const TimerAndWebcam = ({
   nextQuestion,
   questionIndex,
   isLoadingTimer,
-  handleJawab,
   total_consume_time,
   remainingTime,
   showTimer = true,
@@ -21,7 +20,6 @@ const TimerAndWebcam = ({
   nextQuestion: () => void
   questionIndex: number
   isLoadingTimer: boolean
-  handleJawab: () => void
   total_consume_time: number
   remainingTime: number
   showTimer?: boolean
