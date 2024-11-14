@@ -41,7 +41,7 @@ export const useExamHooks = () => {
     useQuery({
       queryKey: ["exam", "soalExam", uuidModule],
       queryFn: () => ExamService.getSoalExamByModule(uuidModule),
-      enabled: !!uuidModule,
+      enabled: !!uuidModule && uuidModule !== "",
     })
 
   const queryGetRiwayatUjian = (params: setRiwayatUjianParams) =>
