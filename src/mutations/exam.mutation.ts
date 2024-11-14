@@ -67,13 +67,14 @@ export function useExamMutation() {
         last_question_filled: number
         last_question_subtest: string
         uuidActivity: string
+        onSuccess?: () => void
       }) => {
         const result = await updateExamActivity(params)
         return result
       },
       onSuccess: (data, variables, context) => {
-        if (params?.onSuccess) {
-          params.onSuccess()
+        if (variables?.onSuccess) {
+          variables.onSuccess()
         }
       },
     })
