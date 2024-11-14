@@ -81,7 +81,7 @@ const LembarUjianTkk: React.FC = () => {
     }
   }, [indexSubtestActiveTkk])
 
-  /*  useEffect(() => {
+  useEffect(() => {
     if (!isLoadingTimer) {
       const timerSoal = setInterval(() => {
         setTimerSoal((prevSeconds) => prevSeconds + 1)
@@ -106,14 +106,20 @@ const LembarUjianTkk: React.FC = () => {
 
       return () => clearInterval(countdownTimer)
     }
-  }, [isLoadingTimer, timer, dataTkk]) */
+  }, [isLoadingTimer, timer, dataTkk])
 
   useEffect(() => {
+    const currentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
+    const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
     if (remainingTime <= 0 && dataTkk?.data && typeof indexSubtestActiveTkk === "number") {
-      if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1) {
+      if (
+        dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1 &&
+        soal &&
+        currentUuid !== numberFacilityUuid
+      ) {
         setTimer(0)
         setTimeout(() => {
-          handleJawab()
+          handleJawab({ source: "timeout" })
         }, 300)
       } else {
         // TODO: handle timer type 2
@@ -130,30 +136,26 @@ const LembarUjianTkk: React.FC = () => {
         (ar) => ar.subtest_model_uuid === activityExamDirect?.data.last_question_subtest
       )
       try {
-        const dataSubtestQuestion = await getSoalExamByModule(activityExamDirect?.data.last_question_subtest || "")
-        const currentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
-        const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
-        console.log("current uuid => ", currentUuid)
-        if (
-          activityExamDirect?.data.last_question_filled >= dataSubtestQuestion.data.length ||
-          currentUuid === numberFacilityUuid
-        ) {
-          if (currentSubtestIndexTkkActivity >= dataTkk?.data.detail_data.length - 1) {
-            if (params.activityId) {
-              finishMutation.mutate({ activityUuid: params.activityId })
+        if (activityExamDirect?.data.last_question_subtest !== "") {
+          const dataSubtestQuestion = await getSoalExamByModule(activityExamDirect?.data.last_question_subtest)
+          if (activityExamDirect?.data.last_question_filled >= dataSubtestQuestion.data.length) {
+            if (currentSubtestIndexTkkActivity >= dataTkk?.data.detail_data.length - 1) {
+              if (params.activityId) {
+                finishMutation.mutate({ activityUuid: params.activityId })
+              }
+            } else {
+              setIndexSubtestActiveTkk(currentSubtestIndexTkkActivity + 1)
+              setCurrentQuestionIndex(0)
             }
           } else {
-            setIndexSubtestActiveTkk(currentSubtestIndexTkkActivity + 1)
-            setCurrentQuestionIndex(0)
-          }
-        } else {
-          setIndexSubtestActiveTkk(currentSubtestIndexTkkActivity)
-          setCurrentQuestionIndex(activityExamDirect?.data.last_question_filled)
-          if (
-            activityExamDirect?.data.last_question_filled + 1 ===
-            (dataSubtestQuestion.data[dataSubtestQuestion.data.length - 1] as SoalExamLS1).showing_order
-          ) {
-            setFinalQuestion(true)
+            setIndexSubtestActiveTkk(currentSubtestIndexTkkActivity)
+            setCurrentQuestionIndex(activityExamDirect?.data.last_question_filled)
+            if (
+              activityExamDirect?.data.last_question_filled + 1 ===
+              (dataSubtestQuestion.data[dataSubtestQuestion.data.length - 1] as SoalExamLS1).showing_order
+            ) {
+              setFinalQuestion(true)
+            }
           }
         }
       } catch (error) {
@@ -173,11 +175,11 @@ const LembarUjianTkk: React.FC = () => {
           setIndexSubtestActiveTkk(0)
           setCurrentQuestionIndex(0)
         } else {
-          // checkQuestionAvailable()
+          checkQuestionAvailable()
 
           // NOTE: only for testing
-          setIndexSubtestActiveTkk(0)
-          setCurrentQuestionIndex(0)
+          // setIndexSubtestActiveTkk(0)
+          // setCurrentQuestionIndex(0)
         }
       }
       checkActivity()
@@ -245,7 +247,7 @@ const LembarUjianTkk: React.FC = () => {
 
   const handleNextQuestion = () => {
     if (selectedAnswer) {
-      handleJawab()
+      handleJawab({ source: "handleNextQuestion" })
     } else {
       nextQuestionAfterSubmit()
     }
@@ -270,12 +272,15 @@ const LembarUjianTkk: React.FC = () => {
     const curentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
     const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
 
-    if (soalExamAvailable?.data || (soal.question_type !== 1 && curentUuid !== numberFacilityUuid)) {
+    if (soalExamAvailable?.data) {
       const soalIndex = soalExamAvailable.data.findIndex(
         (ar) => (ar as SoalExamLS1).uuid === (soal as SoalExamLS1).uuid
       )
       const nextIndex = soalIndex + 1
-      if (nextIndex < soalExamAvailable?.data.length) {
+      if (
+        nextIndex < soalExamAvailable?.data.length &&
+        (soal?.question_type !== 1 || curentUuid !== numberFacilityUuid)
+      ) {
         // condition when the next question is still in the same subtest
         setSoal(soalExamAvailable?.data[nextIndex])
         setCurrentQuestionIndex(nextIndex)
@@ -297,7 +302,15 @@ const LembarUjianTkk: React.FC = () => {
     }
   }
 
-  const handleJawab = (answer?: { content: string; value: number }, question?: SoalExamLS1) => {
+  const handleJawab = (
+    // answer?: { content: string; value: number }, question?: SoalExamLS1
+    props?: {
+      answer?: { content: string; value: number }
+      question?: SoalExamLS1
+      source?: string
+    }
+  ) => {
+    const { answer, question, source } = props || {}
     if (
       activityExam &&
       soal &&
@@ -348,6 +361,7 @@ const LembarUjianTkk: React.FC = () => {
                   const notAnsweredQuestion =
                     soalExamAvailable?.data.filter((ar) => ar.question_type === 1).length - totalAnswer
                   if (
+                    typeof indexSubtestActiveTkk === "number" &&
                     dataTkk?.data?.detail_data[indexSubtestActiveTkk]?.subtest_model_data?.is_must_fill_all_question ===
                       true &&
                     notAnsweredQuestion > 0
@@ -362,7 +376,13 @@ const LembarUjianTkk: React.FC = () => {
                           ...modalConfirm,
                           open: false,
                           title: "",
-                          onConfirm: () => null,
+                          onConfirm: () => {
+                            setModalConfirm({
+                              ...modalConfirm,
+                              open: false,
+                              title: "",
+                            })
+                          },
                         })
                       },
                     })
@@ -372,12 +392,22 @@ const LembarUjianTkk: React.FC = () => {
                       open: true,
                       title: "Apa anda yakin ingin menyelesaikan ujian ini?",
                       onConfirm: () => {
-                        if (curentUuid === numberFacilityUuid) {
-                          checkQuestionAvailable()
-                        }
-                        // if (params.activityId) {
-                        //   finishMutation.mutate({ activityUuid: params.activityId })
-                        // }
+                        setModalConfirm({
+                          ...modalConfirm,
+                          open: false,
+                          title: "",
+                          onConfirm: () => null,
+                        })
+                        examActivityMutation.mutate({
+                          last_question_filled: (
+                            soalExamAvailable?.data[soalExamAvailable?.data.length - 1] as SoalExamLS1
+                          ).showing_order,
+                          last_question_subtest: (soal as SoalExamLS1).subtest_model_uuid,
+                          uuidActivity: activityExam?.data.Uuid,
+                          onSuccess: () => {
+                            checkQuestionAvailable()
+                          },
+                        })
                       },
                     })
                   }
@@ -438,7 +468,7 @@ const LembarUjianTkk: React.FC = () => {
                         ""
                       }
                       subtestName={soal.narrow_data.name}
-                      nextQuestion={handleJawab}
+                      nextQuestion={() => handleJawab({ source: "example" })}
                       setDisableNextButton={(val) => {
                         setDisabledNextButton(val)
                       }}
@@ -496,7 +526,13 @@ const LembarUjianTkk: React.FC = () => {
                                   .examUuid
                                 if (currentUuid === numberFacilityUuid) {
                                   // TODO[Latif]: handle answer scoring here
-                                  handleJawab(answer, item as SoalExamLS1)
+                                  if (answer.content !== "") {
+                                    handleJawab({
+                                      answer: answer,
+                                      question: item as SoalExamLS1,
+                                      source: "scrolling number component",
+                                    })
+                                  }
                                   // @ts-ignore
                                   const questionUuid = item.uuid
                                   // @ts-ignore
@@ -528,10 +564,12 @@ const LembarUjianTkk: React.FC = () => {
                                   }
                                 }
                               }}
+                              // @ts-ignore
                               selectedAnswer={
                                 (soal as SoalExamLS1)?.subtest_model_uuid ===
                                 ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
-                                  ? multipleSelectedAnswer?.find((i) => i.questionUuid === item?.uuid!)?.answer
+                                  ? multipleSelectedAnswer?.find((i) => i.questionUuid === (item as SoalExamLS1)?.uuid!)
+                                      ?.answer
                                   : selectedAnswer
                               }
                               remainingTime={remainingTime}
@@ -582,7 +620,13 @@ const LembarUjianTkk: React.FC = () => {
                                 )[0].examUuid
                                 if (currentUuid === numberFacilityUuid) {
                                   // TODO[Latif]: handle answer scoring here
-                                  handleJawab(answer, item as SoalExamLS1)
+                                  if (answer.content !== "") {
+                                    handleJawab({
+                                      answer: answer,
+                                      question: item as SoalExamLS1,
+                                      source: "pc component",
+                                    })
+                                  }
                                   // @ts-ignore
                                   const questionUuid = item.uuid
                                   // @ts-ignore
@@ -614,10 +658,12 @@ const LembarUjianTkk: React.FC = () => {
                                   }
                                 }
                               }}
+                              // @ts-ignore
                               selectedAnswer={
                                 (soal as SoalExamLS1)?.subtest_model_uuid ===
                                 ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid
-                                  ? multipleSelectedAnswer?.find((i) => i.questionUuid === item?.uuid!)?.answer
+                                  ? multipleSelectedAnswer?.find((i) => i.questionUuid === (item as SoalExamLS1)?.uuid!)
+                                      ?.answer
                                   : selectedAnswer
                               }
                               remainingTime={remainingTime}
@@ -689,7 +735,7 @@ const LembarUjianTkk: React.FC = () => {
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "98%" }}>
                 <Button
                   color={disabledNextButton ? "primary" : "info"}
-                  onClick={() => handleJawab()}
+                  onClick={() => handleJawab({ source: "Lanjutkan" })}
                   disabled={disabledNextButton}
                 >
                   {soal?.question_type === 2 || soal?.question_type === 3
@@ -701,8 +747,11 @@ const LembarUjianTkk: React.FC = () => {
                     ? "Selesai"
                     : "Simpan dan Lanjutkan"}
                 </Button>
-                {typeof indexSubtestActiveTkk === "number" &&
-                  dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 2 && (
+                {soal &&
+                  typeof indexSubtestActiveTkk === "number" &&
+                  dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 2 &&
+                  ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid !==
+                    (soal as SoalExamLS1).subtest_model_uuid && (
                     <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                       <Button
                         onClick={() => handlePreviousQuestion()}
@@ -768,7 +817,6 @@ const LembarUjianTkk: React.FC = () => {
                         nextQuestion={handleNextQuestion}
                         questionIndex={currentQuestionIndex}
                         isLoadingTimer={isLoadingSoal}
-                        handleJawab={handleJawab}
                         total_consume_time={activityExam?.data.total_consume_time || 0}
                         remainingTime={remainingTime}
                         showTimer={
