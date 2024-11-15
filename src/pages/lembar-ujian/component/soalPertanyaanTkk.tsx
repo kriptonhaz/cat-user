@@ -471,7 +471,9 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                         row={
                           soal.answer_showing_position === 2 ||
                           (soal as SoalExamLS1).subtest_model_uuid ===
-                            ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+                            ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+                          (soal as SoalExamLS1).subtest_model_uuid ===
+                            ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid
                             ? true
                             : false
                         }

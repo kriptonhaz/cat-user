@@ -525,7 +525,6 @@ const LembarUjianTkk: React.FC = () => {
                                 const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0]
                                   .examUuid
                                 if (currentUuid === numberFacilityUuid) {
-                                  // TODO[Latif]: handle answer scoring here
                                   if (answer.content !== "") {
                                     handleJawab({
                                       answer: answer,
@@ -783,7 +782,6 @@ const LembarUjianTkk: React.FC = () => {
                 ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
                 ? "sticky"
                 : "relative",
-            top: "70px",
           }}
         >
           <Box>
