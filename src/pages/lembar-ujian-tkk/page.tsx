@@ -175,11 +175,11 @@ const LembarUjianTkk: React.FC = () => {
           setIndexSubtestActiveTkk(0)
           setCurrentQuestionIndex(0)
         } else {
-          checkQuestionAvailable()
+          // checkQuestionAvailable()
 
           // NOTE: only for testing
-          // setIndexSubtestActiveTkk(0)
-          // setCurrentQuestionIndex(0)
+          setIndexSubtestActiveTkk(2)
+          setCurrentQuestionIndex(0)
         }
       }
       checkActivity()
@@ -224,6 +224,7 @@ const LembarUjianTkk: React.FC = () => {
   }, [activityExam, questionResponseByActivity, indexSubtestActiveTkk, refetchSoal, dataTkk])
 
   useEffect(() => {
+    console.log("soalExamAvailable", soalExamAvailable)
     if (soalExamAvailable?.data && dataTkk?.data && typeof indexSubtestActiveTkk === "number") {
       setSoal(soalExamAvailable.data[currentQuestionIndex])
       if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1) {
@@ -690,6 +691,8 @@ const LembarUjianTkk: React.FC = () => {
                       })}
                   {(soal as SoalExamLS1).subtest_model_uuid !==
                     ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid &&
+                    (soal as SoalExamLS1).subtest_model_uuid !==
+                      ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid &&
                     soal.question_type === 1 && (
                       <SoalPertanyaanTkk
                         soal={soal}
