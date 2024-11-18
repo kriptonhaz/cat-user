@@ -175,11 +175,11 @@ const LembarUjianTkk: React.FC = () => {
           setIndexSubtestActiveTkk(0)
           setCurrentQuestionIndex(0)
         } else {
-          // checkQuestionAvailable()
+          checkQuestionAvailable()
 
           // NOTE: only for testing
-          setIndexSubtestActiveTkk(2)
-          setCurrentQuestionIndex(0)
+          // setIndexSubtestActiveTkk(0)
+          // setCurrentQuestionIndex(0)
         }
       }
       checkActivity()
