@@ -248,7 +248,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
             gap={2}
             mt={2}
             columnSpacing={8}
-            sx={{ height: "auto", overflow: "scroll" }}
+            sx={{ height: "auto", overflow: "auto" }}
           >
             {(question as SoalExamLS1).answer_data.map((answer, index) => (
               <Grid key={index} item xs={12} md={6} lg={3.5 * (fontSize / 22)}>
