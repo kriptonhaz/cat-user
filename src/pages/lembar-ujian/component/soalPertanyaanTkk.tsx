@@ -218,7 +218,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               subtestNumber !== undefined &&
               subtestName !== undefined && (
                 <Typography variant="h6" sx={{ fontSize: fontSize, mb: 3 }}>
-                  {subtestNumber} : {subtestName}
+                  {subtestNumber}
                 </Typography>
               )}
             <Box

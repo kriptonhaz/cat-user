@@ -60,7 +60,7 @@ const ExamInstruction: React.FC<ExamInstructionProps> = ({
       <Divider sx={{ my: 3 }} />
       {subtestNumber !== undefined && subtestName !== undefined && (
         <Typography variant="h6" sx={{ fontSize: fontSize }}>
-          {subtestNumber} : {subtestName}
+          {subtestNumber}
         </Typography>
       )}
       {showInstructionLabel && (
