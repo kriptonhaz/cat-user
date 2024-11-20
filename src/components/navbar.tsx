@@ -25,7 +25,7 @@ const Navbar = () => {
               variant="h6"
               noWrap
               component="a"
-              href="/"
+              href={isMatchingRoute(location.pathname, /\/lembar-ujian/) ? undefined : "/"}
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
