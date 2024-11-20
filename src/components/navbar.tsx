@@ -39,33 +39,34 @@ const Navbar = () => {
               CAT
             </Typography>
             {/* Navigation Menu */}
-            {localStorage.getItem("name") && !isMatchingRoute(location.pathname, /^\/lembar-ujian\/\d+$/) && (
-              <Box sx={{ display: "flex", ml: 4 }}>
-                <Button
-                  sx={{
-                    color: "white",
-                    mr: 2,
-                    backgroundColor: location.pathname === "/home" ? "rgba(255, 255, 255, 0.2)" : "transparent",
-                    border: "1px solid white",
-                  }}
-                  onClick={() => navigate("/home")}
-                >
-                  Home
-                </Button>
-                <Button
-                  sx={{
-                    color: "white",
-                    mr: 2,
-                    backgroundColor:
-                      location.pathname === "/riwayat-ujian" ? "rgba(255, 255, 255, 0.2)" : "transparent",
-                    border: "1px solid white",
-                  }}
-                  onClick={() => navigate("/riwayat-ujian")}
-                >
-                  Riwayat Ujian
-                </Button>
-              </Box>
-            )}
+            {localStorage.getItem("name") &&
+              (!isMatchingRoute(location.pathname, /\/lembar-ujian/) || import.meta.env.MODE === "development") && (
+                <Box sx={{ display: "flex", ml: 4 }}>
+                  <Button
+                    sx={{
+                      color: "white",
+                      mr: 2,
+                      backgroundColor: location.pathname === "/home" ? "rgba(255, 255, 255, 0.2)" : "transparent",
+                      border: "1px solid white",
+                    }}
+                    onClick={() => navigate("/home")}
+                  >
+                    Home
+                  </Button>
+                  <Button
+                    sx={{
+                      color: "white",
+                      mr: 2,
+                      backgroundColor:
+                        location.pathname === "/riwayat-ujian" ? "rgba(255, 255, 255, 0.2)" : "transparent",
+                      border: "1px solid white",
+                    }}
+                    onClick={() => navigate("/riwayat-ujian")}
+                  >
+                    Riwayat Ujian
+                  </Button>
+                </Box>
+              )}
             <Box sx={{ flexGrow: 1 }} />
             {localStorage.getItem("name") && (
               <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -73,12 +74,13 @@ const Navbar = () => {
                   {localStorage.getItem("name")} ( {localStorage.getItem("nip")}, {localStorage.getItem("gender")} )
                 </Typography>
                 <Button
-                  color="error"
+                  color={!isMatchingRoute(location.pathname, /\/lembar-ujian/) ? "error" : "inherit"}
                   sx={{ ml: 3 }}
                   onClick={() => {
                     tokenStore.logout()
                     navigate("/login")
                   }}
+                  disabled={isMatchingRoute(location.pathname, /\/lembar-ujian/)}
                 >
                   Keluar
                 </Button>
