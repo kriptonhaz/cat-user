@@ -10,14 +10,15 @@ export interface ModalConfirmProps {
   message: string
   onConfirm: () => void
   loading?: boolean
+  displayCancel?: boolean
 }
 const ModalConfirm: React.FC<ModalConfirmProps> = (props) => {
-  const { onClose, open, title, message, onConfirm, loading } = props
+  const { onClose, open, title, message, onConfirm, loading, displayCancel = true } = props
   return (
     <Modal
       containerProps={{ sx: { maxWidth: "400px !important", minHeight: "230px !important" } }}
       open={open}
-      onClose={onClose}
+      onClose={displayCancel ? onClose : () => (onConfirm(), onClose())}
     >
       <Modal.Header icon={{ icon: <Warning weight="bold" />, color: "warning", variant: "contained" }} />
       <Modal.Body>
@@ -26,7 +27,7 @@ const ModalConfirm: React.FC<ModalConfirmProps> = (props) => {
         </Typography>
         <Typography variant="body2">{message}</Typography>
       </Modal.Body>
-      <Modal.Footer onCancel={onClose} divider>
+      <Modal.Footer onCancel={displayCancel ? onClose : undefined} divider>
         <Button color="warning" onClick={onConfirm} disabled={loading} startIcon={!!loading && <CircularProgress />}>
           Ya
         </Button>

@@ -70,6 +70,7 @@ const LembarUjianTkk: React.FC = () => {
     onConfirm: () => {
       null
     },
+    displayCancel: true,
   })
 
   useEffect(() => {
@@ -145,7 +146,20 @@ const LembarUjianTkk: React.FC = () => {
           if (activityExamDirect?.data.last_question_filled >= dataSubtestQuestion.data.length) {
             if (currentSubtestIndexTkkActivity >= dataTkk?.data.detail_data.length - 1) {
               if (params.activityId) {
-                finishMutation.mutate({ activityUuid: params.activityId })
+                setModalConfirm({
+                  ...modalConfirm,
+                  open: true,
+                  title: "Apa anda yakin ingin menyelesaikan ujian ini?",
+                  onConfirm: () => {
+                    setModalConfirm({
+                      ...modalConfirm,
+                      open: false,
+                      title: "",
+                    })
+                    finishMutation.mutate({ activityUuid: params.activityId || "" })
+                  },
+                  displayCancel: true,
+                })
               }
             } else {
               setIndexSubtestActiveTkk(currentSubtestIndexTkkActivity + 1)
@@ -308,19 +322,29 @@ const LembarUjianTkk: React.FC = () => {
         curentUuid === perceptualSpeedComparisonUuid
       ) {
         // condition when the next question is in a new subtest
-        checkQuestionAvailable()
+        setModalConfirm({
+          ...modalConfirm,
+          open: true,
+          title: "Subtest ini telah selesai, anda akan melanjutkan ke subtest berikutnya",
+          onConfirm: () => {
+            setModalConfirm({
+              ...modalConfirm,
+              open: false,
+              title: "",
+            })
+            checkQuestionAvailable()
+          },
+          displayCancel: false,
+        })
       }
     }
   }
 
-  const handleJawab = (
-    // answer?: { content: string; value: number }, question?: SoalExamLS1
-    props?: {
-      answer?: { content: string; value: number }
-      question?: SoalExamLS1
-      source?: string
-    }
-  ) => {
+  const handleJawab = (props?: {
+    answer?: { content: string; value: number }
+    question?: SoalExamLS1
+    source?: string
+  }) => {
     const { answer, question, source } = props || {}
     if (
       activityExam &&
@@ -399,6 +423,7 @@ const LembarUjianTkk: React.FC = () => {
                           },
                         })
                       },
+                      displayCancel: true,
                     })
                   } else {
                     setModalConfirm({
@@ -423,6 +448,7 @@ const LembarUjianTkk: React.FC = () => {
                           },
                         })
                       },
+                      displayCancel: true,
                     })
                   }
                 }
@@ -1030,6 +1056,7 @@ const LembarUjianTkk: React.FC = () => {
         title={modalConfirm.title}
         message={modalConfirm.message}
         onConfirm={modalConfirm.onConfirm}
+        displayCancel={modalConfirm.displayCancel}
       />
     </>
   )
