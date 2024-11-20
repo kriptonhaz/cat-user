@@ -457,6 +457,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                     "data-state": answer.showing_order,
                                     style: { textTransform: "uppercase" },
                                   }}
+                                  autoComplete="off"
                                   onChange={handleEditMemorySpan}
                                 />
                               </Grid>

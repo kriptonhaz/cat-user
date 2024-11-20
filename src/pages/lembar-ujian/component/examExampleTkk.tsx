@@ -489,6 +489,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                             <TextField
                               variant="filled"
                               inputProps={{ "data-state": answer.showing_order, style: { textTransform: "uppercase" } }}
+                              autoComplete="off"
                             />
                           </Grid>
                         ))}
