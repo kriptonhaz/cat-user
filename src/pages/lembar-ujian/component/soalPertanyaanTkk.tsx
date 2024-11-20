@@ -171,7 +171,9 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
             mb: 5,
             minHeight:
               (soal as SoalExamLS1).subtest_model_uuid ===
-              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+                ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+              (soal as SoalExamLS1).subtest_model_uuid ===
+                ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid
                 ? "10vh"
                 : "525px",
             maxHeight:
@@ -183,8 +185,10 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
           }}
         >
           <CardContent>
-            {(soal as SoalExamLS1).subtest_model_uuid !==
-              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid && (
+            {((soal as SoalExamLS1).subtest_model_uuid !==
+              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+              (soal as SoalExamLS1).subtest_model_uuid !==
+                ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) && (
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 {showTimer && (
                   <Typography variant="h6">
@@ -200,11 +204,17 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               </Box>
             )}
 
-            {(soal as SoalExamLS1).subtest_model_uuid !==
-              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid && <Divider sx={{ my: 3 }} />}
+            {((soal as SoalExamLS1).subtest_model_uuid !==
+              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+              (soal as SoalExamLS1).subtest_model_uuid !==
+                ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) && (
+              <Divider sx={{ my: 3 }} />
+            )}
 
-            {(soal as SoalExamLS1).subtest_model_uuid !==
-              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid &&
+            {((soal as SoalExamLS1).subtest_model_uuid !==
+              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+              (soal as SoalExamLS1).subtest_model_uuid !==
+                ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) &&
               subtestNumber !== undefined &&
               subtestName !== undefined && (
                 <Typography variant="h6" sx={{ fontSize: fontSize, mb: 3 }}>
@@ -409,8 +419,10 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               </Grid>
             ) : (
               <>
-                {(soal as SoalExamLS1).subtest_model_uuid !==
-                  ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid && (
+                {((soal as SoalExamLS1).subtest_model_uuid !==
+                  ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+                  (soal as SoalExamLS1).subtest_model_uuid !==
+                    ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) && (
                   <Divider
                     sx={{
                       marginTop: 3,

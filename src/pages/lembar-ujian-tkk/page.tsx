@@ -111,11 +111,15 @@ const LembarUjianTkk: React.FC = () => {
   useEffect(() => {
     const currentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
     const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+    const perceptualSpeedComparisonUuid = ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0]
+      .examUuid
+
     if (remainingTime <= 0 && dataTkk?.data && typeof indexSubtestActiveTkk === "number") {
       if (
         dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1 &&
         soal &&
-        currentUuid !== numberFacilityUuid
+        currentUuid !== numberFacilityUuid &&
+        currentUuid !== perceptualSpeedComparisonUuid
       ) {
         setTimer(0)
         setTimeout(() => {
@@ -272,6 +276,8 @@ const LembarUjianTkk: React.FC = () => {
   const nextQuestionAfterSubmit = () => {
     const curentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
     const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+    const perceptualSpeedComparisonUuid = ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0]
+      .examUuid
 
     if (soalExamAvailable?.data) {
       const soalIndex = soalExamAvailable.data.findIndex(
@@ -280,7 +286,7 @@ const LembarUjianTkk: React.FC = () => {
       const nextIndex = soalIndex + 1
       if (
         nextIndex < soalExamAvailable?.data.length &&
-        (soal?.question_type !== 1 || curentUuid !== numberFacilityUuid)
+        (soal?.question_type !== 1 || curentUuid !== numberFacilityUuid || curentUuid !== perceptualSpeedComparisonUuid)
       ) {
         // condition when the next question is still in the same subtest
         setSoal(soalExamAvailable?.data[nextIndex])
@@ -296,7 +302,11 @@ const LembarUjianTkk: React.FC = () => {
         }
         // Refetch after updating the state
         refetchQuestionResponseByActivity()
-      } else if (nextIndex >= soalExamAvailable?.data.length || curentUuid === numberFacilityUuid) {
+      } else if (
+        nextIndex >= soalExamAvailable?.data.length ||
+        curentUuid === numberFacilityUuid ||
+        curentUuid === perceptualSpeedComparisonUuid
+      ) {
         // condition when the next question is in a new subtest
         checkQuestionAvailable()
       }
@@ -351,8 +361,11 @@ const LembarUjianTkk: React.FC = () => {
           onSuccess: () => {
             const curentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
             const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+            const perceptualSpeedComparisonUuid = ExamData.filter(
+              (ar) => ar.examName === "Perceptual Speed – comparison"
+            )[0].examUuid
 
-            if (curentUuid !== numberFacilityUuid) {
+            if (curentUuid !== numberFacilityUuid || curentUuid !== perceptualSpeedComparisonUuid) {
               nextQuestionAfterSubmit()
               setSelectedMultipleAnswer([])
             } else {
@@ -480,8 +493,10 @@ const LembarUjianTkk: React.FC = () => {
                     />
                   )}
                   {soal.question_type === 1 &&
-                    (soal as SoalExamLS1).subtest_model_uuid ===
-                      ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid && (
+                    ((soal as SoalExamLS1).subtest_model_uuid ===
+                      ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+                      (soal as SoalExamLS1).subtest_model_uuid ===
+                        ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) && (
                       <CardTimer
                         onIncreaseFont={onIncreaseFont}
                         onDecreaseFont={onDecreaseFont}
@@ -752,8 +767,10 @@ const LembarUjianTkk: React.FC = () => {
                 {soal &&
                   typeof indexSubtestActiveTkk === "number" &&
                   dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 2 &&
-                  ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid !==
-                    (soal as SoalExamLS1).subtest_model_uuid && (
+                  (ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid !==
+                    (soal as SoalExamLS1).subtest_model_uuid ||
+                    ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid !==
+                      (soal as SoalExamLS1).subtest_model_uuid) && (
                     <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                       <Button
                         onClick={() => handlePreviousQuestion()}
@@ -781,8 +798,10 @@ const LembarUjianTkk: React.FC = () => {
             overflow: "auto",
             position:
               soal &&
-              (soal as SoalExamLS1).subtest_model_uuid ===
-                ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+              ((soal as SoalExamLS1).subtest_model_uuid ===
+                ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+                (soal as SoalExamLS1).subtest_model_uuid ===
+                  ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid)
                 ? "sticky"
                 : "relative",
           }}
@@ -963,7 +982,10 @@ const LembarUjianTkk: React.FC = () => {
                                 onClick={() => {
                                   if (
                                     (soal as SoalExamLS1).subtest_model_uuid ===
-                                    ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
+                                      ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+                                    (soal as SoalExamLS1).subtest_model_uuid ===
+                                      ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0]
+                                        .examUuid
                                   ) {
                                     setSelectedQuestionNumber((item as SoalExamLS1).uuid)
                                     setTimeout(() => {
