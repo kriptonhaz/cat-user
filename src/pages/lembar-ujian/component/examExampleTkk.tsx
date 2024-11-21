@@ -11,6 +11,7 @@ import {
   Grid,
   Radio,
   RadioGroup,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material"
@@ -48,6 +49,8 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
   const [indexMemorySpan, setIndexMemorySpan] = useState(0)
   const [timerMemorySpan, setTimerMemorySpan] = useState(0)
   const [startAnswer, setStartAnswer] = useState(false)
+  const [displayAnswerMemory, setDisplayAnswerMemory] = useState(false)
+  const [answerMemory, setAnswerMemory] = useState<{ val: string; index: number }[]>([])
 
   useEffect(() => {
     if (question.answer_type === 3) {
@@ -109,6 +112,31 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
   const onDecreaseFont = () => {
     setFontSize(fontSize - 1)
   }
+
+  const handleEditMemorySpan = (value: string, index: number) => {
+    const found = answerMemory.find((ar) => ar.index === index)
+    if (found) {
+      setAnswerMemory(
+        answerMemory.map((ar) => {
+          if (ar.index === index) {
+            return { ...ar, val: value }
+          }
+          return ar
+        })
+      )
+    } else {
+      setAnswerMemory([...answerMemory, { val: value, index: index }])
+    }
+  }
+
+  useEffect(() => {
+    const totalAnswer = (question as SoalExamLS1).intro_data.filter((ar) => ar.intro_type !== 2).length
+    if (answerMemory.length === totalAnswer) {
+      setDisplayAnswerMemory(true)
+    } else {
+      setDisplayAnswerMemory(false)
+    }
+  }, [answerMemory])
 
   return (
     <Card
@@ -486,11 +514,22 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                         .filter((ar) => ar.intro_type !== 2)
                         .map((answer, index) => (
                           <Grid item sx={{ display: "flex", alignItems: "center" }} key={index}>
-                            <TextField
-                              variant="filled"
-                              inputProps={{ "data-state": answer.showing_order, style: { textTransform: "uppercase" } }}
-                              autoComplete="off"
-                            />
+                            <Stack direction="column" alignItems={"flex-start"} mt={4}>
+                              {displayAnswerMemory === true && (
+                                <span>
+                                  {question.answer_data[0].content.replace(/(<([^>]+)>)/gi, "").split(" ")[index]}
+                                </span>
+                              )}
+                              <TextField
+                                variant="filled"
+                                inputProps={{
+                                  "data-state": answer.showing_order,
+                                  style: { textTransform: "uppercase" },
+                                }}
+                                autoComplete="off"
+                                onChange={(e) => handleEditMemorySpan(e.target.value, index)}
+                              />
+                            </Stack>
                           </Grid>
                         ))}
                     </Grid>
