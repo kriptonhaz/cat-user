@@ -322,20 +322,24 @@ const LembarUjianTkk: React.FC = () => {
         curentUuid === perceptualSpeedComparisonUuid
       ) {
         // condition when the next question is in a new subtest
-        setModalConfirm({
-          ...modalConfirm,
-          open: true,
-          title: "Subtest ini telah selesai, anda akan melanjutkan ke subtest berikutnya",
-          onConfirm: () => {
-            setModalConfirm({
-              ...modalConfirm,
-              open: false,
-              title: "",
-            })
-            checkQuestionAvailable()
-          },
-          displayCancel: false,
-        })
+        if (curentUuid === numberFacilityUuid || curentUuid === perceptualSpeedComparisonUuid) {
+          checkQuestionAvailable()
+        } else {
+          setModalConfirm({
+            ...modalConfirm,
+            open: true,
+            title: "Subtest ini telah selesai, anda akan melanjutkan ke subtest berikutnya",
+            onConfirm: () => {
+              setModalConfirm({
+                ...modalConfirm,
+                open: false,
+                title: "",
+              })
+              checkQuestionAvailable()
+            },
+            displayCancel: false,
+          })
+        }
       }
     }
   }
@@ -389,7 +393,7 @@ const LembarUjianTkk: React.FC = () => {
               (ar) => ar.examName === "Perceptual Speed – comparison"
             )[0].examUuid
 
-            if (curentUuid !== numberFacilityUuid || curentUuid !== perceptualSpeedComparisonUuid) {
+            if (curentUuid !== numberFacilityUuid && curentUuid !== perceptualSpeedComparisonUuid) {
               nextQuestionAfterSubmit()
               setSelectedMultipleAnswer([])
             } else {
