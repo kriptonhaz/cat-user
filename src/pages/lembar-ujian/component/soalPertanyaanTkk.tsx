@@ -17,6 +17,7 @@ import { TextIncrease, TextDecrease } from "@mui/icons-material"
 import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import { formatTime } from "@/utils/timer"
 import { ExamData } from "./exam-data"
+import ModalConfirm,{ ModalConfirmProps } from "@/ui/modal/ModalConfirm"
 
 export interface answer {
   content: string
@@ -36,6 +37,7 @@ export interface ISoalPertanyaanTkk {
   onIncreaseFont: () => void
   onDecreaseFont: () => void
   showTimer?: boolean
+  checkQuestionAvailable?: () => void
 }
 
 const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDivElement, ISoalPertanyaanTkk>(
@@ -53,27 +55,44 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
       onIncreaseFont,
       onDecreaseFont,
       showTimer = true,
+      checkQuestionAvailable,
     } = props
     const [answerMemorySpan, setAnswerMemorySpan] = useState<Array<{ order: number; content: string }>>([])
     const [startTimer, setStartTimer] = useState(false)
     const [indexMemorySpan, setIndexMemorySpan] = useState(0)
     const [timerMemorySpan, setTimerMemorySpan] = useState(0)
     const [startAnswer, setStartAnswer] = useState(false)
+    const [modalConfirm, setModalConfirm] = useState<ModalConfirmProps>({
+      open: false,
+      title: "",
+      message: "",
+      onConfirm: () => {
+        return null
+      },
+      onClose: () => {
+        setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+      },
+      displayCancel: true,
+    })
 
     useEffect(() => {
       if ((soal as SoalExamLS1).answer_type === 3) {
         setTimerMemorySpan((soal as SoalExamLS1).intro_data[indexMemorySpan].timer)
         setStartTimer(true)
         const timerSoal = setInterval(() => {
-          setTimerMemorySpan((prevSeconds) => prevSeconds - 1)
+          if (timerMemorySpan > 0) {
+            setTimerMemorySpan((prevSeconds) => prevSeconds - 1)
+          } else {
+            clearInterval(timerSoal)
+            setStartTimer(false)
+          }
         }, 1000)
 
         return () => {
           clearInterval(timerSoal)
-          setStartTimer(false)
         }
       }
-    }, [indexMemorySpan, soal])
+    }, [indexMemorySpan, soal, timerMemorySpan])
 
     useEffect(() => {
       if ((soal as SoalExamLS1).answer_type === 3 && timerMemorySpan === 0 && startTimer) {
@@ -86,7 +105,32 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
           setTimerMemorySpan(soal.timer)
         } else if (startAnswer === true) {
           // TODO:
-          console.log("ngapain yak")
+          if (setModalConfirm) {
+            setModalConfirm({
+              ...modalConfirm,
+              open: true,
+              title: "Subtest ini telah selesai, anda akan melanjutkan ke subtest berikutnya",
+              message: "",
+              onClose: () => {
+                setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+              },
+              onConfirm: () => {
+                setModalConfirm({
+                  ...modalConfirm,
+                  open: false,
+                  title: "",
+                  message: "",
+                  onClose: () => {
+                    setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+                  },
+                })
+                if (checkQuestionAvailable) {
+                  checkQuestionAvailable()
+                }
+              },
+              displayCancel: false,
+            })
+          }
         }
       }
     }, [timerMemorySpan, soal, startTimer])
@@ -610,6 +654,15 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
             )}
           </CardContent>
         </Card>
+
+        <ModalConfirm
+        open={!!modalConfirm.open}
+        onClose={() => setModalConfirm({ ...modalConfirm, open: false })}
+        title={modalConfirm.title}
+        message={modalConfirm.message}
+        onConfirm={modalConfirm.onConfirm}
+        displayCancel={modalConfirm.displayCancel}
+      />
       </div>
     )
   }

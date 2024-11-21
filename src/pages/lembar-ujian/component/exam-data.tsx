@@ -41,4 +41,12 @@ export const ExamData: IExamData[] = [
     examName: "Perceptual Speed – comparison",
     examUuid: "444161ec-64a6-46c7-a044-e4df8c2cbd95",
   },
+  {
+    examName: "Working Memory",
+    examUuid: "ef1e1f33-b205-4cd8-8149-1542329cf39c",
+  },
+  {
+    examName: "Memory Span",
+    examUuid: "f5f359d4-236f-425b-bc82-b29a19461d30",
+  },
 ]

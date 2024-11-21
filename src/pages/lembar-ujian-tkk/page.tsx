@@ -11,7 +11,7 @@ import SoalPertanyaanTkk, { answer } from "../lembar-ujian/component/soalPertany
 import { getExamActivityByModule, getSoalExamByModule } from "@/service/exam.service"
 import CardTimer from "../lembar-ujian/component/cardTimer"
 import { ExamData } from "../lembar-ujian/component/exam-data"
-import ModalConfirm from "@/ui/modal/ModalConfirm"
+import ModalConfirm, { ModalConfirmProps } from "@/ui/modal/ModalConfirm"
 
 const LembarUjianTkk: React.FC = () => {
   const location = useLocation()
@@ -63,12 +63,15 @@ const LembarUjianTkk: React.FC = () => {
   const examActivityMutation = updateExamActivityMutation()
   const finishMutation = finishExamMutation()
   const submitMutation = submitJawabanMutation()
-  const [modalConfirm, setModalConfirm] = useState({
+  const [modalConfirm, setModalConfirm] = useState<ModalConfirmProps>({
     open: false,
     title: "",
     message: "",
     onConfirm: () => {
-      null
+      return null
+    },
+    onClose: () => {
+      setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
     },
     displayCancel: true,
   })
@@ -114,13 +117,17 @@ const LembarUjianTkk: React.FC = () => {
     const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
     const perceptualSpeedComparisonUuid = ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0]
       .examUuid
+    const memorySpanUuid = ExamData.filter((ar) => ar.examName === "Memory Span")[0].examUuid
+    const workingMemoryUuid = ExamData.filter((ar) => ar.examName === "Working Memory")[0].examUuid
 
     if (remainingTime <= 0 && dataTkk?.data && typeof indexSubtestActiveTkk === "number") {
       if (
         dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1 &&
         soal &&
         currentUuid !== numberFacilityUuid &&
-        currentUuid !== perceptualSpeedComparisonUuid
+        currentUuid !== perceptualSpeedComparisonUuid &&
+        currentUuid !== memorySpanUuid &&
+        currentUuid !== workingMemoryUuid
       ) {
         setTimer(0)
         setTimeout(() => {
@@ -292,7 +299,6 @@ const LembarUjianTkk: React.FC = () => {
     const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
     const perceptualSpeedComparisonUuid = ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0]
       .examUuid
-
     if (soalExamAvailable?.data) {
       const soalIndex = soalExamAvailable.data.findIndex(
         (ar) => (ar as SoalExamLS1).uuid === (soal as SoalExamLS1).uuid
@@ -394,6 +400,7 @@ const LembarUjianTkk: React.FC = () => {
             )[0].examUuid
 
             if (curentUuid !== numberFacilityUuid && curentUuid !== perceptualSpeedComparisonUuid) {
+              console.log("source => ", source)
               nextQuestionAfterSubmit()
               setSelectedMultipleAnswer([])
             } else {
@@ -462,6 +469,7 @@ const LembarUjianTkk: React.FC = () => {
         }
       )
     } else {
+      console.log("next question line 467")
       nextQuestionAfterSubmit()
     }
   }
@@ -566,6 +574,7 @@ const LembarUjianTkk: React.FC = () => {
                               fontSize={fontSize}
                               onIncreaseFont={onIncreaseFont}
                               onDecreaseFont={onDecreaseFont}
+                              checkQuestionAvailable={checkQuestionAvailable}
                               setAnswer={(answer: answer) => {
                                 const currentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
                                 const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0]
@@ -1053,7 +1062,6 @@ const LembarUjianTkk: React.FC = () => {
           </Box>
         </Grid>
       </Grid>
-      {/* !TODO[Latif]: Add modal */}
       <ModalConfirm
         open={!!modalConfirm.open}
         onClose={() => setModalConfirm({ ...modalConfirm, open: false })}
