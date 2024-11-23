@@ -48,7 +48,7 @@ const CardTimer = ({
           </Box>
         </Box>
         <Typography variant="h6" sx={{ mb: 3 }}>
-          {subtestNumber} : {subtestName}
+          {subtestNumber}
         </Typography>
       </CardContent>
     </Card>
