@@ -17,7 +17,7 @@ import { TextIncrease, TextDecrease } from "@mui/icons-material"
 import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import { formatTime } from "@/utils/timer"
 import { ExamData } from "./exam-data"
-import ModalConfirm,{ ModalConfirmProps } from "@/ui/modal/ModalConfirm"
+import ModalConfirm, { ModalConfirmProps } from "@/ui/modal/ModalConfirm"
 
 export interface answer {
   content: string
@@ -80,19 +80,14 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
         setTimerMemorySpan((soal as SoalExamLS1).intro_data[indexMemorySpan].timer)
         setStartTimer(true)
         const timerSoal = setInterval(() => {
-          if (timerMemorySpan > 0) {
-            setTimerMemorySpan((prevSeconds) => prevSeconds - 1)
-          } else {
-            clearInterval(timerSoal)
-            setStartTimer(false)
-          }
+          setTimerMemorySpan((prevSeconds) => prevSeconds - 1)
         }, 1000)
 
         return () => {
           clearInterval(timerSoal)
         }
       }
-    }, [indexMemorySpan, soal, timerMemorySpan])
+    }, [indexMemorySpan, soal])
 
     useEffect(() => {
       if ((soal as SoalExamLS1).answer_type === 3 && timerMemorySpan === 0 && startTimer) {
@@ -656,13 +651,13 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
         </Card>
 
         <ModalConfirm
-        open={!!modalConfirm.open}
-        onClose={() => setModalConfirm({ ...modalConfirm, open: false })}
-        title={modalConfirm.title}
-        message={modalConfirm.message}
-        onConfirm={modalConfirm.onConfirm}
-        displayCancel={modalConfirm.displayCancel}
-      />
+          open={!!modalConfirm.open}
+          onClose={() => setModalConfirm({ ...modalConfirm, open: false })}
+          title={modalConfirm.title}
+          message={modalConfirm.message}
+          onConfirm={modalConfirm.onConfirm}
+          displayCancel={modalConfirm.displayCancel}
+        />
       </div>
     )
   }
