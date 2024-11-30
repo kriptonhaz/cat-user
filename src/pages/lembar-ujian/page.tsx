@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Grid, Box, Card, Button, CardContent, Typography } from "@mui/material"
+import { Grid, Box, Card, Button, CardContent, Typography, Stack } from "@mui/material"
 import SoalPertanyaanPilgan, { answer } from "./component/soalPertanyaanPilgan"
 import ExamInstruction from "./component/examInstruction"
 import { useExamHooks } from "@/hooks/useExamHooks"
@@ -270,7 +270,7 @@ const LembarUjian = () => {
               }
             })
           }
-        }
+        } 
       }
     }
     if (activityExam && selectedAnswer && soal && soal.question_type === 1) {
@@ -303,6 +303,19 @@ const LembarUjian = () => {
     } else {
       nextQuestionAfterSubmit()
     }
+  }
+
+  const onFinish = () => {
+    setModalConfirm({
+      ...modalConfirm,
+      open: true,
+      title: "Apa anda yakin ingin menyelesaikan ujian ini?",
+      onConfirm: () => {
+        if (params.activityId) {
+          finishMutation.mutate({ activityUuid: params.activityId })
+        }
+      },
+    })
   }
 
   if (!soalExamAvailable) {
@@ -355,9 +368,20 @@ const LembarUjian = () => {
                   />
                 )}
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "98%" }}>
-                  <Button color="info" onClick={handleJawab}>
-                    {finalQuestion ? "Selesai" : "Simpan dan Lanjutkan"}
-                  </Button>
+                  <Stack direction="row" spacing={2}>
+                    <Button color="info" onClick={handleJawab}>
+                      {timerUjian?.data.timer_type === 1 && finalQuestion ? "Selesai" : "Simpan dan Lanjutkan"}
+                    </Button>
+                    {timerUjian?.data.timer_type === 2 &&
+                      soalExamAvailable.data.filter((ar) => ar.question_type === 1).length -
+                        (questionResponseByActivity?.data?.length || 0) ===
+                        0 && (
+                        // -----
+                        <Button color="info" onClick={onFinish}>
+                          Selesai
+                        </Button>
+                      )}
+                  </Stack>
                   {timerUjian?.data.timer_type === 2 && (
                     <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                       <Button
@@ -407,7 +431,6 @@ const LembarUjian = () => {
                       nextQuestion={handleNextQuestion}
                       questionIndex={currentQuestionIndex}
                       isLoadingTimer={isLoadingSoal}
-                      handleJawab={handleJawab}
                       total_consume_time={activityExam?.data.total_consume_time || 0}
                       remainingTime={remainingTime}
                     />
