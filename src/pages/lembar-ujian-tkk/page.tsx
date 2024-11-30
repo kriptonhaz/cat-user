@@ -1,5 +1,5 @@
 import { useExamHooks } from "@/hooks/useExamHooks"
-import { Box, Button, Card, CardContent, Grid, Typography, SxProps } from "@mui/material"
+import { Box, Button, Card, CardContent, Grid, Typography, SxProps, Stack } from "@mui/material"
 import { useLocation, useParams } from "react-router-dom"
 import TimerAndWebcam from "../lembar-ujian/component/timerAndWebcam"
 import { useEffect, useRef, useState } from "react"
@@ -348,6 +348,32 @@ const LembarUjianTkk: React.FC = () => {
         }
       }
     }
+  }
+
+  const onFinish = () => {
+    setModalConfirm({
+      ...modalConfirm,
+      open: true,
+      title: "Apa anda yakin ingin menyelesaikan ujian ini?",
+      onConfirm: () => {
+        setModalConfirm({
+          ...modalConfirm,
+          open: false,
+          title: "",
+          onConfirm: () => null,
+        })
+        examActivityMutation.mutate({
+          last_question_filled: (soalExamAvailable?.data[soalExamAvailable?.data.length - 1] as SoalExamLS1)
+            .showing_order,
+          last_question_subtest: (soal as SoalExamLS1).subtest_model_uuid,
+          uuidActivity: activityExam?.data.Uuid || "",
+          onSuccess: () => {
+            checkQuestionAvailable()
+          },
+        })
+      },
+      displayCancel: true,
+    })
   }
 
   const handleJawab = (props?: {
@@ -791,20 +817,40 @@ const LembarUjianTkk: React.FC = () => {
                 </>
               )}
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "98%" }}>
-                <Button
-                  color={disabledNextButton ? "primary" : "info"}
-                  onClick={() => handleJawab({ source: "Lanjutkan" })}
-                  disabled={disabledNextButton}
-                >
-                  {soal?.question_type === 2 || soal?.question_type === 3
-                    ? "Lanjutkan"
-                    : finalQuestion ||
-                      (soal &&
-                        (soal as SoalExamLS1).subtest_model_uuid ===
-                          ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid)
-                    ? "Selesai"
-                    : "Simpan dan Lanjutkan"}
-                </Button>
+                <Stack direction="row" spacing={2}>
+                  <Button
+                    color={disabledNextButton ? "primary" : "info"}
+                    onClick={() => handleJawab({ source: "Lanjutkan" })}
+                    disabled={disabledNextButton}
+                  >
+                    {soal?.question_type === 2 || soal?.question_type === 3 //only for instruction and example
+                      ? "Lanjutkan"
+                      : (typeof indexSubtestActiveTkk === "number" &&
+                          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1 &&
+                          finalQuestion) ||
+                        (soal &&
+                          (soal as SoalExamLS1).subtest_model_uuid ===
+                            ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid) ||
+                        (soal &&
+                          (soal as SoalExamLS1).subtest_model_uuid ===
+                            ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid)
+                      ? "Selesai"
+                      : "Simpan dan Lanjutkan"}
+                  </Button>
+                  {typeof indexSubtestActiveTkk === "number" &&
+                    dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 2 &&
+                    soalExamAvailable &&
+                    soalExamAvailable?.data.filter((ar) => ar.question_type === 1).length -
+                      (questionResponseByActivity?.data?.filter(
+                        (ar) => ar.subtest_uuid === dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid
+                      ).length || 0) ===
+                      0 && (
+                      <Button color="info" onClick={onFinish}>
+                        Selesai
+                      </Button>
+                    )}
+                </Stack>
+
                 {soal &&
                   typeof indexSubtestActiveTkk === "number" &&
                   dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 2 &&
