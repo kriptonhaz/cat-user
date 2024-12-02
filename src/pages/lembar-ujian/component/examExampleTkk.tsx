@@ -132,7 +132,9 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
   useEffect(() => {
     const totalAnswer = (question as SoalExamLS1).intro_data.filter((ar) => ar.intro_type !== 2).length
     if (answerMemory.length === totalAnswer) {
-      setDisplayAnswerMemory(true)
+      setTimeout(() => {
+        setDisplayAnswerMemory(true)
+      }, 1000)
     } else {
       setDisplayAnswerMemory(false)
     }
