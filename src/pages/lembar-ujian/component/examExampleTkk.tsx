@@ -137,7 +137,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
     if (answerMemory.length === totalAnswer) {
       setTimeout(() => {
         setDisplayAnswerMemory(true)
-      }, 1000)
+      }, 3000)
     } else {
       setDisplayAnswerMemory(false)
     }
