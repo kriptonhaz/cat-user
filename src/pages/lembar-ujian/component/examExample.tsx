@@ -10,6 +10,8 @@ interface ExamExampleProps {
   showExampleLabel?: boolean
   subtestNumber?: string
   subtestName?: string
+  fontSize: number
+  setFontSize: (fontSize: number) => void
 }
 
 const ExamExample: React.FC<ExamExampleProps> = ({
@@ -18,22 +20,15 @@ const ExamExample: React.FC<ExamExampleProps> = ({
   showExampleLabel = false,
   subtestNumber,
   subtestName,
+  fontSize,
+  setFontSize,
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
-  const [fontSize, setFontSize] = useState(22)
 
   const onAnswerSelect = (uuid: string, isCorrectAnswer: boolean) => {
     setSelectedAnswer(uuid)
     setIsCorrect(isCorrectAnswer)
-  }
-
-  const onIncreaseFont = () => {
-    setFontSize(fontSize + 1)
-  }
-
-  const onDecreaseFont = () => {
-    setFontSize(fontSize - 1)
   }
 
   return (
@@ -56,8 +51,18 @@ const ExamExample: React.FC<ExamExampleProps> = ({
         <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
         <Box>
           <Box display={"flex"} justifyContent={"space-between"} width={140}>
-            <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />
-            <Button color="primary" startIcon={<TextIncrease />} variant="outlined" onClick={onIncreaseFont} />
+            <Button
+              color="primary"
+              startIcon={<TextDecrease />}
+              variant="outlined"
+              onClick={() => setFontSize(fontSize - 1)}
+            />
+            <Button
+              color="primary"
+              startIcon={<TextIncrease />}
+              variant="outlined"
+              onClick={() => setFontSize(fontSize + 1)}
+            />
           </Box>
         </Box>
       </Box>

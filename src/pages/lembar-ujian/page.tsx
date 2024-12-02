@@ -10,11 +10,12 @@ import TimerAndWebcam from "./component/timerAndWebcam"
 import ExamExample from "./component/examExample"
 import ModalInstruction from "./component/ModalInstruction"
 import ModalConfirm from "@/ui/modal/ModalConfirm"
+import useConfigStore from "@/store/config.store"
 
 const LembarUjian = () => {
   const location = useLocation()
   const params = useParams()
-
+  const configStore = useConfigStore((state) => state)
   const [soal, setSoal] = useState<SoalExam | SoalExamLS1 | SoalExamPPI | null>(null)
   const [finalQuestion, setFinalQuestion] = useState(false)
   const [timer, setTimer] = useState(0)
@@ -270,7 +271,7 @@ const LembarUjian = () => {
               }
             })
           }
-        } 
+        }
       }
     }
     if (activityExam && selectedAnswer && soal && soal.question_type === 1) {
@@ -356,15 +357,24 @@ const LembarUjian = () => {
                           message: moduleInstruction?.data.content || "",
                         })
                       }
+                      fontSize={configStore.fontSize}
+                      setFontSize={configStore.setFontSize}
                     />
                   </>
                 ) : soal.question_type === 2 ? (
-                  <ExamExample question={soal as SoalExamLS1} remainingTime={remainingTime} />
+                  <ExamExample
+                    question={soal as SoalExamLS1}
+                    remainingTime={remainingTime}
+                    fontSize={configStore.fontSize}
+                    setFontSize={configStore.setFontSize}
+                  />
                 ) : (
                   <ExamInstruction
                     content={soal.question_content}
                     imageSrc={(soal as SoalExamLS1).image_path_cat}
                     remainingTime={remainingTime}
+                    fontSize={configStore.fontSize}
+                    setFontSize={configStore.setFontSize}
                   />
                 )}
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "98%" }}>

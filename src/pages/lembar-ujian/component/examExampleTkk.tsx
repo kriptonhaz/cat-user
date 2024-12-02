@@ -27,6 +27,8 @@ interface ExamExampleTkkProps {
   nextQuestion: () => void
   setDisableNextButton?: (val: boolean) => void
   showTimer?: boolean
+  fontSize: number
+  setFontSize: (fontSize: number) => void
 }
 
 const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
@@ -38,13 +40,14 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
   nextQuestion,
   setDisableNextButton,
   showTimer = true,
+  fontSize,
+  setFontSize,
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [selectedAnswerMultiple, setSelectedAnswerMultiple] = useState<
     Array<{ uuid: string; isCorrectAnswer: boolean }>
   >([])
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
-  const [fontSize, setFontSize] = useState(22)
   const [startTimer, setStartTimer] = useState(false)
   const [indexMemorySpan, setIndexMemorySpan] = useState(0)
   const [timerMemorySpan, setTimerMemorySpan] = useState(0)

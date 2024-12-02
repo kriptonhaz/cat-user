@@ -34,11 +34,11 @@ export interface ISoalPertanyaanTkk {
   subtestName?: string
   setDisableNextButton?: (val: boolean) => void
   fontSize: number
-  onIncreaseFont: () => void
-  onDecreaseFont: () => void
+  setFontSize: (fontSize: number) => void
   showTimer?: boolean
   checkQuestionAvailable?: () => void
   selectedMultipleAnswer: string[]
+  isScrolling?: boolean
 }
 
 const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDivElement, ISoalPertanyaanTkk>(
@@ -53,11 +53,11 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
       subtestName,
       setDisableNextButton,
       fontSize,
-      onIncreaseFont,
-      onDecreaseFont,
+      setFontSize,
       showTimer = true,
       checkQuestionAvailable,
       selectedMultipleAnswer,
+      isScrolling = false,
     } = props
     const [answerMemorySpan, setAnswerMemorySpan] = useState<Array<{ order: number; content: string }>>([])
     const [startTimer, setStartTimer] = useState(false)
@@ -237,9 +237,19 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                   </Typography>
                 )}
                 <Box sx={timerType === 2 ? { width: "250px", display: "flex", justifyContent: "space-between" } : {}}>
-                  <Box display={"flex"} justifyContent={"space-between"} width={140}>
-                    <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />
-                    <Button color="primary" startIcon={<TextIncrease />} variant="outlined" onClick={onIncreaseFont} />
+                  <Box display={isScrolling ? "none" : "flex"} justifyContent={"space-between"} width={140}>
+                    <Button
+                      color="primary"
+                      startIcon={<TextDecrease />}
+                      variant="outlined"
+                      onClick={() => setFontSize(fontSize - 1)}
+                    />
+                    <Button
+                      color="primary"
+                      startIcon={<TextIncrease />}
+                      variant="outlined"
+                      onClick={() => setFontSize(fontSize + 1)}
+                    />
                   </Box>
                 </Box>
               </Box>

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio, Button, Divider } from "@mui/material"
 import { TextIncrease, TextDecrease } from "@mui/icons-material"
 import { ITimerUjianResponse, SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
@@ -19,6 +19,8 @@ const SoalPertanyaanPilgan = ({
   remainingTime,
   timerUjian,
   showInstruction,
+  fontSize,
+  setFontSize,
 }: {
   soal: SoalExam | SoalExamLS1 | SoalExamPPI
   isFinalQuestion: boolean
@@ -28,8 +30,9 @@ const SoalPertanyaanPilgan = ({
   remainingTime: number
   timerUjian?: ITimerUjianResponse
   showInstruction: () => void
+  fontSize: number
+  setFontSize: (fontSize: number) => void
 }) => {
-  const [fontSize, setFontSize] = useState(22)
   const { finishExamMutation } = useExamMutation()
   const examMutation = finishExamMutation()
 
@@ -87,14 +90,6 @@ const SoalPertanyaanPilgan = ({
     }
   }
 
-  const onIncreaseFont = () => {
-    setFontSize(fontSize + 1)
-  }
-
-  const onDecreaseFont = () => {
-    setFontSize(fontSize - 1)
-  }
-
   return (
     <>
       <Card
@@ -126,8 +121,18 @@ const SoalPertanyaanPilgan = ({
                 </Button>
               )}
               <Box display={"flex"} justifyContent={"space-between"} width={140}>
-                <Button color="primary" startIcon={<TextDecrease />} variant="outlined" onClick={onDecreaseFont} />
-                <Button color="primary" startIcon={<TextIncrease />} variant="outlined" onClick={onIncreaseFont} />
+                <Button
+                  color="primary"
+                  startIcon={<TextDecrease />}
+                  variant="outlined"
+                  onClick={() => setFontSize(fontSize - 1)}
+                />
+                <Button
+                  color="primary"
+                  startIcon={<TextIncrease />}
+                  variant="outlined"
+                  onClick={() => setFontSize(fontSize + 1)}
+                />
               </Box>
             </Box>
           </Box>

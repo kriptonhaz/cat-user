@@ -12,11 +12,13 @@ import { getExamActivityByModule, getSoalExamByModule } from "@/service/exam.ser
 import CardTimer from "../lembar-ujian/component/cardTimer"
 import { ExamData } from "../lembar-ujian/component/exam-data"
 import ModalConfirm, { ModalConfirmProps } from "@/ui/modal/ModalConfirm"
+import useConfigStore from "@/store/config.store"
 
 const LembarUjianTkk: React.FC = () => {
   const location = useLocation()
   const params = useParams()
   const ref = useRef<HTMLDivElement>(null)
+  const configStore = useConfigStore((state) => state)
   const {
     queryActivityExam,
     queryGetTimerUjian,
@@ -54,7 +56,6 @@ const LembarUjianTkk: React.FC = () => {
   >(null)
   const [selectedMultipleAnswer, setSelectedMultipleAnswer] = useState<string[]>([])
   const [disabledNextButton, setDisabledNextButton] = useState(false)
-  const [fontSize, setFontSize] = useState(22)
   const [selectedQuestionNumber, setSelectedQuestionNumber] = useState<string | null>(null)
 
   const { leftExamBeforeFinishMutation, updateExamActivityMutation, finishExamMutation, submitJawabanMutation } =
@@ -262,14 +263,6 @@ const LembarUjianTkk: React.FC = () => {
       }
     }
   }, [soalExamAvailable, currentQuestionIndex, dataTkk])
-
-  const onIncreaseFont = () => {
-    setFontSize(fontSize + 1)
-  }
-
-  const onDecreaseFont = () => {
-    setFontSize(fontSize - 1)
-  }
 
   const handleNextQuestion = () => {
     if (selectedAnswer) {
@@ -533,6 +526,8 @@ const LembarUjianTkk: React.FC = () => {
                         typeof indexSubtestActiveTkk === "number" &&
                         dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_countdown_timer
                       }
+                      fontSize={configStore.fontSize}
+                      setFontSize={configStore.setFontSize}
                     />
                   )}
                   {soal.question_type === 2 && (
@@ -554,6 +549,8 @@ const LembarUjianTkk: React.FC = () => {
                         typeof indexSubtestActiveTkk === "number" &&
                         dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_countdown_timer
                       }
+                      fontSize={configStore.fontSize}
+                      setFontSize={configStore.setFontSize}
                     />
                   )}
                   {soal.question_type === 1 &&
@@ -562,8 +559,6 @@ const LembarUjianTkk: React.FC = () => {
                       (soal as SoalExamLS1).subtest_model_uuid ===
                         ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) && (
                       <CardTimer
-                        onIncreaseFont={onIncreaseFont}
-                        onDecreaseFont={onDecreaseFont}
                         remainingTime={remainingTime}
                         timerType={
                           (typeof indexSubtestActiveTkk === "number" &&
@@ -580,6 +575,8 @@ const LembarUjianTkk: React.FC = () => {
                           typeof indexSubtestActiveTkk === "number" &&
                           dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_countdown_timer
                         }
+                        fontSize={configStore.fontSize}
+                        setFontSize={configStore.setFontSize}
                       />
                     )}
                   {(soal as SoalExamLS1).subtest_model_uuid ===
@@ -597,9 +594,9 @@ const LembarUjianTkk: React.FC = () => {
                               // @ts-ignore
                               ref={selectedQuestionNumber === (item as SoalExamLS1).uuid ? ref : undefined}
                               soal={item}
-                              fontSize={fontSize}
-                              onIncreaseFont={onIncreaseFont}
-                              onDecreaseFont={onDecreaseFont}
+                              fontSize={configStore.fontSize}
+                              setFontSize={configStore.setFontSize}
+                              isScrolling={true}
                               checkQuestionAvailable={checkQuestionAvailable}
                               selectedMultipleAnswer={selectedMultipleAnswer}
                               setAnswer={(answer: answer) => {
@@ -691,9 +688,9 @@ const LembarUjianTkk: React.FC = () => {
                               // @ts-ignore
                               ref={selectedQuestionNumber === (item as SoalExamLS1).uuid ? ref : undefined}
                               soal={item}
-                              fontSize={fontSize}
-                              onIncreaseFont={onIncreaseFont}
-                              onDecreaseFont={onDecreaseFont}
+                              fontSize={configStore.fontSize}
+                              setFontSize={configStore.setFontSize}
+                              isScrolling={true}
                               checkQuestionAvailable={checkQuestionAvailable}
                               selectedMultipleAnswer={selectedMultipleAnswer}
                               setAnswer={(answer: answer) => {
@@ -779,9 +776,8 @@ const LembarUjianTkk: React.FC = () => {
                     soal.question_type === 1 && (
                       <SoalPertanyaanTkk
                         soal={soal}
-                        fontSize={fontSize}
-                        onIncreaseFont={onIncreaseFont}
-                        onDecreaseFont={onDecreaseFont}
+                        fontSize={configStore.fontSize}
+                        setFontSize={configStore.setFontSize}
                         checkQuestionAvailable={checkQuestionAvailable}
                         selectedMultipleAnswer={selectedMultipleAnswer}
                         setAnswer={(answer: answer) => {

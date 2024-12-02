@@ -12,6 +12,8 @@ interface ExamInstructionProps {
   subtestNumber?: string
   subtestName?: string
   showTimer?: boolean
+  fontSize: number
+  setFontSize: (fontSize: number) => void
 }
 
 const ExamInstruction: React.FC<ExamInstructionProps> = ({
@@ -23,8 +25,10 @@ const ExamInstruction: React.FC<ExamInstructionProps> = ({
   subtestNumber,
   subtestName,
   showTimer = true,
+  fontSize,
+  setFontSize,
 }) => {
-  const [fontSize, setFontSize] = useState(22)
+  // const [fontSize, setFontSize] = useState(22)
 
   const onIncreaseFont = () => {
     setFontSize(fontSize + 1)
