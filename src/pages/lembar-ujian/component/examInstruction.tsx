@@ -69,7 +69,7 @@ const ExamInstruction: React.FC<ExamInstructionProps> = ({
       )}
       {showInstructionLabel && (
         <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: fontSize, my: 3 }}>
-          Petunjuk Pengerjaan
+          Instruksi
         </Typography>
       )}
       <div className="content">
