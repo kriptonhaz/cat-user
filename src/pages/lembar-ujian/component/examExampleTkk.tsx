@@ -451,42 +451,54 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                   }
                   sx={{ width: "100%" }}
                 >
-                  {(question as SoalExamLS1).answer_data.map((answer) => (
-                    <FormControlLabel
-                      key={answer.uuid}
-                      value={answer.uuid}
-                      control={<Checkbox size="small" />}
-                      onChange={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
-                      label={
-                        <Box display={"flex"} flexDirection={question.answer_showing_position === 1 ? "row" : "column"}>
+                  {(question as SoalExamLS1).answer_data.map((answer) => {
+                    const isChecked = selectedAnswerMultiple.some((selected) => selected.uuid === answer.uuid)
+                    const isDisabled =
+                      !isChecked &&
+                      selectedAnswerMultiple.length >= (question as SoalExamLS1).total_answer_should_have_for_true
+                    return (
+                      <FormControlLabel
+                        key={answer.uuid}
+                        value={answer.uuid}
+                        control={<Checkbox size="small" />}
+                        onChange={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
+                        disabled={isDisabled}
+                        label={
                           <Box
                             display={"flex"}
-                            justifyContent={"center"}
-                            flexDirection={"column"}
-                            alignItems={"center"}
+                            flexDirection={question.answer_showing_position === 1 ? "row" : "column"}
                           >
-                            <Typography
-                              dangerouslySetInnerHTML={{ __html: answer.content }}
-                              sx={{
-                                "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                                "& p": { margin: 0 },
-                                "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
-                                fontSize: fontSize,
-                              }}
-                            />
-                            {(question as SoalExamLS1).is_need_answer_label && <Typography>{answer.label}</Typography>}
+                            <Box
+                              display={"flex"}
+                              justifyContent={"center"}
+                              flexDirection={"column"}
+                              alignItems={"center"}
+                            >
+                              <Typography
+                                dangerouslySetInnerHTML={{ __html: answer.content }}
+                                sx={{
+                                  "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                  "& p": { margin: 0 },
+                                  "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                  fontSize: fontSize,
+                                }}
+                              />
+                              {(question as SoalExamLS1).is_need_answer_label && (
+                                <Typography>{answer.label}</Typography>
+                              )}
+                            </Box>
+                            {question.total_answer_should_have_for_true === 2 &&
+                              ((selectedAnswerMultiple.filter(
+                                (ar) => ar.uuid === answer.uuid && ar.isCorrectAnswer === true
+                              ).length > 0 && <Check style={{ marginLeft: "5px", color: "green" }} />) ||
+                                (selectedAnswerMultiple.filter(
+                                  (ar) => ar.uuid === answer.uuid && ar.isCorrectAnswer === false
+                                ).length > 0 && <Cancel style={{ marginLeft: "5px", color: "red" }} />))}
                           </Box>
-                          {question.total_answer_should_have_for_true === 2 &&
-                            ((selectedAnswerMultiple.filter(
-                              (ar) => ar.uuid === answer.uuid && ar.isCorrectAnswer === true
-                            ).length > 0 && <Check style={{ marginLeft: "5px", color: "green" }} />) ||
-                              (selectedAnswerMultiple.filter(
-                                (ar) => ar.uuid === answer.uuid && ar.isCorrectAnswer === false
-                              ).length > 0 && <Cancel style={{ marginLeft: "5px", color: "red" }} />))}
-                        </Box>
-                      }
-                    />
-                  ))}
+                        }
+                      />
+                    )
+                  })}
                 </Box>
               )}
             {(question as SoalExamLS1).answer_type === 3 && (

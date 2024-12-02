@@ -38,6 +38,7 @@ export interface ISoalPertanyaanTkk {
   onDecreaseFont: () => void
   showTimer?: boolean
   checkQuestionAvailable?: () => void
+  selectedMultipleAnswer: string[]
 }
 
 const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDivElement, ISoalPertanyaanTkk>(
@@ -56,6 +57,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
       onDecreaseFont,
       showTimer = true,
       checkQuestionAvailable,
+      selectedMultipleAnswer,
     } = props
     const [answerMemorySpan, setAnswerMemorySpan] = useState<Array<{ order: number; content: string }>>([])
     const [startTimer, setStartTimer] = useState(false)
@@ -620,28 +622,36 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                         }
                         sx={{ width: "100%" }}
                       >
-                        {(soal as SoalExamLS1).answer_data.map((answer) => (
-                          <FormControlLabel
-                            key={answer.uuid}
-                            value={answer.uuid}
-                            control={<Checkbox size="small" />}
-                            // @ts-ignore
-                            onChange={handleChoose}
-                            label={
-                              <>
-                                <Typography
-                                  dangerouslySetInnerHTML={{ __html: answer.content }}
-                                  sx={{
-                                    "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                                    "& p": { margin: 0 },
-                                    "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
-                                    fontSize: fontSize,
-                                  }}
-                                />
-                              </>
-                            }
-                          />
-                        ))}
+                        {(soal as SoalExamLS1).answer_data.map((answer) => {
+                          const isChecked = selectedMultipleAnswer.includes(answer.uuid)
+                          const isDisabled =
+                            !isChecked &&
+                            selectedMultipleAnswer.filter((ar) => ar !== "").length >=
+                              (soal as SoalExamLS1).total_answer_should_have_for_true
+                          return (
+                            <FormControlLabel
+                              key={answer.uuid}
+                              value={answer.uuid}
+                              control={<Checkbox size="small" />}
+                              // @ts-ignore
+                              onChange={handleChoose}
+                              disabled={isDisabled}
+                              label={
+                                <>
+                                  <Typography
+                                    dangerouslySetInnerHTML={{ __html: answer.content }}
+                                    sx={{
+                                      "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                      "& p": { margin: 0 },
+                                      "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                      fontSize: fontSize,
+                                    }}
+                                  />
+                                </>
+                              }
+                            />
+                          )
+                        })}
                       </Box>
                     )}
                 </Box>

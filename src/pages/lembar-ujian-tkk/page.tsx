@@ -601,6 +601,7 @@ const LembarUjianTkk: React.FC = () => {
                               onIncreaseFont={onIncreaseFont}
                               onDecreaseFont={onDecreaseFont}
                               checkQuestionAvailable={checkQuestionAvailable}
+                              selectedMultipleAnswer={selectedMultipleAnswer}
                               setAnswer={(answer: answer) => {
                                 const currentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
                                 const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0]
@@ -694,6 +695,7 @@ const LembarUjianTkk: React.FC = () => {
                               onIncreaseFont={onIncreaseFont}
                               onDecreaseFont={onDecreaseFont}
                               checkQuestionAvailable={checkQuestionAvailable}
+                              selectedMultipleAnswer={selectedMultipleAnswer}
                               setAnswer={(answer: answer) => {
                                 const currentUuid = (soal as SoalExamLS1)?.subtest_model_uuid
                                 const numberFacilityUuid = ExamData.filter(
@@ -781,6 +783,7 @@ const LembarUjianTkk: React.FC = () => {
                         onIncreaseFont={onIncreaseFont}
                         onDecreaseFont={onDecreaseFont}
                         checkQuestionAvailable={checkQuestionAvailable}
+                        selectedMultipleAnswer={selectedMultipleAnswer}
                         setAnswer={(answer: answer) => {
                           if ((soal as SoalExamLS1).total_answer_should_have_for_true === 1) {
                             setSelectedAnswer(answer)
