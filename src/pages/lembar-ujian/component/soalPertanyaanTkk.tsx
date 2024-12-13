@@ -12,6 +12,7 @@ import {
   Checkbox,
   Grid,
   TextField,
+  Stack,
 } from "@mui/material"
 import { TextIncrease, TextDecrease } from "@mui/icons-material"
 import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
@@ -435,35 +436,44 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                 >
                   {(soal as SoalExamLS1).answer_data.map((answer, index) => (
                     <Grid key={index} item xs={12} md={6 * (fontSize / 22)} lg={3.5 * (fontSize / 22)}>
-                      <Box
-                        sx={{
-                          width: "100%",
-                          display: "flex",
-                          alignItems: "flex-start",
-                          flexDirection: "column",
-                          cursor: "pointer",
-                          // minHeight: "27vh",
-                          backgroundColor: selectedAnswer?.content === answer.uuid ? "#c5e89e" : undefined,
-                        }}
-                        onClick={() => {
-                          selectAnswerInduction(answer.uuid)
-                        }}
-                      >
-                        {(soal as SoalExamLS1).is_need_answer_label && <Typography>{answer.label}</Typography>}
-
-                        <img
-                          src={import.meta.env.VITE_API_URL + answer.image_path_cat}
-                          alt={"Answer image"}
-                          style={{
-                            marginTop: "8px",
-                            width: "100%",
-                            // height: "90%",
-                            alignSelf: "center",
-                            marginBottom: "8px",
-                            objectFit: "contain",
+                      <Stack direction="row" alignItems="flex-start">
+                        <Radio
+                          size="small"
+                          sx={{ mt: -2 }}
+                          checked={selectedAnswer?.content === answer.uuid}
+                          onClick={() => {
+                            selectAnswerInduction(answer.uuid)
                           }}
                         />
-                      </Box>
+                        <Box
+                          sx={{
+                            width: "100%",
+                            display: "flex",
+                            alignItems: "flex-start",
+                            flexDirection: "column",
+                            cursor: "pointer",
+                            // minHeight: "27vh",
+                            backgroundColor: selectedAnswer?.content === answer.uuid ? "#c5e89e" : undefined,
+                          }}
+                          onClick={() => {
+                            selectAnswerInduction(answer.uuid)
+                          }}
+                        >
+                          {(soal as SoalExamLS1).is_need_answer_label && <Typography>{answer.label}</Typography>}
+                          <img
+                            src={import.meta.env.VITE_API_URL + answer.image_path_cat}
+                            alt={"Answer image"}
+                            style={{
+                              marginTop: "8px",
+                              width: "100%",
+                              // height: "90%",
+                              alignSelf: "center",
+                              marginBottom: "8px",
+                              objectFit: "contain",
+                            }}
+                          />
+                        </Box>
+                      </Stack>
                     </Grid>
                   ))}
                 </Grid>

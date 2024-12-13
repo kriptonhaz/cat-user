@@ -285,40 +285,51 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
           >
             {(question as SoalExamLS1).answer_data.map((answer, index) => (
               <Grid key={index} item xs={12} md={6} lg={3.5 * (fontSize / 22)}>
-                <Box
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "flex-start",
-                    flexDirection: "column",
-                    cursor: "pointer",
-                    minHeight: "27vh",
-                    backgroundColor: selectedAnswer === answer.uuid ? "#c5e89e" : undefined,
-                  }}
-                  onClick={() => {
-                    setSelectedAnswer(answer.uuid)
-                    setIsCorrect(answer.is_question_answer)
-                  }}
-                >
-                  <Box display={"flex"} justifyContent={"space-between"} sx={{ width: "100%" }}>
-                    {(question as SoalExamLS1).is_need_answer_label && <Typography>{answer.label}</Typography>}
-                    {question.total_answer_should_have_for_true === 1 &&
-                      selectedAnswer === answer.uuid &&
-                      (isCorrect ? <Check style={{ color: "green" }} /> : <Cancel style={{ color: "red" }} />)}
-                  </Box>
-
-                  <img
-                    src={import.meta.env.VITE_API_URL + answer.image_path_cat}
-                    alt={"Answer image"}
-                    style={{
-                      marginTop: "8px",
-                      width: "90%",
-                      height: "90%",
-                      alignSelf: "center",
-                      marginBottom: "8px",
+                <Stack direction="row" alignItems="flex-start">
+                  <Radio
+                    size="small"
+                    sx={{ mt: -2 }}
+                    checked={selectedAnswer === answer.uuid}
+                    onClick={() => {
+                      setSelectedAnswer(answer.uuid)
+                      setIsCorrect(answer.is_question_answer)
                     }}
                   />
-                </Box>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "flex-start",
+                      flexDirection: "column",
+                      cursor: "pointer",
+                      minHeight: "27vh",
+                      backgroundColor: selectedAnswer === answer.uuid ? "#c5e89e" : undefined,
+                    }}
+                    onClick={() => {
+                      setSelectedAnswer(answer.uuid)
+                      setIsCorrect(answer.is_question_answer)
+                    }}
+                  >
+                    <Box display={"flex"} justifyContent={"space-between"} sx={{ width: "100%" }}>
+                      {(question as SoalExamLS1).is_need_answer_label && <Typography>{answer.label}</Typography>}
+                      {question.total_answer_should_have_for_true === 1 &&
+                        selectedAnswer === answer.uuid &&
+                        (isCorrect ? <Check style={{ color: "green" }} /> : <Cancel style={{ color: "red" }} />)}
+                    </Box>
+
+                    <img
+                      src={import.meta.env.VITE_API_URL + answer.image_path_cat}
+                      alt={"Answer image"}
+                      style={{
+                        marginTop: "8px",
+                        width: "90%",
+                        height: "90%",
+                        alignSelf: "center",
+                        marginBottom: "8px",
+                      }}
+                    />
+                  </Box>
+                </Stack>
               </Grid>
             ))}
           </Grid>
