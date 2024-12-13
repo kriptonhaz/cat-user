@@ -201,11 +201,11 @@ const LembarUjianTkk: React.FC = () => {
           setIndexSubtestActiveTkk(0)
           setCurrentQuestionIndex(0)
         } else {
-          checkQuestionAvailable()
+          // checkQuestionAvailable()
 
           // NOTE: only for testing
-          // setIndexSubtestActiveTkk(0)
-          // setCurrentQuestionIndex(0)
+          setIndexSubtestActiveTkk(0)
+          setCurrentQuestionIndex(0)
         }
       }
       checkActivity()
@@ -882,14 +882,16 @@ const LembarUjianTkk: React.FC = () => {
             mt: 10,
             height: "90vh",
             overflow: "auto",
-            position:
+            /* position:
               soal &&
               ((soal as SoalExamLS1).subtest_model_uuid ===
                 ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
                 (soal as SoalExamLS1).subtest_model_uuid ===
                   ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid)
                 ? "sticky"
-                : "relative",
+                : "relative", */
+                position: 'sticky',
+                top: '50px',
           }}
         >
           <Box>
@@ -900,7 +902,7 @@ const LembarUjianTkk: React.FC = () => {
             >
               <Card
                 sx={{
-                  position: "sticky",
+                  // position: "sticky",
                   top: "20px",
                   width: "95%",
                   border: "0.5px solid #ccc",
@@ -1014,6 +1016,7 @@ const LembarUjianTkk: React.FC = () => {
                   }}
                 >
                   <Grid container spacing={3} gap={2}>
+                    
                     {typeof indexSubtestActiveTkk === "number" &&
                       soalExamAvailable?.data
                         // @ts-ignore
