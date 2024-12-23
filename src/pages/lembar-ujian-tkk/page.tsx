@@ -13,6 +13,8 @@ import CardTimer from "../lembar-ujian/component/cardTimer"
 import { ExamData } from "../lembar-ujian/component/exam-data"
 import ModalConfirm, { ModalConfirmProps } from "@/ui/modal/ModalConfirm"
 import useConfigStore from "@/store/config.store"
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const LembarUjianTkk: React.FC = () => {
   const location = useLocation()
@@ -204,7 +206,7 @@ const LembarUjianTkk: React.FC = () => {
           // checkQuestionAvailable()
 
           // NOTE: only for testing
-          setIndexSubtestActiveTkk(0)
+          setIndexSubtestActiveTkk(6)
           setCurrentQuestionIndex(0)
         }
       }
@@ -863,10 +865,10 @@ const LembarUjianTkk: React.FC = () => {
                         disabled={currentQuestionIndex === 0}
                         sx={{ mr: 2 }}
                       >
-                        Sebelumnya
+                        <ArrowBackIcon />
                       </Button>
                       <Button onClick={() => handleNextQuestion()} disabled={finalQuestion}>
-                        Selanjutnya
+                        <ArrowForwardIcon />
                       </Button>
                     </Box>
                   )}

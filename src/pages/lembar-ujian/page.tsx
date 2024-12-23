@@ -11,6 +11,8 @@ import ExamExample from "./component/examExample"
 import ModalInstruction from "./component/ModalInstruction"
 import ModalConfirm from "@/ui/modal/ModalConfirm"
 import useConfigStore from "@/store/config.store"
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
+import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 
 const LembarUjian = () => {
   const location = useLocation()
@@ -399,10 +401,10 @@ const LembarUjian = () => {
                         disabled={currentQuestionIndex === 0}
                         sx={{ mr: 2 }}
                       >
-                        Sebelumnya
+                        <ArrowBackIcon />
                       </Button>
                       <Button onClick={() => handleNextQuestion()} disabled={finalQuestion}>
-                        Selanjutnya
+                        <ArrowForwardIcon />
                       </Button>
                     </Box>
                   )}

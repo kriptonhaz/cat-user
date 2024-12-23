@@ -530,6 +530,27 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                     "data-state": answer.showing_order,
                                     style: { textTransform: "uppercase" },
                                   }}
+                                  onKeyUp={(e) => {
+                                    const input = e.target as HTMLInputElement
+                                    const cursorPosition = input.selectionStart
+                                    const inputValue = input.value
+                                    // @ts-ignore
+                                    const rootElement = e.target.parentElement?.parentElement.parentElement
+                                      .parentElement as HTMLDivElement
+                                    const nextItems = rootElement.childNodes[index + 1] as HTMLDivElement
+                                    const prevItems = rootElement.childNodes[index - 1] as HTMLDivElement
+                                    if (e.code === "ArrowRight" && cursorPosition === inputValue.length) {
+                                      // Do some action here
+                                      if (nextItems) {
+                                        nextItems.querySelector("input")?.focus()
+                                      }
+                                    }
+                                    if (e.code === "ArrowLeft" && cursorPosition === 0) {
+                                      if (prevItems) {
+                                        prevItems.querySelector("input")?.focus()
+                                      }
+                                    }
+                                  }}
                                   autoComplete="off"
                                   onChange={handleEditMemorySpan}
                                 />
