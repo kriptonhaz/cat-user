@@ -13,8 +13,8 @@ import CardTimer from "../lembar-ujian/component/cardTimer"
 import { ExamData } from "../lembar-ujian/component/exam-data"
 import ModalConfirm, { ModalConfirmProps } from "@/ui/modal/ModalConfirm"
 import useConfigStore from "@/store/config.store"
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
+import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 
 const LembarUjianTkk: React.FC = () => {
   const location = useLocation()
@@ -203,11 +203,11 @@ const LembarUjianTkk: React.FC = () => {
           setIndexSubtestActiveTkk(0)
           setCurrentQuestionIndex(0)
         } else {
-          // checkQuestionAvailable()
+          checkQuestionAvailable()
 
           // NOTE: only for testing
-          setIndexSubtestActiveTkk(6)
-          setCurrentQuestionIndex(0)
+          // setIndexSubtestActiveTkk(6)
+          // setCurrentQuestionIndex(0)
         }
       }
       checkActivity()
@@ -892,8 +892,8 @@ const LembarUjianTkk: React.FC = () => {
                   ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid)
                 ? "sticky"
                 : "relative", */
-                position: 'sticky',
-                top: '50px',
+            position: "sticky",
+            top: "50px",
           }}
         >
           <Box>
@@ -1018,7 +1018,6 @@ const LembarUjianTkk: React.FC = () => {
                   }}
                 >
                   <Grid container spacing={3} gap={2}>
-                    
                     {typeof indexSubtestActiveTkk === "number" &&
                       soalExamAvailable?.data
                         // @ts-ignore
