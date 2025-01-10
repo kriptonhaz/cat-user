@@ -1,0 +1,72 @@
+.Container {
+  .Navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: $space-8 $space-12;
+    box-sizing: border-box;
+    left: 0;
+    right: 0;
+    max-width: 100vw;
+    position: absolute;
+    z-index: 1000;
+
+    .ListMenu {
+      display: flex;
+      gap: $space-4;
+      background: $neutral-50;
+      height: 54px;
+      align-items: center;
+      padding: $space-6 $space-3;
+      border-radius: 54px;
+      box-shadow: $shadow-lg;
+
+      :global(.MuiButton-root) {
+        border-radius: 48px;
+
+        &:hover {
+          background-color: $primary-50;
+          color: $primary-500;
+        }
+      }
+    }
+
+    a {
+      color: $neutral-600 !important;
+    }
+  }
+
+  .Footer {
+    background-color: $neutral-900;
+    color: #fff;
+    padding: $space-10;
+
+    .Main {
+      padding-bottom: $space-12;
+      .Logo {
+        margin-bottom: $space-6;
+      }
+
+      .TitleMenu {
+        margin-bottom: $space-4;
+      }
+
+      .Menu {
+        flex: 1;
+      }
+    }
+
+    .Copyright {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: $space-12;
+    }
+
+    a {
+      color: #fff;
+      opacity: 0.8;
+      margin-bottom: $space-3;
+    }
+  }
+}

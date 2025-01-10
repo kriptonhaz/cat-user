@@ -19,7 +19,7 @@ export interface LoginFormResponse {
   message: string
 }
 
-export interface LoginMutationParams extends MutationParams<LoginFormResponse, LoginForm> {}
+export type LoginMutationParams = MutationParams<LoginFormResponse, LoginForm>
 
 export interface IJwtToken {
   id: number

@@ -172,7 +172,7 @@ const SoalPertanyaanPilgan = ({
                   >
                     <img
                       src={import.meta.env.VITE_API_URL + (soal as SoalExamLS1).image_path_cat}
-                      alt={`Answer image`}
+                      alt={"Answer image"}
                       style={{ marginTop: "8px", width: "auto", height: "100%" }}
                     />
                   </div>

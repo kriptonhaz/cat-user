@@ -1,11 +1,11 @@
-import { Box, Typography } from "@mui/material"
+import { Box, BoxProps, Typography } from "@mui/material"
 import React, { useEffect } from "react"
 import ReactDOM from "react-dom"
 import classes from "./_.module.scss"
 import { combineClasses } from "@/utils/styles"
 import NProgress from "nprogress"
 
-export const LoadingScreen: React.FC = () => {
+export const LoadingScreen: React.FC<BoxProps> = (props) => {
   useEffect(() => {
     NProgress.start()
 
@@ -14,12 +14,12 @@ export const LoadingScreen: React.FC = () => {
     }
   })
   return (
-    <Box className={combineClasses([classes.Container, classes.Screen])}>
+    <Box className={combineClasses([classes.Container, classes.Screen])} {...props}>
       <Box className={classes.Content}>
         <Illustration trackColor="#e2e8f0" />
 
-        <Typography className={classes.Title}>Preparing your experience</Typography>
-        <Typography className={classes.Subtitle}>Setting up the info required</Typography>
+        <Typography className={classes.Title}>Harap Menunggu</Typography>
+        <Typography className={classes.Subtitle}>Sedang memuat data</Typography>
       </Box>
     </Box>
   )
