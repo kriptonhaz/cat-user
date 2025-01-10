@@ -429,6 +429,7 @@ const LembarUjian = () => {
                   boxShadow: 3,
                   borderRadius: 2,
                   transition: "0.3s",
+                  zIndex: 1000,
                   "&:hover": {
                     boxShadow: 6,
                   },
