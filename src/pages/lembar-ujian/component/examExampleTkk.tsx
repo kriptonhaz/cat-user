@@ -17,6 +17,7 @@ import {
 } from "@mui/material"
 import { formatTime } from "@/utils/timer"
 import { ExamData } from "./exam-data"
+import { CheckboxManual } from "@/components/checkbox"
 
 interface ExamExampleTkkProps {
   question: SoalExamLS1
@@ -286,15 +287,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
             {(question as SoalExamLS1).answer_data.map((answer, index) => (
               <Grid key={index} item xs={12} md={6} lg={3.5 * (fontSize / 22)}>
                 <Stack direction="row" alignItems="flex-start">
-                  <Radio
-                    size="small"
-                    sx={{ mt: -2 }}
-                    checked={selectedAnswer === answer.uuid}
-                    onClick={() => {
-                      setSelectedAnswer(answer.uuid)
-                      setIsCorrect(answer.is_question_answer)
-                    }}
-                  />
+                  <CheckboxManual isChecked={selectedAnswer === answer.uuid} />
                   <Box
                     sx={{
                       width: "100%",
@@ -367,10 +360,14 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                         ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
                           <></>
                         ) : (
-                          <Radio size="small" />
+                          <CheckboxManual
+                            isChecked={
+                              question.total_answer_should_have_for_true === 1 && selectedAnswer === answer.uuid
+                            }
+                          />
                         )
                       }
-                      onChange={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
+                      onClick={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
                       label={
                         <>
                           <Box flexDirection={"row"} display={"flex"}>

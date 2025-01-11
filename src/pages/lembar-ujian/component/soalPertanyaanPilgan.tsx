@@ -1,9 +1,10 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { Box, Card, CardContent, Typography, RadioGroup, FormControlLabel, Radio, Button, Divider } from "@mui/material"
 import { TextIncrease, TextDecrease } from "@mui/icons-material"
 import { ITimerUjianResponse, SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import { useExamMutation } from "@/mutations/exam.mutation"
 import { formatTime } from "@/utils/timer"
+import { CheckboxManual } from "@/components/checkbox"
 
 export interface answer {
   content: string
@@ -89,6 +90,10 @@ const SoalPertanyaanPilgan = ({
       })
     }
   }
+
+  useEffect(() => {
+    console.log(selectedAnswer)
+  }, [selectedAnswer])
 
   return (
     <>
@@ -187,7 +192,7 @@ const SoalPertanyaanPilgan = ({
               key={soal.Uuid}
               aria-labelledby="demo-radio-buttons-group-label"
               name="radio-buttons-group"
-              onChange={handleChoose}
+              // onChange={handleChoose}
               value={
                 selectedAnswer
                   ? questionType === "SoalExam" || questionType === "SoalExamPPI"
@@ -201,7 +206,15 @@ const SoalPertanyaanPilgan = ({
                   <FormControlLabel
                     key={index}
                     value={answer.value}
-                    control={<Radio size="small" />}
+                    onClick={() => {
+                      setAnswer({
+                        content: answer?.content,
+                        value: answer?.value,
+                      })
+                    }}
+                    control={
+                      <CheckboxManual isChecked={selectedAnswer ? selectedAnswer.value === answer.value : false} />
+                    }
                     label={answer.content}
                     sx={{
                       mr: 7,
@@ -219,7 +232,15 @@ const SoalPertanyaanPilgan = ({
                   <FormControlLabel
                     key={index}
                     value={answer.Uuid}
-                    control={<Radio size="small" />}
+                    onClick={() => {
+                      setAnswer({
+                        content: answer?.Uuid || "",
+                        value: 0,
+                      })
+                    }}
+                    control={
+                      <CheckboxManual isChecked={selectedAnswer ? selectedAnswer.content === answer.Uuid : false} />
+                    }
                     label={
                       <>
                         <Typography
@@ -248,7 +269,29 @@ const SoalPertanyaanPilgan = ({
                   <FormControlLabel
                     key={(soal as SoalExamPPI).answer_data.option_one_value}
                     value={(soal as SoalExamPPI).answer_data.option_one_value}
-                    control={<Radio size="medium" />}
+                    onClick={() => {
+                      const soalPPI = soal as SoalExamPPI
+                      let content = ""
+                      const choosenAnswer = "1"
+                      if (soalPPI.answer_data.answer_type === 1) {
+                        // handle for type NOT CONSISTENCY
+                        content = soalPPI.answer_data.option_one_sub_aspect_uuid
+                      } else {
+                        // handle for type CONSISTENCY
+                        content = soalPPI.answer_data.option_one_sub_aspect_uuid
+                      }
+                      setAnswer({
+                        content: content,
+                        value: Number(choosenAnswer),
+                      })
+                    }}
+                    control={
+                      <CheckboxManual
+                        isChecked={
+                          selectedAnswer?.value === parseInt((soal as SoalExamPPI).answer_data.option_one_value)
+                        }
+                      />
+                    }
                     label={
                       <Box
                         sx={{
@@ -270,7 +313,29 @@ const SoalPertanyaanPilgan = ({
                   <FormControlLabel
                     key={(soal as SoalExamPPI).answer_data.option_two_value}
                     value={(soal as SoalExamPPI).answer_data.option_two_value}
-                    control={<Radio size="medium" />}
+                    onClick={() => {
+                      const soalPPI = soal as SoalExamPPI
+                      let content = ""
+                      const choosenAnswer = "2"
+                      if (soalPPI.answer_data.answer_type === 1) {
+                        // handle for type NOT CONSISTENCY
+                        content = soalPPI.answer_data.option_two_sub_aspect_uuid
+                      } else {
+                        // handle for type CONSISTENCY
+                        content = soalPPI.answer_data.option_one_sub_aspect_uuid
+                      }
+                      setAnswer({
+                        content: content,
+                        value: Number(choosenAnswer),
+                      })
+                    }}
+                    control={
+                      <CheckboxManual
+                        isChecked={
+                          selectedAnswer?.value === parseInt((soal as SoalExamPPI).answer_data.option_two_value)
+                        }
+                      />
+                    }
                     label={
                       <Box
                         sx={{

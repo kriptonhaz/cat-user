@@ -3,6 +3,7 @@ import React, { useState } from "react"
 import { Cancel, Check, TextIncrease, TextDecrease } from "@mui/icons-material" // Import icons from Material-UI
 import { Box, Button, Card, Divider, Typography } from "@mui/material"
 import { formatTime } from "@/utils/timer"
+import { CheckboxManual } from "@/components/checkbox"
 
 interface ExamExampleProps {
   question: SoalExamLS1
@@ -83,15 +84,12 @@ const ExamExample: React.FC<ExamExampleProps> = ({
       />
       <div className="answer-options">
         {question.answer_data.map((answer, index) => (
-          <div key={index} style={{ display: "flex", alignItems: "center", height: "40px", marginLeft: 40 }}>
-            <input
-              type="radio"
-              id={`question-${question.ID}-answer-${index}`}
-              name={`question-${question.ID}`}
-              style={{ marginRight: "15px" }}
-              value={answer.Uuid}
-              onChange={() => onAnswerSelect(answer.Uuid, answer.is_question_answer)}
-            />
+          <div
+            key={index}
+            style={{ display: "flex", alignItems: "center", height: "40px", marginLeft: 40 }}
+            onClick={() => onAnswerSelect(answer.Uuid, answer.is_question_answer)}
+          >
+            <CheckboxManual isChecked={selectedAnswer === answer.Uuid} />
             <label
               htmlFor={`question-${question.ID}-answer-${index}`}
               style={{ display: "flex", alignItems: "center" }}

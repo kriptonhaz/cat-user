@@ -19,6 +19,7 @@ import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import { formatTime } from "@/utils/timer"
 import { ExamData } from "./exam-data"
 import ModalConfirm, { ModalConfirmProps } from "@/ui/modal/ModalConfirm"
+import { CheckboxManual } from "@/components/checkbox"
 
 export interface answer {
   content: string
@@ -437,14 +438,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                   {(soal as SoalExamLS1).answer_data.map((answer, index) => (
                     <Grid key={index} item xs={12} md={6 * (fontSize / 22)} lg={3.5 * (fontSize / 22)}>
                       <Stack direction="row" alignItems="flex-start">
-                        <Radio
-                          size="small"
-                          sx={{ mt: -2 }}
-                          checked={selectedAnswer?.content === answer.uuid}
-                          onClick={() => {
-                            selectAnswerInduction(answer.uuid)
-                          }}
-                        />
+                        <CheckboxManual isChecked={selectedAnswer?.content === answer.uuid} />
                         <Box
                           sx={{
                             width: "100%",
@@ -588,12 +582,23 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                           <FormControlLabel
                             key={index}
                             value={answer.uuid}
+                            onClick={() => {
+                              setAnswer({
+                                content: answer?.uuid || "",
+                                value: 0,
+                              })
+                            }}
                             control={
                               (soal as SoalExamLS1).subtest_model_uuid ===
                               ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
                                 <></>
                               ) : (
-                                <Radio size="small" />
+                                <CheckboxManual
+                                  isChecked={
+                                    (soal as SoalExamLS1).total_answer_should_have_for_true === 1 &&
+                                    selectedAnswer?.content === answer.uuid
+                                  }
+                                />
                               )
                             }
                             label={
