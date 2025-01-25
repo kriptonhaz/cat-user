@@ -1,7 +1,8 @@
-import { Box, Grid, Stack, SxProps, Typography } from "@mui/material"
-import React, { useState } from "react"
+import { Box, Grid, SxProps, Typography } from "@mui/material"
+import React from "react"
 import BtnArrow from "./BtnArrow"
 import { useNavigate } from "react-router"
+import { useCmsHooks } from "@/hooks/useCmsHooks"
 
 const styles: { card: SxProps } = {
   card: {
@@ -18,58 +19,33 @@ const styles: { card: SxProps } = {
 
 const About: React.FC = () => {
   const navigate = useNavigate()
-
+  const { queryContentPublic } = useCmsHooks()
+  const { data: dataContent } = queryContentPublic()
   return (
     <Grid container spacing={3} sx={{ my: 8 }}>
-      <Grid md={4}>
-        <Box sx={{ ...styles.card, height: "100%" }}>
-          <Typography variant="h6" fontWeight={"bold"} color={"#474A6C"}>
-            Lorem Ipsum
-          </Typography>
-          <Box
-            sx={{
-              // backgroundImage: `url(${import.meta.env.VITE_API_URL + "/laporan/files/" + item.image})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              borderRadius: "20px 152px 152px 20px",
-              width: "100%",
-              my: 4,
-            }}
-          ></Box>
-          <Typography color="text.secondary">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci inventore delectus unde, accusantium
-            earum tenetur assumenda ad fugit atque{" "}
-          </Typography>
-          <Box sx={{ height: "80px" }}>
-            <BtnArrow className="btn-lg bottom-right" onClick={() => ""} />
-          </Box>
-        </Box>
-      </Grid>
-      <Grid md={4}>
-        <Box sx={{ ...styles.card, height: "100%", flex: 1, mb: 5 }}>
-          <Typography variant="h6" fontWeight={"bold"} color={"#474A6C"} mb={4}>
-            Lorem Ipsum
-          </Typography>
-          <Typography color="text.secondary">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci inventore delectus unde, accusantium
-            earum tenetur assumenda ad fugit atque{" "}
-          </Typography>
-          <Box sx={{ height: "80px" }}>
-            <BtnArrow className="btn-lg bottom-right" onClick={() => ""} />
-          </Box>
-        </Box>
-      </Grid>
-      <Grid md={4}>
-        <Box sx={{ ...styles.card, height: "100%", flex: 1 }}>
-          <Typography variant="h6" fontWeight={"bold"} color={"#474A6C"} mb={4}>
-            Hubungi Helpdesk
-          </Typography>
-          <Typography color="text.secondary">Untuk informasi dan/atau pengaduan terkait laporan</Typography>
-          <Box sx={{ height: "80px" }}>
-            <BtnArrow className="btn-lg bottom-right" onClick={() => ""} />
-          </Box>
-        </Box>
-      </Grid>
+      {dataContent &&
+        dataContent.data.map((item) => (
+          <Grid md={4} key={item.uuid}>
+            <Box sx={{ ...styles.card, height: "100%" }}>
+              <Typography variant="h6" fontWeight={"bold"} color={"#474A6C"}>
+                {item.title}
+              </Typography>
+              <Box
+                sx={{
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  borderRadius: "20px 152px 152px 20px",
+                  width: "100%",
+                  my: 4,
+                }}
+              ></Box>
+              <Typography color="text.secondary">{item.subtitle}</Typography>
+              <Box sx={{ height: "80px" }}>
+                <BtnArrow className="btn-lg bottom-right" onClick={() => ""} />
+              </Box>
+            </Box>
+          </Grid>
+        ))}
     </Grid>
   )
 }
