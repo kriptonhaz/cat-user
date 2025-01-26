@@ -13,10 +13,13 @@ import Layout from "./pages/layout/Layout"
 import { LandingLayoutRoute } from "./landing/landing.layout"
 import LandingPage from "./pages"
 import Render from "./ui/elements/Render"
+import ContentPage from "./pages/content"
 
 function App() {
   const location = useLocation()
   const queryClient = new QueryClient()
+
+  const isMatchingRoute = (pathname: string, pattern: RegExp) => pattern.test(pathname)
 
   const ProtectedRoute: React.FC = () => {
     const token = useTokenStore((state) => state.accessToken)
@@ -39,13 +42,14 @@ function App() {
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>
-        <Render in={location.pathname !== "/"}>
+        <Render in={location.pathname !== "/" && !isMatchingRoute(location.pathname, /\/content/)}>
           <Navbar />
         </Render>
         <Layout>
           <Routes>
             <Route element={<LandingLayoutRoute />}>
               <Route path={"/"} element={<LandingPage />} />
+              <Route path={"/content/:contentId"} element={<ContentPage />} />
             </Route>
             <Route element={<GuestRoute />}>
               <Route path={"/login"} element={<LoginPage />} />

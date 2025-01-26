@@ -41,7 +41,7 @@ const About: React.FC = () => {
               ></Box>
               <Typography color="text.secondary">{item.subtitle}</Typography>
               <Box sx={{ height: "80px" }}>
-                <BtnArrow className="btn-lg bottom-right" onClick={() => ""} />
+                <BtnArrow className="btn-lg bottom-right" onClick={() => navigate(`/content/${item.uuid}`)} />
               </Box>
             </Box>
           </Grid>
