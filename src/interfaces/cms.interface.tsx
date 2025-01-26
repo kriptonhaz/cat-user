@@ -43,3 +43,25 @@ export interface IContentPublicRespose {
     total_page: number
   }
 }
+
+export interface IFaqPublicResponse {
+  code: number
+  data: {
+    uuid: string
+    question: string
+    answer: string
+    createBy: string
+    created_at: string
+    updated_at: string
+    deleted_at: null | string
+  }[]
+  message: string
+  meta: {
+    page: number
+    per_page: number
+    offset: number
+    total_data: number
+    total_showing_data: number
+    total_page: number
+  }
+}

@@ -14,8 +14,15 @@ export const useCmsHooks = () => {
       queryFn: () => CMSService.getContentPublic(),
     })
 
+  const queryFaqPublic = () =>
+    useQuery({
+      queryKey: ["cms", "faq"],
+      queryFn: () => CMSService.getFaqPublic(),
+    })
+
   return {
     queryBannerPublic,
     queryContentPublic,
+    queryFaqPublic,
   }
 }

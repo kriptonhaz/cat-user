@@ -1,5 +1,5 @@
 import API from "./base.service"
-import { IBannerPublicResponse, IContentPublicRespose } from "@/interfaces/cms.interface"
+import { IBannerPublicResponse, IContentPublicRespose, IFaqPublicResponse } from "@/interfaces/cms.interface"
 
 export const getBannerPublic = async (): Promise<IBannerPublicResponse> => {
   const { data } = await API().request<IBannerPublicResponse>({
@@ -13,6 +13,15 @@ export const getBannerPublic = async (): Promise<IBannerPublicResponse> => {
 export const getContentPublic = async (): Promise<IContentPublicRespose> => {
   const { data } = await API().request<IContentPublicRespose>({
     url: "/v1/home+content/public",
+    method: "GET",
+  })
+
+  return data
+}
+
+export const getFaqPublic = async (): Promise<IFaqPublicResponse> => {
+  const { data } = await API().request<IFaqPublicResponse>({
+    url: "/v1/faq/public",
     method: "GET",
   })
 
