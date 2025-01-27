@@ -31,3 +31,22 @@ export interface IJwtToken {
   role: number
   exp: number
 }
+
+export interface ICaptchaResponse {
+  imageData: Blob
+  headers: {
+    token: string
+    xToken: string
+  }
+}
+
+export interface IParamCaptchaVerify {
+  captcha: string
+  Token: string
+}
+
+export interface IVerifyCaptchaResponse {
+  code: number
+  data: null
+  message: string
+}

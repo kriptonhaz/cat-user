@@ -1,8 +1,13 @@
 import { API_URL } from "@/constants/api"
-import useTokenStore from "@/store/token.store"
 import axios from "axios"
 import API from "./base.service"
-import { LoginForm, LoginFormResponse } from "@/interfaces/auth.interface"
+import {
+  ICaptchaResponse,
+  IParamCaptchaVerify,
+  IVerifyCaptchaResponse,
+  LoginForm,
+  LoginFormResponse,
+} from "@/interfaces/auth.interface"
 
 export const submitLoginForm = async (payload: LoginForm): Promise<LoginFormResponse> => {
   const { data } = await API().request<LoginFormResponse>({
@@ -22,6 +27,40 @@ export const submitLoginForm = async (payload: LoginForm): Promise<LoginFormResp
     localStorage.setItem("name", data.data.full_name)
     localStorage.setItem("gender", profile.data.data.sex === 1 ? "Laki - laki" : "Perempuan")
   }
+
+  return data
+}
+
+export const getCaptcha = async (): Promise<ICaptchaResponse> => {
+  const response = await API().request({
+    url: "/v1/captcha/generate",
+    method: "GET",
+    responseType: "blob",
+  })
+
+  const token = response.headers["token"]
+  const xToken = response.headers["x-token"]
+
+  return {
+    imageData: response.data,
+    headers: {
+      token,
+      xToken,
+    },
+  }
+}
+
+export const verifyCaptcha = async (props: IParamCaptchaVerify): Promise<IVerifyCaptchaResponse> => {
+  const { data } = await API().request<IVerifyCaptchaResponse>({
+    url: "/v1/captcha/verify",
+    method: "POST",
+    data: {
+      captcha: props.captcha,
+    },
+    headers: {
+      Token: props.Token,
+    },
+  })
 
   return data
 }

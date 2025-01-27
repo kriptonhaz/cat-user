@@ -1,23 +1,57 @@
-import { Button, Card } from "@mui/material"
-import { SubmitHandler, useForm } from "react-hook-form"
+import { Box, Button, CircularProgress } from "@mui/material"
+import { useForm } from "react-hook-form"
 import InputGroup from "@/ui/components/InputGroup"
 import { useLoginMutation } from "@/mutations/auth.mutation"
+import { useEffect, useState } from "react"
+import { getCaptcha, verifyCaptcha } from "@/service/auth.service"
 
 interface LoginForm {
   username: string
   password: string
+  captcha: string
+  headerToken: string
 }
 
 const LoginForm = () => {
-  const { handleSubmit, register } = useForm<LoginForm>()
+  const {
+    handleSubmit,
+    register,
+    setError,
+    setValue,
+    formState: { errors },
+  } = useForm<LoginForm>()
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
   const { loginMutation } = useLoginMutation()
   const mutation = loginMutation()
 
   const onSubmit = handleSubmit((data) => {
-    console.log(data)
-    mutation.mutate(data)
+    verifyCaptcha({ captcha: data.captcha, Token: data.headerToken })
+      .then(() => {
+        mutation.mutate(data)
+      })
+      .catch(() => {
+        setError("captcha", { message: "Captcha tidak sesuai silahkan coba lagi" })
+      })
   })
+
+  useEffect(() => {
+    const fetchCaptcha = async () => {
+      try {
+        const captcha = await getCaptcha()
+        const url = URL.createObjectURL(captcha.imageData)
+        setImageUrl(url)
+        setValue("headerToken", captcha.headers.token)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCaptcha()
+  }, [])
 
   return (
     <form onSubmit={onSubmit}>
@@ -34,6 +68,18 @@ const LoginForm = () => {
         {...register("password")}
         required
       />
+      <Box sx={{ border: "1px solid rgb(179, 178, 177)", padding: 4, borderRadius: 2, mt: 2, mb: 2 }}>
+        {imageUrl && <img src={imageUrl} alt="Captcha" />}
+        {loading && <CircularProgress />}
+        <InputGroup
+          label="Captcha"
+          placeholder="masukan captcha disini"
+          {...register("captcha")}
+          required
+          error={!!errors.captcha?.message}
+          helperText={errors.captcha?.message}
+        />
+      </Box>
       <Button type="submit" sx={{ mt: 2 }}>
         Masuk
       </Button>
