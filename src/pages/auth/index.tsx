@@ -81,14 +81,6 @@ const LoginPage: React.FC = () => {
                   <img src={Logo} alt="cat kemenhan" style={{ width: "100%" }} />
                 </Box>
                 <Box sx={{ flex: "1", maxWidth: "400px", mx: "auto" }}>
-                  <Box textAlign={"center"} mb={4}>
-                    <Typography variant="h6" fontWeight={"semiBold"}>
-                      Silahkan Masuk sebagai Peserta
-                    </Typography>
-                    <Typography variant="subtitle1">
-                      Masukan nama pengguna dan kata sandi peserta untuk dapat mengikuti ujian
-                    </Typography>
-                  </Box>
                   <LoginForm />
                 </Box>
               </Box>
