@@ -1,4 +1,4 @@
-import { Card, Grid, Typography, CardContent } from "@mui/material"
+import { Card, Grid, Typography, CardContent, Button } from "@mui/material"
 import {
   PersonOutline,
   BadgeOutlined,
@@ -14,7 +14,9 @@ import { useExamHooks } from "@/hooks/useExamHooks"
 import dayjs from "dayjs"
 import "dayjs/locale/id"
 import { useProfileHooks } from "@/hooks/useProfileHooks"
-import { useEffect, useState } from "react"
+import Barcode from "react-barcode"
+import ModalConfirm, { ModalConfirmProps } from "@/ui/modal/ModalConfirm"
+import { useState } from "react"
 
 const HomePage: React.FC = () => {
   const { queryExamAvailable } = useExamHooks()
@@ -22,6 +24,19 @@ const HomePage: React.FC = () => {
 
   const { data: dataExamAvailable } = queryExamAvailable()
   const { data: dataProfile } = queryProfile()
+
+  const [modalConfirm, setModalConfirm] = useState<ModalConfirmProps>({
+    open: false,
+    title: "",
+    message: "",
+    onConfirm: () => {
+      return null
+    },
+    onClose: () => {
+      setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+    },
+    displayCancel: true,
+  })
 
   return (
     <>
@@ -41,29 +56,29 @@ const HomePage: React.FC = () => {
               },
             }}
           >
-            <CardContent>
-              <Typography sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center" }}>
+            <CardContent sx={{ mt: -4 }}>
+              <Typography sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center" }}>
                 <PersonOutline sx={{ mr: 3 }} />
                 Nama: {dataProfile?.data.full_name}
               </Typography>
-              <Typography sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center" }}>
+              <Typography sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center" }}>
                 <BadgeOutlined sx={{ mr: 3 }} />
                 NIP: {dataProfile?.data.nip}
               </Typography>
-              <Typography sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center" }}>
+              <Typography sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center" }}>
                 <PhoneOutlined sx={{ mr: 3 }} />
                 Tlp: {dataProfile?.data.phone}
               </Typography>
-              <Typography sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center" }}>
+              <Typography sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center" }}>
                 <CalendarMonthOutlined sx={{ mr: 3 }} />
                 TTL: {dataProfile?.data.pob}, {dayjs(dataProfile?.data.dob).locale("id").format("DD MMMM YYYY")}
               </Typography>
-              <Typography sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center" }}>
+              <Typography sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center" }}>
                 {dataProfile?.data.sex === 1 ? <MaleOutlined sx={{ mr: 3 }} /> : <FemaleOutlined sx={{ mr: 3 }} />}
                 Jenis Kelamin: {dataProfile?.data.sex === 1 ? "Laki - laki" : "Perempuan"}
               </Typography>
               <Typography
-                sx={{ fontWeight: "regular", fontSize: 20, mt: 7, mb: 3, display: "flex", alignItems: "center" }}
+                sx={{ fontWeight: "regular", fontSize: 18, mt: 5, mb: 1, display: "flex", alignItems: "center" }}
               >
                 <WorkOutline sx={{ mr: 3 }} />
                 Pekerjaan Terakhir
@@ -71,22 +86,22 @@ const HomePage: React.FC = () => {
               {dataProfile?.data && dataProfile?.data?.job?.length > 0 && (
                 <>
                   <Typography
-                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                    sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center", pl: 8 }}
                   >
                     Jabatan: {dataProfile?.data.job[0].job_title}
                   </Typography>
                   <Typography
-                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                    sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center", pl: 8 }}
                   >
                     Grade: {dataProfile?.data.job[0].grade}
                   </Typography>
                   <Typography
-                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                    sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center", pl: 8 }}
                   >
                     Departement: {dataProfile?.data.job[0].work_department}
                   </Typography>
                   <Typography
-                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                    sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center", pl: 8 }}
                   >
                     Tempat Bekerja: {dataProfile?.data.job[0].work_place}
                   </Typography>
@@ -94,7 +109,7 @@ const HomePage: React.FC = () => {
               )}
 
               <Typography
-                sx={{ fontWeight: "regular", fontSize: 20, mt: 7, mb: 3, display: "flex", alignItems: "center" }}
+                sx={{ fontWeight: "regular", fontSize: 18, mt: 5, mb: 1, display: "flex", alignItems: "center" }}
               >
                 <SchoolOutlined sx={{ mr: 3 }} />
                 Pendidikan Terakhir
@@ -102,22 +117,46 @@ const HomePage: React.FC = () => {
               {dataProfile?.data && dataProfile?.data?.education?.length > 0 && (
                 <>
                   <Typography
-                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                    sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center", pl: 8 }}
                   >
                     Gelar: {dataProfile?.data.education[0].title}
                   </Typography>
                   <Typography
-                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                    sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center", pl: 8 }}
                   >
                     Grade: {dataProfile?.data.education[0].grade}
                   </Typography>
                   <Typography
-                    sx={{ fontWeight: "regular", fontSize: 20, mb: 3, display: "flex", alignItems: "center", pl: 8 }}
+                    sx={{ fontWeight: "regular", fontSize: 18, mb: 1, display: "flex", alignItems: "center", pl: 8 }}
                   >
                     Program Studi: {dataProfile?.data.education[0].major}
                   </Typography>
                 </>
               )}
+              {dataProfile?.data.nip && <Barcode value={dataProfile?.data.nip} height={30} width={3} />}
+              <Typography sx={{ fontWeight: "regular", fontSize: 18, mb: 1, textAlign: "center" }}>
+                Belum Verifikasi
+              </Typography>
+              <Button
+                fullWidth
+                onClick={() => {
+                  setModalConfirm({
+                    ...modalConfirm,
+                    open: true,
+                    title: "Apakah anda yakin data anda sudah sesuai?",
+                    message: "Jika data tidak sesuai harap hubungi admin",
+                    onClose: () => {
+                      setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+                    },
+                    onConfirm: () => {
+                      // TODO: wiring verifikasi data
+                    },
+                    displayCancel: true,
+                  })
+                }}
+              >
+                Verifikasi Data
+              </Button>
             </CardContent>
           </Card>
         </Grid>
@@ -158,6 +197,15 @@ const HomePage: React.FC = () => {
           </Grid>
         </Grid>
       </Grid>
+
+      <ModalConfirm
+        open={!!modalConfirm.open}
+        onClose={() => setModalConfirm({ ...modalConfirm, open: false })}
+        title={modalConfirm.title}
+        message={modalConfirm.message}
+        onConfirm={modalConfirm.onConfirm}
+        displayCancel={modalConfirm.displayCancel}
+      />
     </>
   )
 }
