@@ -4,6 +4,7 @@ import InputGroup from "@/ui/components/InputGroup"
 import { useLoginMutation } from "@/mutations/auth.mutation"
 import { useEffect, useState } from "react"
 import { getCaptcha, verifyCaptcha } from "@/service/auth.service"
+import { ArrowClockwise } from "phosphor-react"
 
 interface LoginForm {
   username: string
@@ -36,20 +37,20 @@ const LoginForm = () => {
       })
   })
 
-  useEffect(() => {
-    const fetchCaptcha = async () => {
-      try {
-        const captcha = await getCaptcha()
-        const url = URL.createObjectURL(captcha.imageData)
-        setImageUrl(url)
-        setValue("headerToken", captcha.headers.token)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
+  const fetchCaptcha = async () => {
+    try {
+      const captcha = await getCaptcha()
+      const url = URL.createObjectURL(captcha.imageData)
+      setImageUrl(url)
+      setValue("headerToken", captcha.headers.token)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchCaptcha()
   }, [])
 
@@ -69,8 +70,26 @@ const LoginForm = () => {
         required
       />
       <Box sx={{ border: "1px solid rgb(179, 178, 177)", padding: 4, borderRadius: 2, mt: 2, mb: 2 }}>
-        {imageUrl && <img src={imageUrl} alt="Captcha" />}
-        {loading && <CircularProgress />}
+        <Box
+          sx={{
+            flexDirection: "row",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            display: "flex",
+          }}
+        >
+          {imageUrl && <img src={imageUrl} alt="Captcha" />}
+          {loading && <CircularProgress />}
+          <Button
+            data-shape="icon"
+            size="lg"
+            variant="text"
+            onClick={fetchCaptcha}
+            sx={{ position: "relative", top: 0, right: 0 }}
+          >
+            <ArrowClockwise size={24} />
+          </Button>
+        </Box>
         <InputGroup
           label="Captcha"
           placeholder="masukan captcha disini"
