@@ -16,6 +16,7 @@ import Render from "./ui/elements/Render"
 import ContentPage from "./pages/content"
 import ForgotPasswordPage from "./pages/auth/forgot"
 import FAQPage from "./pages/faq"
+import SettingPage from "./pages/setting"
 
 function App() {
   const location = useLocation()
@@ -79,6 +80,7 @@ function App() {
               />
               <Route path={"/riwayat-ujian"} element={<RiwayatUjian />} />
               <Route path={"/faq"} element={<FAQPage />} />
+              <Route path={"/setting"} element={<SettingPage />} />
             </Route>
           </Routes>
         </Layout>
