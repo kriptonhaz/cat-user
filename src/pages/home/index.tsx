@@ -1,4 +1,4 @@
-import { Card, Grid, Typography, CardContent, Button } from "@mui/material"
+import { Card, Grid, Typography, CardContent, Button, Box } from "@mui/material"
 import {
   PersonOutline,
   BadgeOutlined,
@@ -133,7 +133,12 @@ const HomePage: React.FC = () => {
                   </Typography>
                 </>
               )}
-              {dataProfile?.data.nip && <Barcode value={dataProfile?.data.nip} height={30} width={3} />}
+              <Box display={"flex"} justifyContent={"center"}>
+                {dataProfile?.data.nip && (
+                  <Barcode value={dataProfile?.data.nip} height={70} width={3} displayValue={false} />
+                )}
+              </Box>
+
               <Typography sx={{ fontWeight: "regular", fontSize: 18, mb: 1, textAlign: "center" }}>
                 Belum Verifikasi
               </Typography>
@@ -205,6 +210,7 @@ const HomePage: React.FC = () => {
         message={modalConfirm.message}
         onConfirm={modalConfirm.onConfirm}
         displayCancel={modalConfirm.displayCancel}
+        cancelLabel="Tidak"
       />
     </>
   )
