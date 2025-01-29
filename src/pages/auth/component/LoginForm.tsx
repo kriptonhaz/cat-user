@@ -119,7 +119,7 @@ const LoginForm = () => {
       >
         Lupa Password
       </Button>
-      <ModalLoading open={ssoLoading} onClose={() => setSsoLoading(false)} />
+      <ModalLoading open={ssoLoading} onClose={() => setSsoLoading(false)} isSso={true} />
     </form>
   )
 }
