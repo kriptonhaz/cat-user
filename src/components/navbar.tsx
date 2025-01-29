@@ -48,6 +48,7 @@ const Navbar = () => {
                       mr: 2,
                       backgroundColor: location.pathname === "/home" ? "rgba(255, 255, 255, 0.2)" : "transparent",
                       border: "1px solid white",
+                      width: "150px",
                     }}
                     onClick={() => navigate("/home")}
                   >
@@ -60,10 +61,35 @@ const Navbar = () => {
                       backgroundColor:
                         location.pathname === "/riwayat-ujian" ? "rgba(255, 255, 255, 0.2)" : "transparent",
                       border: "1px solid white",
+                      width: "150px",
                     }}
                     onClick={() => navigate("/riwayat-ujian")}
                   >
                     Riwayat Ujian
+                  </Button>
+                  <Button
+                    sx={{
+                      color: "white",
+                      mr: 2,
+                      backgroundColor: location.pathname === "/faq" ? "rgba(255, 255, 255, 0.2)" : "transparent",
+                      border: "1px solid white",
+                      width: "150px",
+                    }}
+                    onClick={() => navigate("/faq")}
+                  >
+                    FAQ
+                  </Button>
+                  <Button
+                    sx={{
+                      color: "white",
+                      mr: 2,
+                      backgroundColor: location.pathname === "/setting" ? "rgba(255, 255, 255, 0.2)" : "transparent",
+                      border: "1px solid white",
+                      width: "150px",
+                    }}
+                    onClick={() => navigate("/setting")}
+                  >
+                    Pengaturan
                   </Button>
                 </Box>
               )}

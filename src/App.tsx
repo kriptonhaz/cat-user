@@ -15,6 +15,7 @@ import LandingPage from "./pages"
 import Render from "./ui/elements/Render"
 import ContentPage from "./pages/content"
 import ForgotPasswordPage from "./pages/auth/forgot"
+import FAQPage from "./pages/faq"
 
 function App() {
   const location = useLocation()
@@ -77,6 +78,7 @@ function App() {
                 element={<LembarUjianTkk />}
               />
               <Route path={"/riwayat-ujian"} element={<RiwayatUjian />} />
+              <Route path={"/faq"} element={<FAQPage />} />
             </Route>
           </Routes>
         </Layout>
