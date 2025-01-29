@@ -5,6 +5,7 @@ import { useLoginMutation } from "@/mutations/auth.mutation"
 import { useEffect, useState } from "react"
 import { getCaptcha, verifyCaptcha } from "@/service/auth.service"
 import { ArrowClockwise } from "phosphor-react"
+import ModalLoading from "@/ui/layouts/Modal/ui/ModalLoading"
 
 interface LoginForm {
   username: string
@@ -23,6 +24,7 @@ const LoginForm = () => {
   } = useForm<LoginForm>()
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
+  const [ssoLoading, setSsoLoading] = useState(false)
 
   const { loginMutation } = useLoginMutation()
   const mutation = loginMutation()
@@ -99,9 +101,13 @@ const LoginForm = () => {
           helperText={errors.captcha?.message}
         />
       </Box>
-      <Button type="submit" sx={{ mt: 2 }}>
+      <Button type="submit" sx={{ mt: 2 }} fullWidth>
         Masuk
       </Button>
+      <Button sx={{ mt: 2 }} fullWidth variant="outlined" onClick={() => setSsoLoading(true)}>
+        Masuk dengan SSO
+      </Button>
+      <ModalLoading open={ssoLoading} onClose={() => setSsoLoading(false)} />
     </form>
   )
 }
