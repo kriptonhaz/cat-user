@@ -61,17 +61,11 @@ const LoginForm = () => {
   return (
     <form onSubmit={onSubmit}>
       <InputGroup
-        label="Nama Pengguna"
-        placeholder="masukan nama pengguna anda disini"
+        label="NRP / NIP / Email"
+        placeholder="Masukan NRP / NIP / Email pengguna anda disini"
         {...register("username")}
         required
-      />
-      <InputGroup
-        label="Kata Sandi"
-        type="password"
-        placeholder="masukan kata sandi anda disini"
-        {...register("password")}
-        required
+        sx={{ width: "400px" }}
       />
       <Box sx={{ border: "1px solid rgb(179, 178, 177)", padding: 4, borderRadius: 2, mt: 2, mb: 2 }}>
         <Box
@@ -103,23 +97,13 @@ const LoginForm = () => {
           helperText={errors.captcha?.message}
         />
       </Box>
-      <Button type="submit" sx={{ mt: 2 }} fullWidth>
-        Masuk
-      </Button>
-      <Button sx={{ mt: 2, mb: 5 }} fullWidth variant="outlined" onClick={() => setSsoLoading(true)}>
-        Masuk dengan SSO
+      <Button type="submit" sx={{ mb: 5 }} fullWidth>
+        Kirim
       </Button>
       <hr />
-      <Button
-        sx={{ mt: 5 }}
-        fullWidth
-        variant="outlined"
-        color="secondary"
-        onClick={() => navigate("/forgot-password")}
-      >
-        Lupa Password
+      <Button sx={{ mt: 5 }} fullWidth variant="outlined" color="secondary" onClick={() => navigate("/login")}>
+        Kembali ke Login
       </Button>
-      <ModalLoading open={ssoLoading} onClose={() => setSsoLoading(false)} />
     </form>
   )
 }

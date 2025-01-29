@@ -14,6 +14,7 @@ import { LandingLayoutRoute } from "./landing/landing.layout"
 import LandingPage from "./pages"
 import Render from "./ui/elements/Render"
 import ContentPage from "./pages/content"
+import ForgotPasswordPage from "./pages/auth/forgot"
 
 function App() {
   const location = useLocation()
@@ -42,7 +43,13 @@ function App() {
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>
-        <Render in={location.pathname !== "/" && !isMatchingRoute(location.pathname, /\/content/)}>
+        <Render
+          in={
+            location.pathname !== "/" &&
+            !isMatchingRoute(location.pathname, /\/content/) &&
+            !isMatchingRoute(location.pathname, /\/forgot/)
+          }
+        >
           <Navbar />
         </Render>
         <Layout>
@@ -53,6 +60,7 @@ function App() {
             </Route>
             <Route element={<GuestRoute />}>
               <Route path={"/login"} element={<LoginPage />} />
+              <Route path={"/forgot-password"} element={<ForgotPasswordPage />} />
             </Route>
             <Route element={<ProtectedRoute />}>
               <Route path={"/"} element={<HomePage />} />

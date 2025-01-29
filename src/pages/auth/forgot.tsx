@@ -1,4 +1,3 @@
-import LoginForm from "./component/LoginForm"
 import "@splidejs/react-splide/css"
 import { Splide, SplideSlide } from "@splidejs/react-splide"
 import Logo from "@/assets/logo-kemenhan.png"
@@ -8,8 +7,9 @@ import Thumbnail1 from "@/assets/slider/image-1.jpg"
 import Thumbnail2 from "@/assets/slider/image-2.jpg"
 import Thumbnail3 from "@/assets/slider/image-3.jpg"
 import Thumbnail4 from "@/assets/slider/image-4.jpg"
+import ForgotPasswordForm from "./component/ForgotPasswordForm"
 
-const LoginPage: React.FC = () => {
+const ForgotPasswordPage: React.FC = () => {
   return (
     <>
       <Grid container sx={{ height: "100vh" }}>
@@ -77,11 +77,11 @@ const LoginPage: React.FC = () => {
           <Container maxWidth="sm">
             <Stack direction="column" justifyContent={"center"} alignItems={"center"} sx={{ height: "80vh" }}>
               <Box>
-                <Box sx={{ width: "180px", margin: "auto", mt: 12 }}>
+                <Box sx={{ width: "180px", margin: "auto" }}>
                   <img src={Logo} alt="cat kemenhan" style={{ width: "100%" }} />
                 </Box>
                 <Box sx={{ flex: "1", maxWidth: "400px", mx: "auto" }}>
-                  <LoginForm />
+                  <ForgotPasswordForm />
                 </Box>
               </Box>
             </Stack>
@@ -91,4 +91,4 @@ const LoginPage: React.FC = () => {
     </>
   )
 }
-export default LoginPage
+export default ForgotPasswordPage
