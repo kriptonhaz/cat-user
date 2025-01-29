@@ -1,21 +1,19 @@
 import { Box, Button, CircularProgress } from "@mui/material"
 import { useForm } from "react-hook-form"
 import InputGroup from "@/ui/components/InputGroup"
-import { useLoginMutation } from "@/mutations/auth.mutation"
 import { useEffect, useState } from "react"
 import { getCaptcha, verifyCaptcha } from "@/service/auth.service"
 import { ArrowClockwise } from "phosphor-react"
-import ModalLoading from "@/ui/layouts/Modal/ui/ModalLoading"
 import { useNavigate } from "react-router-dom"
 
-interface LoginForm {
+interface IForgotPasswordForm {
   username: string
-  password: string
+  email: string
   captcha: string
   headerToken: string
 }
 
-const LoginForm = () => {
+const ForgotPasswordForm = () => {
   const navigate = useNavigate()
   const {
     handleSubmit,
@@ -23,18 +21,14 @@ const LoginForm = () => {
     setError,
     setValue,
     formState: { errors },
-  } = useForm<LoginForm>()
+  } = useForm<IForgotPasswordForm>()
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
-  const [ssoLoading, setSsoLoading] = useState(false)
-
-  const { loginMutation } = useLoginMutation()
-  const mutation = loginMutation()
 
   const onSubmit = handleSubmit((data) => {
     verifyCaptcha({ captcha: data.captcha, Token: data.headerToken })
       .then(() => {
-        mutation.mutate(data)
+        // TODO: wiring forgot password
       })
       .catch(() => {
         setError("captcha", { message: "Captcha tidak sesuai silahkan coba lagi" })
@@ -61,9 +55,16 @@ const LoginForm = () => {
   return (
     <form onSubmit={onSubmit}>
       <InputGroup
-        label="NRP / NIP / Email"
-        placeholder="Masukan NRP / NIP / Email pengguna anda disini"
+        label="NRP / NIP"
+        placeholder="Masukan NRP / NIP anda disini"
         {...register("username")}
+        required
+        sx={{ width: "400px" }}
+      />
+      <InputGroup
+        label="Email"
+        placeholder="Masukan Email anda disini"
+        {...register("email")}
         required
         sx={{ width: "400px" }}
       />
@@ -108,4 +109,4 @@ const LoginForm = () => {
   )
 }
 
-export default LoginForm
+export default ForgotPasswordForm
