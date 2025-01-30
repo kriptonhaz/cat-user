@@ -20,10 +20,12 @@ import { useState } from "react"
 
 const HomePage: React.FC = () => {
   const { queryExamAvailable } = useExamHooks()
-  const { queryProfile } = useProfileHooks()
+  const { queryProfile, submitReviseMutation, submitVerifyMutation } = useProfileHooks()
 
   const { data: dataExamAvailable } = queryExamAvailable()
   const { data: dataProfile } = queryProfile()
+  const mutationRevise = submitReviseMutation()
+  const mutationVerify = submitVerifyMutation()
 
   const [modalConfirm, setModalConfirm] = useState<ModalConfirmProps>({
     open: false,
@@ -36,6 +38,9 @@ const HomePage: React.FC = () => {
       setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
     },
     displayCancel: true,
+    onCancel: () => {
+      return null
+    },
   })
 
   return (
@@ -139,24 +144,34 @@ const HomePage: React.FC = () => {
                 )}
               </Box>
 
+              {dataProfile?.data.is_verified_by_user !== true}
               <Typography sx={{ fontWeight: "regular", fontSize: 18, mb: 1, textAlign: "center" }}>
-                Belum Verifikasi
+                {dataProfile?.data.is_verified_by_user !== true ? "Belum Verifikasi" : "Data Terverifikasi"}
               </Typography>
               <Button
                 fullWidth
+                sx={
+                  {
+                    // display: dataProfile?.data.is_verified_by_user ? "none" : "block",
+                  }
+                }
                 onClick={() => {
                   setModalConfirm({
                     ...modalConfirm,
                     open: true,
                     title: "Apakah anda yakin data anda sudah sesuai?",
-                    message: "Jika data tidak sesuai harap hubungi admin",
                     onClose: () => {
                       setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
                     },
                     onConfirm: () => {
-                      // TODO: wiring verifikasi data
+                      setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+                      mutationVerify.mutate()
                     },
                     displayCancel: true,
+                    onCancel: () => {
+                      setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+                      mutationRevise.mutate()
+                    },
                   })
                 }}
               >
@@ -209,8 +224,9 @@ const HomePage: React.FC = () => {
         title={modalConfirm.title}
         message={modalConfirm.message}
         onConfirm={modalConfirm.onConfirm}
-        displayCancel={modalConfirm.displayCancel}
+        displayCancel={false}
         cancelLabel="Tidak"
+        onCancel={modalConfirm.onCancel}
       />
     </>
   )

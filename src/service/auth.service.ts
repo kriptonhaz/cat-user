@@ -17,7 +17,7 @@ export const submitLoginForm = async (payload: LoginForm): Promise<LoginFormResp
   })
 
   if (data.code === 200) {
-    const profile = await axios.get(`${API_URL}/v1/cat+apps/profile`, {
+    const profile = await axios.get(`${import.meta.env.VITE_API_URL}/v1/cat+apps/profile`, {
       headers: {
         Authorization: `Bearer ${data.data.token}`,
       },

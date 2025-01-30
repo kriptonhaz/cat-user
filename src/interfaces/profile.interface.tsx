@@ -1,3 +1,5 @@
+import { MutationParams } from "./global.interface"
+
 export interface IProfileResponse {
   code: number
   data: {
@@ -20,6 +22,8 @@ export interface IProfileResponse {
     is_active: boolean
     user_type: number
     registration_from: number
+    is_verified_by_user: boolean | null
+    is_revision_requested: boolean | null
     education: {
       ID: number
       CreatedAt: string
@@ -49,3 +53,5 @@ export interface IProfileResponse {
   }
   message: string
 }
+
+export type SubmitVerifiedMutationParams = MutationParams<any, any>

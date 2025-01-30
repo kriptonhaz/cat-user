@@ -9,3 +9,21 @@ export const getProfile = async (): Promise<IProfileResponse> => {
 
   return data
 }
+
+export const submitVerified = async (): Promise<IProfileResponse> => {
+  const { data } = await API().request<IProfileResponse>({
+    url: "/v1/verify+me",
+    method: "PUT",
+  })
+
+  return data
+}
+
+export const submitRevision = async (): Promise<IProfileResponse> => {
+  const { data } = await API().request<IProfileResponse>({
+    url: "/v1/revised+me",
+    method: "PUT",
+  })
+
+  return data
+}
