@@ -37,9 +37,11 @@ const ModalConfirm: React.FC<ModalConfirmProps> = (props) => {
         <Typography variant="body2">{message}</Typography>
       </Modal.Body>
       <Modal.Footer onCancel={displayCancel ? onClose : undefined} divider cancelLabel={cancelLabel}>
-        <Button color="error" onClick={onCancel} disabled={loading} startIcon={!!loading && <CircularProgress />}>
-          {cancelLabel}
-        </Button>
+        {cancelLabel && (
+          <Button color="error" onClick={onCancel} disabled={loading} startIcon={!!loading && <CircularProgress />}>
+            {cancelLabel}
+          </Button>
+        )}
         <Button color="warning" onClick={onConfirm} disabled={loading} startIcon={!!loading && <CircularProgress />}>
           Ya
         </Button>
