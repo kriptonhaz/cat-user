@@ -9,8 +9,8 @@ export const CheckboxManual = (props: CheckboxManualProps) => {
   return (
     <Box
       sx={{
-        width: 30,
-        height: undefined,
+        width: 24,
+        height: 24,
         aspectRatio: 1 / 1,
         borderRadius: "4px",
         border: "2px solid",
