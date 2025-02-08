@@ -1,4 +1,3 @@
-import { API_URL } from "@/constants/api"
 import axios from "axios"
 import API from "./base.service"
 import {
