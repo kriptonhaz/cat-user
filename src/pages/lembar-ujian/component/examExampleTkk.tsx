@@ -159,7 +159,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
         minHeight: "525px",
         paddingBottom: 10,
         maxHeight:
-          (question as SoalExamLS1).subtest_model_uuid ===
+          (question as SoalExamLS1).narrow_data.Uuid ===
           ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid
             ? "82vh"
             : undefined,
@@ -216,7 +216,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
         />
       )}
       {(question as SoalExamLS1).image_path_cat &&
-        (question as SoalExamLS1).subtest_model_uuid !==
+        (question as SoalExamLS1).narrow_data.Uuid !==
           ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid && (
           <Box
             sx={{
@@ -226,7 +226,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
               marginBottom: 4,
               display: "flex",
               justifyContent:
-                (question as SoalExamLS1).subtest_model_uuid ===
+                (question as SoalExamLS1).narrow_data.Uuid ===
                 ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
                   ? "center"
                   : "flex-start",
@@ -239,11 +239,16 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                 marginTop: "8px",
                 width: "auto",
                 height: "auto",
+                maxHeight:
+                  (question as SoalExamLS1).narrow_data.Uuid ===
+                  ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
+                    ? "30vh"
+                    : undefined,
               }}
             />
           </Box>
         )}
-      {(question as SoalExamLS1).subtest_model_uuid ===
+      {(question as SoalExamLS1).narrow_data.Uuid ===
       ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid ? (
         <Grid container spacing={2} sx={{ overflow: "hidden", mt: 4 }}>
           <Grid item xs={12} lg={4}>
@@ -255,7 +260,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                   display: "flex",
                   borderRight: "1px solid #ccc",
                   justifyContent:
-                    (question as SoalExamLS1).subtest_model_uuid ===
+                    (question as SoalExamLS1).narrow_data.Uuid ===
                     ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
                       ? "center"
                       : "flex-start",
@@ -455,7 +460,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                   display={"flex"}
                   flexDirection={question.answer_showing_position === 1 ? "column" : "row"}
                   justifyContent={
-                    (question as SoalExamLS1).subtest_model_uuid ===
+                    (question as SoalExamLS1).narrow_data.Uuid ===
                     ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
                       ? "space-between"
                       : "flex-start"
@@ -482,20 +487,60 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                             <Box
                               display={"flex"}
                               justifyContent={"center"}
-                              flexDirection={"column"}
+                              flexDirection={
+                                (question as SoalExamLS1).narrow_data.Uuid ===
+                                ExamData.filter((ar) => ar.examName === "Lexical Knowledge")[0].examUuid
+                                  ? "row"
+                                  : "column"
+                              }
                               alignItems={"center"}
                             >
-                              <Typography
-                                dangerouslySetInnerHTML={{ __html: answer.content }}
-                                sx={{
-                                  "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                                  "& p": { margin: 0 },
-                                  "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
-                                  fontSize: fontSize,
-                                }}
-                              />
-                              {(question as SoalExamLS1).is_need_answer_label && (
-                                <Typography>{answer.label}</Typography>
+                              {(question as SoalExamLS1).narrow_data.Uuid ===
+                              ExamData.filter((ar) => ar.examName === "Lexical Knowledge")[0].examUuid ? (
+                                <>
+                                  {(question as SoalExamLS1).is_need_answer_label && (
+                                    <Typography
+                                      dangerouslySetInnerHTML={{ __html: answer.label + ".&nbsp;" }}
+                                      sx={{
+                                        "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                        "& p": { margin: 0 },
+                                        "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                        fontSize: fontSize,
+                                      }}
+                                    />
+                                  )}
+                                  <Typography
+                                    dangerouslySetInnerHTML={{ __html: answer.content }}
+                                    sx={{
+                                      "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                      "& p": { margin: 0 },
+                                      "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                      fontSize: fontSize,
+                                    }}
+                                  />
+                                </>
+                              ) : (
+                                <>
+                                  {answer.image_path_cat ? (
+                                    <img
+                                      src={import.meta.env.VITE_API_URL + answer.image_path_cat}
+                                      style={{ width: "100%", height: "100%", fontSize: fontSize, margin: 0 }}
+                                    />
+                                  ) : (
+                                    <Typography
+                                      dangerouslySetInnerHTML={{ __html: answer.content }}
+                                      sx={{
+                                        "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                        "& p": { margin: 0 },
+                                        "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                        fontSize: fontSize,
+                                      }}
+                                    />
+                                  )}
+                                  {(question as SoalExamLS1).is_need_answer_label && (
+                                    <Typography>{answer.label}</Typography>
+                                  )}
+                                </>
                               )}
                             </Box>
                             {question.total_answer_should_have_for_true === 2 &&
