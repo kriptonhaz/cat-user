@@ -213,14 +213,14 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
             },
             mb: 5,
             minHeight:
-              (soal as SoalExamLS1).subtest_model_uuid ===
+              (soal as SoalExamLS1).narrow_data.Uuid ===
                 ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
-              (soal as SoalExamLS1).subtest_model_uuid ===
+              (soal as SoalExamLS1).narrow_data.Uuid ===
                 ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid
                 ? "10vh"
                 : "525px",
             maxHeight:
-              (soal as SoalExamLS1).subtest_model_uuid ===
+              (soal as SoalExamLS1).narrow_data.Uuid ===
               ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid
                 ? "82vh"
                 : undefined,
@@ -228,9 +228,9 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
           }}
         >
           <CardContent>
-            {((soal as SoalExamLS1).subtest_model_uuid !==
+            {((soal as SoalExamLS1).narrow_data.Uuid !==
               ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
-              (soal as SoalExamLS1).subtest_model_uuid !==
+              (soal as SoalExamLS1).narrow_data.Uuid !==
                 ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) && (
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 {showTimer && (
@@ -257,16 +257,16 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               </Box>
             )}
 
-            {((soal as SoalExamLS1).subtest_model_uuid !==
+            {((soal as SoalExamLS1).narrow_data.Uuid !==
               ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
-              (soal as SoalExamLS1).subtest_model_uuid !==
+              (soal as SoalExamLS1).narrow_data.Uuid !==
                 ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) && (
               <Divider sx={{ my: 3 }} />
             )}
 
-            {((soal as SoalExamLS1).subtest_model_uuid !==
+            {((soal as SoalExamLS1).narrow_data.Uuid !==
               ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
-              (soal as SoalExamLS1).subtest_model_uuid !==
+              (soal as SoalExamLS1).narrow_data.Uuid !==
                 ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) &&
               subtestNumber !== undefined &&
               subtestName !== undefined && (
@@ -278,12 +278,12 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               sx={{
                 display: "flex",
                 alignItems:
-                  (soal as SoalExamLS1).subtest_model_uuid ===
+                  (soal as SoalExamLS1).narrow_data.Uuid ===
                   ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
                     ? "center"
                     : "flex-start",
                 flexDirection:
-                  (soal as SoalExamLS1).subtest_model_uuid ===
+                  (soal as SoalExamLS1).narrow_data.Uuid ===
                   ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
                     ? "column"
                     : "row",
@@ -313,14 +313,14 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                     display: "flex",
                     width: "100%",
                     flexDirection:
-                      (soal as SoalExamLS1).subtest_model_uuid ===
+                      (soal as SoalExamLS1).narrow_data.Uuid ===
                         ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid ||
-                      (soal as SoalExamLS1).subtest_model_uuid ===
+                      (soal as SoalExamLS1).narrow_data.Uuid ===
                         ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid
                         ? "column"
                         : "row",
                     justifyContent:
-                      (soal as SoalExamLS1).subtest_model_uuid ===
+                      (soal as SoalExamLS1).narrow_data.Uuid ===
                       ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
                         ? "center"
                         : "flex-start",
@@ -350,13 +350,14 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                       sx={{
                         "& p": { margin: 0, fontSize: fontSize },
                         "& figure": { margin: 0, marginRight: "0px" },
+                        "& img": { width: "100%", height: "auto", maxHeight: "30vh" },
                         fontSize: fontSize,
                         minHeight: "10px",
                         height: "auto",
                         textWrap: "wrap",
                         display: "flex",
                         flexDirection:
-                          (soal as SoalExamLS1).subtest_model_uuid ===
+                          (soal as SoalExamLS1).narrow_data.Uuid ===
                           ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
                             ? "row"
                             : "column",
@@ -366,17 +367,17 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
 
                   <br />
                   {(soal as SoalExamLS1).image_path_cat &&
-                    (soal as SoalExamLS1).subtest_model_uuid !==
+                    (soal as SoalExamLS1).narrow_data.Uuid !==
                       ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid && (
                       <Box
                         sx={{
                           width: "100%",
-                          height: "145px",
-                          maxHeight: "200px",
+                          // height: "145px",
+                          // maxHeight: "200px",
                           marginBottom: 4,
                           display: "flex",
                           justifyContent:
-                            (soal as SoalExamLS1).subtest_model_uuid ===
+                            (soal as SoalExamLS1).narrow_data.Uuid ===
                             ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
                               ? "center"
                               : "flex-start",
@@ -385,14 +386,23 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                         <img
                           src={import.meta.env.VITE_API_URL + (soal as SoalExamLS1).image_path_cat}
                           alt={"Answer image"}
-                          style={{ marginTop: "8px", width: "auto", height: "100%" }}
+                          style={{
+                            marginTop: "8px",
+                            width: "auto",
+                            height: "auto",
+                            maxHeight:
+                              (soal as SoalExamLS1).narrow_data.Uuid ===
+                              ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
+                                ? "30vh"
+                                : undefined,
+                          }}
                         />
                       </Box>
                     )}
                 </Box>
               )}
             </Box>
-            {(soal as SoalExamLS1).subtest_model_uuid ===
+            {(soal as SoalExamLS1).narrow_data.Uuid ===
             ExamData.filter((ar) => ar.examName === "Visualization")[0].examUuid ? (
               <Grid container spacing={2} sx={{ overflow: "hidden", mt: 4 }}>
                 <Grid item xs={12} lg={4}>
@@ -406,7 +416,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                         display: "flex",
                         borderRight: "1px solid #ccc",
                         justifyContent:
-                          (soal as SoalExamLS1).subtest_model_uuid ===
+                          (soal as SoalExamLS1).narrow_data.Uuid ===
                           ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
                             ? "center"
                             : "flex-start",
@@ -474,9 +484,9 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               </Grid>
             ) : (
               <>
-                {((soal as SoalExamLS1).subtest_model_uuid !==
+                {((soal as SoalExamLS1).narrow_data.Uuid !==
                   ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
-                  (soal as SoalExamLS1).subtest_model_uuid !==
+                  (soal as SoalExamLS1).narrow_data.Uuid !==
                     ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) && (
                   <Divider
                     sx={{
@@ -491,7 +501,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                     display: "flex",
                     flexDirection: "column",
                     alignItems:
-                      (soal as SoalExamLS1).subtest_model_uuid ===
+                      (soal as SoalExamLS1).narrow_data.Uuid ===
                       ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
                         ? "center"
                         : "flex-start",
@@ -559,9 +569,9 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                       <RadioGroup
                         row={
                           soal.answer_showing_position === 2 ||
-                          (soal as SoalExamLS1).subtest_model_uuid ===
+                          (soal as SoalExamLS1).narrow_data.Uuid ===
                             ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
-                          (soal as SoalExamLS1).subtest_model_uuid ===
+                          (soal as SoalExamLS1).narrow_data.Uuid ===
                             ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid
                             ? true
                             : false
@@ -589,7 +599,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                               })
                             }}
                             control={
-                              (soal as SoalExamLS1).subtest_model_uuid ===
+                              (soal as SoalExamLS1).narrow_data.Uuid ===
                               ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
                                 <></>
                               ) : (
@@ -603,7 +613,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                             }
                             label={
                               <>
-                                {(soal as SoalExamLS1).subtest_model_uuid ===
+                                {(soal as SoalExamLS1).narrow_data.Uuid ===
                                 ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
                                   <Box
                                     flexDirection={"column"}
@@ -661,11 +671,12 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                         display={"flex"}
                         flexDirection={soal.answer_showing_position === 1 ? "column" : "row"}
                         justifyContent={
-                          (soal as SoalExamLS1).subtest_model_uuid ===
+                          (soal as SoalExamLS1).narrow_data.Uuid ===
                           ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
                             ? "space-between"
                             : "flex-start"
                         }
+                        textAlign={"center"}
                         sx={{ width: "100%" }}
                       >
                         {(soal as SoalExamLS1).answer_data.map((answer) => {
@@ -684,15 +695,25 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                               disabled={isDisabled}
                               label={
                                 <>
-                                  <Typography
-                                    dangerouslySetInnerHTML={{ __html: answer.content }}
-                                    sx={{
-                                      "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                                      "& p": { margin: 0 },
-                                      "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
-                                      fontSize: fontSize,
-                                    }}
-                                  />
+                                  {answer.image_path_cat ? (
+                                    <img
+                                      src={import.meta.env.VITE_API_URL + answer.image_path_cat}
+                                      style={{ width: "100%", height: "100%", fontSize: fontSize, margin: 0 }}
+                                    />
+                                  ) : (
+                                    <Typography
+                                      dangerouslySetInnerHTML={{ __html: answer.content }}
+                                      sx={{
+                                        "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                        "& p": { margin: 0 },
+                                        "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                        fontSize: fontSize,
+                                      }}
+                                    />
+                                  )}
+                                  {(soal as SoalExamLS1).is_need_answer_label && (
+                                    <Typography>{answer.label}</Typography>
+                                  )}
                                 </>
                               }
                             />
