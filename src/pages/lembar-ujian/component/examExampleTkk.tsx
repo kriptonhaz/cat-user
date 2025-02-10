@@ -9,7 +9,6 @@ import {
   Divider,
   FormControlLabel,
   Grid,
-  Radio,
   RadioGroup,
   Stack,
   TextField,
@@ -200,7 +199,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
               (question as SoalExamLS1).subtest_model_uuid ===
               ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
                 ? 0
-                : 40,
+                : "40px",
             display: "flex",
             flexDirection:
               (question as SoalExamLS1).subtest_model_uuid ===
@@ -422,7 +421,17 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                                   dangerouslySetInnerHTML={{ __html: answer.content }}
                                   sx={{
                                     "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                                    "& p": { margin: 0 },
+                                    "& p": {
+                                      margin: 0,
+                                      marginRight:
+                                        (question as SoalExamLS1).narrow_data.Uuid ===
+                                          ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+                                        (question as SoalExamLS1).narrow_data.Uuid ===
+                                          ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0]
+                                            .examUuid
+                                          ? 8
+                                          : 0,
+                                    },
                                     "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
                                     fontSize: fontSize,
                                   }}
@@ -449,7 +458,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                           </Box>
                         </>
                       }
-                      sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+                      sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 1 } }}
                     />
                   ))}
                 </RadioGroup>

@@ -6,7 +6,6 @@ import {
   Typography,
   RadioGroup,
   FormControlLabel,
-  Radio,
   Button,
   Divider,
   Checkbox,
@@ -15,7 +14,7 @@ import {
   Stack,
 } from "@mui/material"
 import { TextIncrease, TextDecrease } from "@mui/icons-material"
-import { SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
+import { ISoalExamByModuleResponse, SoalExam, SoalExamLS1, SoalExamPPI } from "@/interfaces/exam.interface"
 import { formatTime } from "@/utils/timer"
 import { ExamData } from "./exam-data"
 import ModalConfirm, { ModalConfirmProps } from "@/ui/modal/ModalConfirm"
@@ -41,6 +40,8 @@ export interface ISoalPertanyaanTkk {
   checkQuestionAvailable?: () => void
   selectedMultipleAnswer: string[]
   isScrolling?: boolean
+  soalExamAvailable?: ISoalExamByModuleResponse
+  submitAnswer?: () => void
 }
 
 const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDivElement, ISoalPertanyaanTkk>(
@@ -60,6 +61,8 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
       checkQuestionAvailable,
       selectedMultipleAnswer,
       isScrolling = false,
+      soalExamAvailable,
+      submitAnswer,
     } = props
     const [answerMemorySpan, setAnswerMemorySpan] = useState<Array<{ order: number; content: string }>>([])
     const [startTimer, setStartTimer] = useState(false)
@@ -103,32 +106,52 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
           setStartAnswer(true)
           setTimerMemorySpan(soal.timer)
         } else if (startAnswer === true) {
-          // TODO:
-          if (setModalConfirm) {
-            setModalConfirm({
-              ...modalConfirm,
-              open: true,
-              title: "Subtest ini telah selesai, anda akan melanjutkan ke subtest berikutnya",
-              message: "",
-              onClose: () => {
-                setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
-              },
-              onConfirm: () => {
-                setModalConfirm({
-                  ...modalConfirm,
-                  open: false,
-                  title: "",
-                  message: "",
-                  onClose: () => {
-                    setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
-                  },
-                })
-                if (checkQuestionAvailable) {
-                  checkQuestionAvailable()
-                }
-              },
-              displayCancel: false,
-            })
+          const indexSoal = soalExamAvailable?.data.findIndex(
+            (ar) => (ar as SoalExamLS1).uuid === (soal as SoalExamLS1).uuid
+          )
+          if (indexSoal && soalExamAvailable) {
+            if (indexSoal < soalExamAvailable.data.length - 1) {
+              setModalConfirm({
+                ...modalConfirm,
+                open: true,
+                title: "Waktu habis, Anda diarahkan ke soal berikutnya",
+                message: "",
+                onClose: () => {
+                  setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+                },
+                onConfirm: () => {
+                  setModalConfirm({
+                    ...modalConfirm,
+                    open: false,
+                    title: "",
+                    message: "",
+                    onClose: () => {
+                      setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+                    },
+                  })
+                  if (submitAnswer) {
+                    submitAnswer()
+                  }
+                  if (checkQuestionAvailable) {
+                    checkQuestionAvailable()
+                  }
+                  setIndexMemorySpan(0)
+                  setStartAnswer(false)
+                  setTimerMemorySpan((soal as SoalExamLS1).intro_data[indexMemorySpan + 1].timer)
+                  // setDisableNextButton && setDisableNextButton(true)
+                },
+                displayCancel: false,
+              })
+            } else {
+              if (submitAnswer) {
+                submitAnswer()
+              }
+              if (checkQuestionAvailable) {
+                checkQuestionAvailable()
+              }
+            }
+          } else {
+            console.log("data error")
           }
         }
       }
@@ -195,9 +218,14 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
     }
 
     useEffect(() => {
-      const formattedAnswer = answerMemorySpan.sort((a, b) => a.order - b.order)
-      setAnswer({ content: formattedAnswer.map((ar) => ar.content).join(""), value: 0 })
-    }, [answerMemorySpan])
+      const currentUuid = (soal as SoalExamLS1)?.narrow_data.Uuid
+      const memorySpanUuid = ExamData.filter((ar) => ar.examName === "Memory Span")[0].examUuid
+      const workingMemoryUuid = ExamData.filter((ar) => ar.examName === "Working Memory")[0].examUuid
+      if (currentUuid === memorySpanUuid || currentUuid === workingMemoryUuid) {
+        const formattedAnswer = answerMemorySpan.sort((a, b) => a.order - b.order)
+        setAnswer({ content: formattedAnswer.map((ar) => ar.content).join(""), value: 0 })
+      }
+    }, [soal, answerMemorySpan])
 
     return (
       <div ref={ref}>
@@ -300,7 +328,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                   display: (soal as SoalExamLS1).answer_type === 3 && startAnswer === false ? "none" : "block",
                 }}
               >
-                {soal.question_order}.
+                {`${soal.question_order})`}
               </Typography>
               {questionType === "SoalExam" ? (
                 <Typography variant="h6" sx={{ fontSize: fontSize }}>
@@ -593,10 +621,15 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                             key={index}
                             value={answer.uuid}
                             onClick={() => {
-                              setAnswer({
-                                content: answer?.uuid || "",
-                                value: 0,
-                              })
+                              if (
+                                (soal as SoalExamLS1).narrow_data.Uuid !==
+                                ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+                              ) {
+                                setAnswer({
+                                  content: answer?.uuid || "",
+                                  value: 0,
+                                })
+                              }
                             }}
                             control={
                               (soal as SoalExamLS1).narrow_data.Uuid ===
@@ -625,7 +658,9 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                     }}
                                     width={"12vw"}
                                     height={"16vh"}
-                                    onClick={() => selectAnswerInduction(answer.uuid)}
+                                    onClick={() => {
+                                      selectAnswerInduction(answer.uuid)
+                                    }}
                                   >
                                     <Typography
                                       dangerouslySetInnerHTML={{ __html: answer.content }}
@@ -645,7 +680,17 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                     dangerouslySetInnerHTML={{ __html: answer.content }}
                                     sx={{
                                       "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                                      "& p": { margin: 0 },
+                                      "& p": {
+                                        margin: 0,
+                                        marginRight:
+                                          (soal as SoalExamLS1).narrow_data.Uuid ===
+                                            ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+                                          (soal as SoalExamLS1).narrow_data.Uuid ===
+                                            ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0]
+                                              .examUuid
+                                            ? 8
+                                            : 0,
+                                      },
                                       "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
                                       fontSize: fontSize,
                                     }}
@@ -660,7 +705,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                 )}
                               </>
                             }
-                            sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 0.5 } }}
+                            sx={{ mb: 2, "& .MuiFormControlLabel-label": { ml: 1 } }}
                           />
                         ))}
                       </RadioGroup>
@@ -689,31 +734,72 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                             <FormControlLabel
                               key={answer.uuid}
                               value={answer.uuid}
-                              control={<Checkbox size="small" />}
+                              control={<Checkbox size="small" checked={selectedMultipleAnswer.includes(answer.uuid)} />}
+                              // checked={true}
                               // @ts-ignore
                               onChange={handleChoose}
                               disabled={isDisabled}
                               label={
                                 <>
-                                  {answer.image_path_cat ? (
-                                    <img
-                                      src={import.meta.env.VITE_API_URL + answer.image_path_cat}
-                                      style={{ width: "100%", height: "100%", fontSize: fontSize, margin: 0 }}
-                                    />
-                                  ) : (
-                                    <Typography
-                                      dangerouslySetInnerHTML={{ __html: answer.content }}
-                                      sx={{
-                                        "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                                        "& p": { margin: 0 },
-                                        "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
-                                        fontSize: fontSize,
-                                      }}
-                                    />
-                                  )}
-                                  {(soal as SoalExamLS1).is_need_answer_label && (
-                                    <Typography>{answer.label}</Typography>
-                                  )}
+                                  <Box
+                                    display={"flex"}
+                                    justifyContent={"center"}
+                                    flexDirection={
+                                      (soal as SoalExamLS1).narrow_data.Uuid ===
+                                      ExamData.filter((ar) => ar.examName === "Lexical Knowledge")[0].examUuid
+                                        ? "row"
+                                        : "column"
+                                    }
+                                    alignItems={"center"}
+                                  >
+                                    {(soal as SoalExamLS1).narrow_data.Uuid ===
+                                    ExamData.filter((ar) => ar.examName === "Lexical Knowledge")[0].examUuid ? (
+                                      <>
+                                        {(soal as SoalExamLS1).is_need_answer_label && (
+                                          <Typography
+                                            dangerouslySetInnerHTML={{ __html: answer.label + ".&nbsp;" }}
+                                            sx={{
+                                              "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                              "& p": { margin: 0 },
+                                              "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                              fontSize: fontSize,
+                                            }}
+                                          />
+                                        )}
+                                        <Typography
+                                          dangerouslySetInnerHTML={{ __html: answer.content }}
+                                          sx={{
+                                            "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                            "& p": { margin: 0 },
+                                            "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                            fontSize: fontSize,
+                                          }}
+                                        />
+                                      </>
+                                    ) : (
+                                      <>
+                                        {answer.image_path_cat ? (
+                                          <img
+                                            src={import.meta.env.VITE_API_URL + answer.image_path_cat}
+                                            style={{ width: "100%", height: "100%", fontSize: fontSize, margin: 0 }}
+                                          />
+                                        ) : (
+                                          <Typography
+                                            dangerouslySetInnerHTML={{ __html: answer.content }}
+                                            sx={{
+                                              "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                              "& p": { margin: 0 },
+                                              "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                              fontSize: fontSize,
+                                            }}
+                                          />
+                                        )}
+                                        {(soal as SoalExamLS1).is_need_answer_label && (
+                                          <Typography>{answer.label}</Typography>
+                                        )}
+                                      </>
+                                    )}
+                                  </Box>
                                 </>
                               }
                             />
