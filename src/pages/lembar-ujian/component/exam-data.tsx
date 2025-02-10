@@ -19,34 +19,38 @@ interface IExamData {
 export const ExamData: IExamData[] = [
   {
     examName: "Induction",
-    examUuid: "1e9b5f59-48bb-421d-83b7-3f3d03a4d552",
+    examUuid: "555bec5b-a97b-48e2-bf61-ec4ddb8ff63a",
   },
   {
     examName: "Flexibility of Closure",
-    examUuid: "b6b33e0f-cfd1-4568-ba5b-677e242e5158",
+    examUuid: "7e7c3759-e8fb-4400-92b8-756b3c1a7ba4",
   },
   {
     examName: "Visualization",
-    examUuid: "c0ee45a2-54d2-4d0f-ba98-88dab74c39ae",
+    examUuid: "27f23236-54ab-42e7-bf6c-5d95aed8982c",
   },
   {
     examName: "Language Development",
-    examUuid: "c0f4d42d-e462-4b09-82d6-58d06bae7bac",
+    examUuid: "020829d4-3bd6-4fc1-bde4-978b89d06e45",
   },
   {
     examName: "Number Facility",
-    examUuid: "a1c807f9-a668-4509-bc9f-030b1734cd93",
+    examUuid: "04bd0cbe-30e2-4770-aa4d-e0e5b9d941fa",
   },
   {
     examName: "Perceptual Speed – comparison",
-    examUuid: "444161ec-64a6-46c7-a044-e4df8c2cbd95",
+    examUuid: "6643a9b3-0556-4054-b47e-1a4c9f365d13",
   },
   {
     examName: "Working Memory",
-    examUuid: "ef1e1f33-b205-4cd8-8149-1542329cf39c",
+    examUuid: "4e54ffc6-bad9-40d1-8ef9-abf998fde2a2",
   },
   {
     examName: "Memory Span",
-    examUuid: "f5f359d4-236f-425b-bc82-b29a19461d30",
+    examUuid: "067c5614-0865-4799-8a63-5ff396aa4bdc",
+  },
+  {
+    examName: "Lexical Knowledge",
+    examUuid: "b4dd3b1d-2cc3-4640-8f29-2a7bfc40ab62",
   },
 ]
