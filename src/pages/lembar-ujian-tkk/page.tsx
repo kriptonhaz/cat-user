@@ -430,6 +430,8 @@ const LembarUjianTkk: React.FC = () => {
   }
 
   const nextQuestionAfterSubmit = () => {
+    setSelectedAnswer(null)
+    setSelectedMultipleAnswer([])
     const curentUuid = (soal as SoalExamLS1)?.narrow_data.Uuid
     const numberFacilityUuid = ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid
     const perceptualSpeedComparisonUuid = ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0]
@@ -989,7 +991,12 @@ const LembarUjianTkk: React.FC = () => {
                       (questionResponseByActivity?.data?.filter(
                         (ar) => ar.subtest_uuid === dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid
                       ).length || 0) ===
-                      0 && (
+                      0 &&
+                    soal &&
+                    (soal as SoalExamLS1).narrow_data.Uuid !==
+                      ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid &&
+                    (soal as SoalExamLS1).narrow_data.Uuid !==
+                      ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid && (
                       <Button color="info" onClick={onFinish}>
                         Selesai
                       </Button>
