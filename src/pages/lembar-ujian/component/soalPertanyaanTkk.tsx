@@ -677,10 +677,15 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                   </Box>
                                 ) : (
                                   <Typography
-                                    dangerouslySetInnerHTML={{ __html: answer.content }}
+                                    dangerouslySetInnerHTML={{
+                                      __html: `${
+                                        (soal as SoalExamLS1).is_need_answer_label ? answer.label + ". " : ""
+                                      }${answer.content}`,
+                                    }}
                                     sx={{
                                       "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
                                       "& p": {
+                                        display: "inline",
                                         margin: 0,
                                         marginRight:
                                           (soal as SoalExamLS1).narrow_data.Uuid ===
