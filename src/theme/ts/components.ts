@@ -192,6 +192,31 @@ export const components: Components = {
       root: {
         padding: "20px 16px",
         boxShadow: shadows.lg,
+        "&.no-padding": {
+          padding: 0,
+        },
+        "&.min-screen": {
+          minHeight: "calc(100% - 80px)",
+        },
+      },
+    },
+  },
+  MuiCardHeader: {
+    styleOverrides: {
+      root: {
+        padding: "20px 16px",
+        borderBottom: `1px solid ${neutral[200]}`,
+        "& p": {
+          fontSize: "20px",
+          fontWeight: 600,
+        },
+      },
+    },
+  },
+  MuiCardContent: {
+    styleOverrides: {
+      root: {
+        padding: "20px 16px",
       },
     },
   },
@@ -401,6 +426,7 @@ export const components: Components = {
           border: "1px solid #EAECF0",
           boxShadow: "0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)",
           borderRadius: "8px",
+          maxHeight: "400px",
         },
         "&.select-dropdown ul": {
           display: "flex",
@@ -544,69 +570,72 @@ export const components: Components = {
       },
     },
   },
-  // MuiTableHead: {
-  //   styleOverrides: {
-  //     root: {
-  //       "& .MuiTableRow-root .MuiTableCell-root": {
-  //         color: neutral[700],
-  //         fontSize: "12px",
-  //         borderTop: `1px solid ${neutral[200]}`,
-  //       },
-  //     },
-  //   },
-  // },
-  // MuiTableBody: {
-  //   styleOverrides: {
-  //     root: {
-  //       "& .MuiTableRow-root .MuiTableCell-root": {
-  //         color: neutral[700],
-  //       },
-  //       "& .MuiTableRow-root .MuiTableCell-root svg": {
-  //         width: "17px",
-  //       },
-  //       "&.hoverable .MuiTableRow-root:hover": {
-  //         backgroundColor: info[50],
-  //         cursor: "pointer",
-  //         "& .MuiTableCell-root": {
-  //           color: neutral[900],
-  //         },
-  //       },
-  //     },
-  //   },
-  // },
-  // MuiTableCell: {
-  //   styleOverrides: {
-  //     root: {
-  //       fontWeight: 500,
-  //       fontSize: "14px",
-  //       height: "54px",
-  //       padding: "0px 16px",
-  //       borderBottom: `1px solid ${neutral[200]}`,
-  //       "& a": {
-  //         color: neutral[700],
-  //       },
-  //       "& .MuiIconButton-root.MuiButtonBase-root": {
-  //         width: "28px",
-  //         height: "28px",
-  //         padding: "0",
-  //         borderRadius: "4px",
-  //         "& svg": {
-  //           color: neutral[500],
-  //           position: "absolute",
-  //           top: "50%",
-  //           left: "50%",
-  //           transform: "translate(-50%, -50%) scale(.9)",
-  //         },
-  //       },
-  //       "& .MuiIconButton-root.MuiButtonBase-root:hover": {
-  //         background: info[100],
-  //         "& svg": {
-  //           color: info[500],
-  //         },
-  //       },
-  //     },
-  //   },
-  // },
+  MuiTableHead: {
+    styleOverrides: {
+      root: {
+        "& .MuiTableRow-root .MuiTableCell-root": {
+          color: neutral[700],
+          fontSize: "14px",
+          borderTop: `1px solid ${neutral[100]}`,
+          fontWeight: 700,
+          backgroundColor: neutral[200],
+        },
+      },
+    },
+  },
+  MuiTableBody: {
+    styleOverrides: {
+      root: {
+        "& .MuiTableRow-root .MuiTableCell-root": {
+          color: neutral[700],
+          padding: "4px 16px",
+        },
+        "& .MuiTableRow-root .MuiTableCell-root svg": {
+          width: "17px",
+        },
+        "&.hoverable .MuiTableRow-root:hover": {
+          backgroundColor: neutral[50],
+          cursor: "pointer",
+          "& .MuiTableCell-root": {
+            color: neutral[900],
+          },
+        },
+      },
+    },
+  },
+  MuiTableCell: {
+    styleOverrides: {
+      root: {
+        fontWeight: 500,
+        fontSize: "14px",
+        height: "54px",
+        padding: "0px 16px",
+        borderBottom: `1px solid ${neutral[200]}`,
+        "& a": {
+          color: neutral[700],
+        },
+        "& .MuiIconButton-root.MuiButtonBase-root": {
+          width: "24px",
+          height: "24px",
+          padding: "0",
+          borderRadius: "4px",
+          "& svg": {
+            color: neutral[500],
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%) scale(.9)",
+          },
+        },
+        "& .MuiIconButton-root.MuiButtonBase-root:hover": {
+          background: info[100],
+          "& svg": {
+            color: info[500],
+          },
+        },
+      },
+    },
+  },
   MuiPaginationItem: {
     styleOverrides: {
       root: {
@@ -656,6 +685,25 @@ export const components: Components = {
               },
             },
           },
+        },
+      },
+    },
+  },
+  MuiDivider: {
+    styleOverrides: {
+      root: {
+        width: "100%",
+        margin: `8px 0px`,
+        marginTop: "12px",
+      },
+    },
+  },
+  MuiContainer: {
+    styleOverrides: {
+      root: {
+        "&.align-left": {
+          marginLeft: 0,
+          paddingLeft: 0,
         },
       },
     },

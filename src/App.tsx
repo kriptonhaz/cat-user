@@ -17,6 +17,7 @@ import ContentPage from "./pages/content"
 import ForgotPasswordPage from "./pages/auth/forgot"
 import FAQPage from "./pages/faq"
 import SettingPage from "./pages/setting"
+import SignUpPage from "./pages/auth/signup"
 
 function App() {
   const location = useLocation()
@@ -49,7 +50,8 @@ function App() {
           in={
             location.pathname !== "/" &&
             !isMatchingRoute(location.pathname, /\/content/) &&
-            !isMatchingRoute(location.pathname, /\/forgot/)
+            !isMatchingRoute(location.pathname, /\/forgot/) &&
+            !isMatchingRoute(location.pathname, /\/signup/)
           }
         >
           <Navbar />
@@ -63,6 +65,7 @@ function App() {
             <Route element={<GuestRoute />}>
               <Route path={"/login"} element={<LoginPage />} />
               <Route path={"/forgot-password"} element={<ForgotPasswordPage />} />
+              <Route path={"/signup"} element={<SignUpPage />} />
             </Route>
             <Route element={<ProtectedRoute />}>
               <Route path={"/"} element={<HomePage />} />

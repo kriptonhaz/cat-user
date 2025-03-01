@@ -7,6 +7,7 @@ import {
   LoginForm,
   LoginFormResponse,
 } from "@/interfaces/auth.interface"
+import { CreateUserForm, CreateUserResponse } from "@/interfaces/user.interface"
 
 export const submitLoginForm = async (payload: LoginForm): Promise<LoginFormResponse> => {
   const { data } = await API().request<LoginFormResponse>({
@@ -59,6 +60,16 @@ export const verifyCaptcha = async (props: IParamCaptchaVerify): Promise<IVerify
     headers: {
       Token: props.Token,
     },
+  })
+
+  return data
+}
+
+export const createUser = async (payload: CreateUserForm): Promise<CreateUserResponse> => {
+  const { data } = await API().request<CreateUserResponse>({
+    url: "/v1/user/public",
+    method: "POST",
+    data: payload,
   })
 
   return data

@@ -110,15 +110,14 @@ const LoginForm = () => {
         Masuk dengan SSO
       </Button>
       <hr />
-      <Button
-        sx={{ mt: 5 }}
-        fullWidth
-        variant="outlined"
-        color="secondary"
-        onClick={() => navigate("/forgot-password")}
-      >
-        Lupa Password
-      </Button>
+      <Box sx={{ display: "flex", gap: 2, mt: 5 }}>
+        <Button fullWidth variant="outlined" color="secondary" onClick={() => navigate("/forgot-password")}>
+          Lupa Password
+        </Button>
+        <Button fullWidth variant="outlined" color="primary" onClick={() => navigate("/signup")}>
+          Daftar
+        </Button>
+      </Box>
       <ModalLoading open={ssoLoading} onClose={() => setSsoLoading(false)} isSso={true} />
     </form>
   )
