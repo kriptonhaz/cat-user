@@ -1,6 +1,9 @@
+import { useProfileHooks } from "@/hooks/useProfileHooks"
 import InputGroup from "@/ui/components/InputGroup"
 import { Box, Button, Card, CardContent, CardHeader, Grid, Typography } from "@mui/material"
 import { useForm } from "react-hook-form"
+import * as yup from "yup"
+import { yupResolver } from "@hookform/resolvers/yup"
 
 type ChangePasswordForm = {
   oldPassword: string
@@ -8,15 +11,35 @@ type ChangePasswordForm = {
   verifyPassword: string
 }
 const SettingPage = () => {
+  const validationSchema = yup.object().shape({
+    oldPassword: yup.string().required("Password lama wajib diisi"),
+    newPassword: yup.string().required("Password baru wajib diisi"),
+    verifyPassword: yup
+      .string()
+      .required("Verifikasi password wajib diisi")
+      .oneOf([yup.ref("newPassword")], "Password tidak cocok"),
+  })
+
   const {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<ChangePasswordForm>()
+  } = useForm<ChangePasswordForm>({
+    mode: "onChange",
+    defaultValues: {
+      oldPassword: "",
+      newPassword: "",
+      verifyPassword: "",
+    },
+    resolver: yupResolver(validationSchema),
+  })
+
+  const { changePasswordMutation } = useProfileHooks()
+
+  const mutation = changePasswordMutation()
 
   const onSubmit = handleSubmit((data) => {
-    // TODO: wiring update password
-    console.log(data)
+    mutation.mutate(data)
   })
 
   return (
@@ -57,7 +80,7 @@ const SettingPage = () => {
                   error={!!errors.verifyPassword?.message}
                   helperText={errors.verifyPassword?.message}
                 />
-                <Button sx={{ mt: 2 }} fullWidth>
+                <Button sx={{ mt: 2 }} fullWidth type="submit">
                   Simpan
                 </Button>
               </CardContent>

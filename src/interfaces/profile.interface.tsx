@@ -55,3 +55,17 @@ export interface IProfileResponse {
 }
 
 export type SubmitVerifiedMutationParams = MutationParams<any, any>
+
+export interface IUpdatePasswordPayload {
+  oldPassword: string
+  newPassword: string
+  verifyPassword: string
+}
+
+export interface IUpdatePasswordResponse {
+  code: number
+  data: null
+  message: string
+}
+
+export type SubmitUpdatePasswordMutationParams = MutationParams<IUpdatePasswordResponse, IUpdatePasswordPayload>

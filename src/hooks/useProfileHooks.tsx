@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import * as ProfileService from "@/service/profile.service"
-import { SubmitVerifiedMutationParams } from "@/interfaces/profile.interface"
+import { SubmitUpdatePasswordMutationParams, SubmitVerifiedMutationParams } from "@/interfaces/profile.interface"
 
 export const useProfileHooks = () => {
   const queryClient = useQueryClient()
@@ -55,5 +55,28 @@ export const useProfileHooks = () => {
     })
   }
 
-  return { queryProfile, submitVerifyMutation, submitReviseMutation }
+  const changePasswordMutation = (params?: SubmitUpdatePasswordMutationParams) => {
+    const { onSuccess, onError } = params || {}
+    return useMutation({
+      mutationKey: ["user", "change-password"],
+      mutationFn: ProfileService.changePassword,
+      onSuccess: (data, variables, context) => {
+        queryClient.invalidateQueries({
+          queryKey: ["profile", "get"],
+        })
+        if (onSuccess) {
+          onSuccess(data, variables, context)
+          return
+        }
+      },
+      onError: (err: Error, variables, context) => {
+        if (onError) {
+          onError(err, variables, context)
+          return
+        }
+      },
+    })
+  }
+
+  return { queryProfile, submitVerifyMutation, submitReviseMutation, changePasswordMutation }
 }
