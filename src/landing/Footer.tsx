@@ -1,34 +1,12 @@
 import { Box, Stack, Typography } from "@mui/material"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import classes from "./_.module.scss"
-import { loadEnv } from "@/loadEnv"
-import { EnvType } from "@/env"
 import Logo from "@/assets/logo-kemenhan.png"
+import { useCmsHooks } from "@/hooks/useCmsHooks"
 
 const Footer: React.FC = () => {
-  const date = new Date()
-  const year = date.getFullYear()
-  const [env, setEnv] = useState<EnvType>({
-    VITE_TENTANG_KAMI: "",
-    VITE_HUBUNGI_KAMI: {
-      email: "",
-      direktorat: "",
-      alamat: "",
-    },
-    VITE_COPYRIGHT: "",
-  })
-
-  useEffect(() => {
-    async function fetchEnv() {
-      try {
-        const env = await loadEnv()
-        setEnv(env)
-      } catch (error) {
-        console.error("Error loading environment variables", error)
-      }
-    }
-    fetchEnv()
-  }, [])
+  const { queryContentPublic } = useCmsHooks()
+  const { data: dataContent } = queryContentPublic()
 
   return (
     <Box className={classes.Footer}>
@@ -39,26 +17,32 @@ const Footer: React.FC = () => {
         <Stack direction="row" spacing={4}>
           <Box className={classes.Menu}>
             <Typography variant="subtitle1" fontWeight={"semiBold"} className={classes.TitleMenu}>
-              Tentang Kami
+              {dataContent?.data?.filter((ar) => ar.content_type === 2)[0]?.title}
             </Typography>
-            <Typography>{env.VITE_TENTANG_KAMI}</Typography>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: dataContent?.data?.filter((ar) => ar.content_type === 2)[0]?.content ?? "",
+              }}
+            />
           </Box>
           <Box className={classes.Menu}>
             <Typography variant="subtitle1" fontWeight={"semiBold"} className={classes.TitleMenu}>
-              Hubungi Kami
+              {dataContent?.data?.filter((ar) => ar.content_type === 3)[0]?.title}
             </Typography>
-            <Typography>
-              Email : <a href={`mailto:${env.VITE_HUBUNGI_KAMI?.email}`}>{env.VITE_HUBUNGI_KAMI?.email}</a>
-            </Typography>
-            <Typography>{env.VITE_HUBUNGI_KAMI?.direktorat}</Typography>
-            <Typography>{env.VITE_HUBUNGI_KAMI?.alamat}</Typography>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: dataContent?.data?.filter((ar) => ar.content_type === 3)[0]?.content ?? "",
+              }}
+            />
           </Box>
         </Stack>
       </Box>
       <Box className={classes.Copyright}>
-        <Typography fontWeight={"semiBold"}>
-          &copy; {year} {env.VITE_COPYRIGHT}
-        </Typography>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: dataContent?.data?.filter((ar) => ar.content_type === 4)[0]?.content ?? "",
+          }}
+        />
       </Box>
     </Box>
   )

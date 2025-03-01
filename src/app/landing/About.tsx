@@ -6,7 +6,7 @@ import { useCmsHooks } from "@/hooks/useCmsHooks"
 
 const styles: { card: SxProps } = {
   card: {
-    backgroundColor: "#F2F2F2",
+    backgroundColor: "#f2f2f2",
     margin: "0px 40px",
     padding: "32px 20px",
     borderRadius: "30px",
@@ -24,28 +24,30 @@ const About: React.FC = () => {
   return (
     <Grid container spacing={3} sx={{ my: 8 }}>
       {dataContent &&
-        dataContent.data.map((item) => (
-          <Grid md={4} key={item.uuid}>
-            <Box sx={{ ...styles.card, height: "100%" }}>
-              <Typography variant="h6" fontWeight={"bold"} color={"#474A6C"}>
-                {item.title}
-              </Typography>
-              <Box
-                sx={{
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  borderRadius: "20px 152px 152px 20px",
-                  width: "100%",
-                  my: 4,
-                }}
-              ></Box>
-              <Typography color="text.secondary">{item.subtitle}</Typography>
-              <Box sx={{ height: "80px" }}>
-                <BtnArrow className="btn-lg bottom-right" onClick={() => navigate(`/content/${item.uuid}`)} />
+        dataContent.data
+          .filter((ar) => ar.content_type === 1)
+          .map((item) => (
+            <Grid md={4} key={item.uuid}>
+              <Box sx={{ ...styles.card, height: "100%" }}>
+                <Typography variant="h6" fontWeight={"bold"} color={"#474A6C"}>
+                  {item.title}
+                </Typography>
+                <Box
+                  sx={{
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    borderRadius: "20px 152px 152px 20px",
+                    width: "100%",
+                    my: 4,
+                  }}
+                ></Box>
+                <Typography color="text.secondary">{item.subtitle}</Typography>
+                <Box sx={{ height: "80px" }}>
+                  <BtnArrow className="btn-lg bottom-right" onClick={() => navigate(`/content/${item.uuid}`)} />
+                </Box>
               </Box>
-            </Box>
-          </Grid>
-        ))}
+            </Grid>
+          ))}
     </Grid>
   )
 }

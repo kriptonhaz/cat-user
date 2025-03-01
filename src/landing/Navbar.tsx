@@ -3,8 +3,12 @@ import { Box, Button } from "@mui/material"
 import classes from "./_.module.scss"
 import { Link } from "react-router-dom"
 import Logo from "@/assets/logo-kemenhan.png"
+import { useCmsHooks } from "@/hooks/useCmsHooks"
 
 const Navbar: React.FC = () => {
+  const { queryContentPublic } = useCmsHooks()
+  const { data: dataContent } = queryContentPublic()
+
   return (
     <>
       <Box className={classes.Navbar}>
@@ -17,24 +21,17 @@ const Navbar: React.FC = () => {
               Beranda
             </Button>
           </Link>
-          <a href={"#"}>
+          <a href={`/content/${dataContent?.data.filter((ar) => ar.content_type === 5)[0]?.uuid}`}>
             <Button variant="text" color="inherit">
               Informasi
             </Button>
           </a>
-          <Button
-            variant="text"
-            color="inherit"
-            onClick={() => {
-              window.open(
-                "https://jdih.kominfo.go.id/produk_hukum/view/id/765/t/peraturan+menteri+komunikasi+dan+informatika+nomor+3+tahun+2021",
-                "_blank"
-              )
-            }}
-          >
-            Regulasi
-          </Button>
-          <a href={"#"}>
+          <a href={`/content/${dataContent?.data.filter((ar) => ar.content_type === 6)[0]?.uuid}`}>
+            <Button variant="text" color="inherit">
+              Regulasi
+            </Button>
+          </a>
+          <a href={"/#faq"}>
             <Button variant="text" color="inherit">
               FAQ
             </Button>

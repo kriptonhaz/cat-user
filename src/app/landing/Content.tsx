@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { Container, Typography } from "@mui/material"
 import { useCmsHooks } from "@/hooks/useCmsHooks"
 import { useParams } from "react-router-dom"
@@ -7,6 +7,13 @@ const ContentScreen: React.FC = () => {
   const { queryContentPublic } = useCmsHooks()
   const { data: dataContent } = queryContentPublic()
   const { contentId } = useParams()
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    })
+  }, [])
 
   return (
     <>
