@@ -14,6 +14,7 @@ dist-ssr
 *.local
 .env
 .eslintrc.json
+dist.zip
 
 # Editor directories and files
 .vscode/*
