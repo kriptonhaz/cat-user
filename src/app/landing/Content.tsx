@@ -18,7 +18,7 @@ const ContentScreen: React.FC = () => {
   return (
     <>
       <Container sx={{ width: "100%", mx: "auto", paddingTop: 20 }}>
-        <div style={{ height: "18vh", width: "100%" }} />
+        <div style={{ height: "18vh", width: "100%", paddingBottom: 4 }} />
         {dataContent && contentId && (
           <>
             <Typography variant="h4" fontWeight={500} mb={2} textAlign={"center"} sx={{ marginTop: 100 }}>
