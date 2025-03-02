@@ -22,13 +22,22 @@ const About: React.FC = () => {
   const { queryContentPublic } = useCmsHooks()
   const { data: dataContent } = queryContentPublic()
   return (
-    <Grid container spacing={3} sx={{ my: 8 }}>
+    <Grid
+      container
+      spacing={3}
+      sx={{
+        justifyContent: "center",
+        margin: "0 auto",
+        width: "100%",
+        px: { xs: 2, sm: 3, md: 4 },
+      }}
+    >
       {dataContent &&
         dataContent.data
           .filter((ar) => ar.content_type === 1)
           .map((item) => (
-            <Grid md={4} key={item.uuid}>
-              <Box sx={{ ...styles.card, height: "100%" }}>
+            <Grid item xs={12} sm={6} md={4} key={item.uuid}>
+              <Box sx={{ ...styles.card, height: "100%", margin: 0 }}>
                 <Typography variant="h6" fontWeight={"bold"} color={"#474A6C"}>
                   {item.title}
                 </Typography>
