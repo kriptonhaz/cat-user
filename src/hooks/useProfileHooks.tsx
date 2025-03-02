@@ -1,9 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import * as ProfileService from "@/service/profile.service"
 import { SubmitUpdatePasswordMutationParams, SubmitVerifiedMutationParams } from "@/interfaces/profile.interface"
+import useTokenStore from "@/store/token.store"
+import { useNavigate } from "react-router-dom"
 
 export const useProfileHooks = () => {
   const queryClient = useQueryClient()
+  const tokenStore = useTokenStore()
+  const navigate = useNavigate()
   const queryProfile = () =>
     useQuery({
       queryKey: ["profile", "get"],
@@ -64,6 +68,8 @@ export const useProfileHooks = () => {
         queryClient.invalidateQueries({
           queryKey: ["profile", "get"],
         })
+        tokenStore.logout()
+        navigate("/login")
         if (onSuccess) {
           onSuccess(data, variables, context)
           return

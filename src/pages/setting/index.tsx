@@ -4,32 +4,28 @@ import { Box, Button, Card, CardContent, CardHeader, Grid, Typography } from "@m
 import { useForm } from "react-hook-form"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
+import { IUpdatePasswordPayload } from "@/interfaces/profile.interface"
 
-type ChangePasswordForm = {
-  oldPassword: string
-  newPassword: string
-  verifyPassword: string
-}
 const SettingPage = () => {
   const validationSchema = yup.object().shape({
-    oldPassword: yup.string().required("Password lama wajib diisi"),
-    newPassword: yup.string().required("Password baru wajib diisi"),
-    verifyPassword: yup
+    old_password: yup.string().required("Password lama wajib diisi"),
+    new_password: yup.string().required("Password baru wajib diisi"),
+    confirm_new_password: yup
       .string()
       .required("Verifikasi password wajib diisi")
-      .oneOf([yup.ref("newPassword")], "Password tidak cocok"),
+      .oneOf([yup.ref("new_password")], "Password tidak cocok"),
   })
 
   const {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<ChangePasswordForm>({
+  } = useForm<IUpdatePasswordPayload>({
     mode: "onChange",
     defaultValues: {
-      oldPassword: "",
-      newPassword: "",
-      verifyPassword: "",
+      old_password: "",
+      new_password: "",
+      confirm_new_password: "",
     },
     resolver: yupResolver(validationSchema),
   })
@@ -57,28 +53,28 @@ const SettingPage = () => {
                   label="Password Lama"
                   type="password"
                   placeholder="masukan lama anda disini"
-                  {...register("oldPassword")}
+                  {...register("old_password")}
                   required
-                  error={!!errors.oldPassword?.message}
-                  helperText={errors.oldPassword?.message}
+                  error={!!errors.old_password?.message}
+                  helperText={errors.old_password?.message}
                 />
                 <InputGroup
                   label="Password Baru"
                   type="password"
                   placeholder="masukan baru anda disini"
-                  {...register("newPassword")}
+                  {...register("new_password")}
                   required
-                  error={!!errors.newPassword?.message}
-                  helperText={errors.newPassword?.message}
+                  error={!!errors.new_password?.message}
+                  helperText={errors.new_password?.message}
                 />
                 <InputGroup
                   label="Verifikasi Password Baru"
                   type="password"
                   placeholder="verifikasi password baru"
-                  {...register("verifyPassword")}
+                  {...register("confirm_new_password")}
                   required
-                  error={!!errors.verifyPassword?.message}
-                  helperText={errors.verifyPassword?.message}
+                  error={!!errors.confirm_new_password?.message}
+                  helperText={errors.confirm_new_password?.message}
                 />
                 <Button sx={{ mt: 2 }} fullWidth type="submit">
                   Simpan

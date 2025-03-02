@@ -30,7 +30,7 @@ export const submitRevision = async (): Promise<IProfileResponse> => {
 
 export const changePassword = async (payload: IUpdatePasswordPayload): Promise<IUpdatePasswordResponse> => {
   const { data } = await API().request<IUpdatePasswordResponse>({
-    url: "/v1/change+password",
+    url: "/v1/user+ch+password",
     method: "PUT",
     data: payload,
   })
