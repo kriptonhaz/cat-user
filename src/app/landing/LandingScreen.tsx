@@ -4,11 +4,13 @@ import BannerImage from "./BannerImage"
 import About from "./About"
 import { useCmsHooks } from "@/hooks/useCmsHooks"
 import FAQ from "./FAQ"
+import { useLocation } from "react-router-dom"
 
 const LandingScreen: React.FC = () => {
   const { queryBannerPublic, queryFaqPublic } = useCmsHooks()
   const { data: dataBanner } = queryBannerPublic()
   const { data: dataFaq } = queryFaqPublic()
+  const location = useLocation()
 
   useEffect(() => {
     window.scrollTo({
@@ -18,13 +20,16 @@ const LandingScreen: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (dataFaq && location.hash === "#faq") {
-      const faqElement = document.getElementById("faq")
-      if (faqElement) {
-        faqElement.scrollIntoView({ behavior: "smooth" })
+    const hash = location.hash
+    if (hash) {
+      const element = document.getElementById(hash.substring(1))
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" })
+        }, 100)
       }
     }
-  }, [dataFaq, location.hash])
+  }, [location.hash, dataFaq])
 
   return (
     <Box sx={{ backgroundColor: "rgb(255, 255, 255)" }}>

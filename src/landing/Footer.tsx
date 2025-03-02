@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
               }}
             />
           </Box>
-          <Box className={classes.Menu}>
+          <Box className={classes.Menu} id="contact">
             <Typography variant="subtitle1" fontWeight={"semiBold"} className={classes.TitleMenu}>
               {dataContent?.data?.filter((ar) => ar.content_type === 3)[0]?.title}
             </Typography>

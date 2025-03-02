@@ -18,24 +18,22 @@ const Navbar: React.FC = () => {
         <Box className={classes.ListMenu}>
           <Link to="/">
             <Button variant="text" color="inherit">
-              Beranda
+              {
+                dataContent?.data.filter(
+                  (ar) => ar.content_type === 5 && ar.content === "\u003cp\u003e#\u003c/p\u003e"
+                )[0]?.title
+              }
             </Button>
           </Link>
-          <a href={`/content/${dataContent?.data.filter((ar) => ar.content_type === 5)[0]?.uuid}`}>
-            <Button variant="text" color="inherit">
-              Informasi
-            </Button>
-          </a>
-          <a href={`/content/${dataContent?.data.filter((ar) => ar.content_type === 6)[0]?.uuid}`}>
-            <Button variant="text" color="inherit">
-              Regulasi
-            </Button>
-          </a>
-          <a href={"/#faq"}>
-            <Button variant="text" color="inherit">
-              FAQ
-            </Button>
-          </a>
+          {dataContent?.data
+            .filter((ar) => ar.content_type === 5 && ar.content !== "\u003cp\u003e#\u003c/p\u003e")
+            .map((ar) => (
+              <Link to={`/${ar.content.replace(/<[^>]+>/g, "")}`} key={ar.uuid}>
+                <Button variant="text" color="inherit">
+                  {ar.title}
+                </Button>
+              </Link>
+            ))}
         </Box>
         <Box className={classes.ListMenu}>
           <Link to="/login">
