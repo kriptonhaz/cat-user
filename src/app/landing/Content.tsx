@@ -24,14 +24,18 @@ const ContentScreen: React.FC = () => {
             <Typography variant="h4" fontWeight={500} mb={2} textAlign={"center"} sx={{ marginTop: 100 }}>
               {dataContent?.data.filter((ar) => ar.uuid === contentId)[0]?.title}
             </Typography>
-            <Typography variant="h5" fontWeight={500} mb={7} textAlign={"center"}>
+            <Typography variant="h6" fontWeight={500} mb={7} textAlign={"left"} ml={9}>
               {dataContent?.data.filter((ar) => ar.uuid === contentId)[0]?.subtitle}
             </Typography>
             <div
               dangerouslySetInnerHTML={{
                 __html: dataContent?.data.filter((ar) => ar.uuid === contentId)[0]?.content ?? "",
               }}
-              style={{ paddingLeft: 50, paddingRight: 50 }}
+              style={{
+                paddingLeft: 50,
+                paddingRight: 50,
+                textAlign: "justify",
+              }}
             />
           </>
         )}
