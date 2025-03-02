@@ -5,6 +5,7 @@ import About from "./About"
 import { useCmsHooks } from "@/hooks/useCmsHooks"
 import FAQ from "./FAQ"
 import { useLocation } from "react-router-dom"
+import CourseSchedule from "./CourseSchedule"
 
 const LandingScreen: React.FC = () => {
   const { queryBannerPublic, queryFaqPublic } = useCmsHooks()
@@ -36,6 +37,7 @@ const LandingScreen: React.FC = () => {
       {dataBanner && <BannerImage dataBanner={dataBanner.data.map((item) => item.image)} />}
       <Container maxWidth="xl" sx={{ my: 8 }}>
         <About />
+        <CourseSchedule />
         {dataFaq && (
           <Box id="faq">
             <FAQ

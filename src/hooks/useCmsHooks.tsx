@@ -20,9 +20,16 @@ export const useCmsHooks = () => {
       queryFn: () => CMSService.getFaqPublic(),
     })
 
+  const querySchedulePublic = () =>
+    useQuery({
+      queryKey: ["cms", "schedule"],
+      queryFn: () => CMSService.getScheduleTestPublic(),
+    })
+
   return {
     queryBannerPublic,
     queryContentPublic,
     queryFaqPublic,
+    querySchedulePublic,
   }
 }
