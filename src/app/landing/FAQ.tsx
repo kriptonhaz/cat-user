@@ -31,16 +31,18 @@ const AccordionItem: React.FC<{ question: string; answer: string }> = ({ questio
 
 const FAQ: React.FC<FAQProps> = (props: FAQProps) => {
   return (
-    <Container maxWidth="lg" sx={{ my: 8 }}>
+    <Container maxWidth="lg" sx={{ my: 10 }}>
       <Typography variant="h5" fontWeight="bold" textAlign="center" mb={4}>
         Pertanyaan yang Sering Diajukan
       </Typography>
       <Stack direction="column" gap={2}>
-        {
-          props.faqItem.map((item) => (
-            <AccordionItem key={item.question} question={`Pertanyaan ${item.question}`} answer={`Jawaban ${item.answer}`} />
-          ))
-        }
+        {props.faqItem.map((item) => (
+          <AccordionItem
+            key={item.question}
+            question={`Pertanyaan ${item.question}`}
+            answer={`Jawaban ${item.answer}`}
+          />
+        ))}
       </Stack>
     </Container>
   )
