@@ -53,6 +53,7 @@ const UserForm: React.FC<FormUserProps> = (props) => {
     control,
     formState: { errors },
     watch,
+    setValue,
   } = useForm<CreateUserForm>({
     mode: "onChange",
     // @ts-ignore
@@ -70,8 +71,8 @@ const UserForm: React.FC<FormUserProps> = (props) => {
   })
 
   useEffect(() => {
-    console.log(watch())
-  }, [watch()])
+    setValue("username", watch("email"))
+  }, [watch("email")])
 
   useEffect(() => {
     console.log(errors)

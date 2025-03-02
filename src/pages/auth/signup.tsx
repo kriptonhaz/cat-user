@@ -177,7 +177,7 @@ const SignupPage: React.FC = () => {
                                 prevStep={() => setActiveStep(1)}
                                 nextStep={() => setActiveStep(3)}
                                 userId={userID}
-                                userUuid={"1234"}
+                                userUuid={userUUID}
                               />
                             </Render>
                             <Render in={activeStep === 3}>
@@ -185,7 +185,7 @@ const SignupPage: React.FC = () => {
                                 prevStep={() => setActiveStep(2)}
                                 nextStep={() => navigate("/login")}
                                 userId={userID}
-                                userUuid={"1234"}
+                                userUuid={userUUID}
                               />
                             </Render>
                           </Container>

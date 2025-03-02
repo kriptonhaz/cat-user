@@ -15,7 +15,7 @@ import API from "./base.service"
 class EducationService {
   public static async getByUuid(params: GetEducationByUUIDParams): Promise<GetEducationByUUIDResponse> {
     const { data } = await API().request<GetEducationByUUIDResponse>({
-      url: `/v1/user/education/${params.uuid}`,
+      url: `/v1/public+register/education/${params.uuid}`,
       method: "GET",
     })
 
@@ -24,7 +24,7 @@ class EducationService {
 
   public static async getByUserUuid(params: GetEducationByUserUuidParams): Promise<GetEducationByUserUuidResponse> {
     const { data } = await API().request<GetEducationByUserUuidResponse>({
-      url: `/v1/user/education/by_user/${params.user_uuid}`,
+      url: `/v1/public+register/education/by_user/${params.user_uuid}`,
       method: "GET",
     })
 
@@ -33,7 +33,7 @@ class EducationService {
 
   public static async create(payload: FormCreateEducation): Promise<CreateEducationResponse> {
     const { data } = await API().request<CreateEducationResponse>({
-      url: "/v1/user/education",
+      url: "/v1/public+register/education",
       method: "POST",
       data: payload,
     })
@@ -43,7 +43,7 @@ class EducationService {
 
   public static async update(payload: FormUpdateEducation): Promise<UpdateEducationResponse> {
     const { data } = await API().request<UpdateEducationResponse>({
-      url: `/v1/user/education/${payload.uuid}`,
+      url: `/v1/public+register/education/${payload.uuid}`,
       method: "PUT",
       data: payload,
     })
@@ -53,7 +53,7 @@ class EducationService {
 
   public static async destroy(params: DeleteEducationParams): Promise<DeleteEducationResponse> {
     const { data } = await API().request<DeleteEducationResponse>({
-      url: `/v1/user/education/${params.uuid}`,
+      url: `/v1/public+register/education/${params.uuid}`,
       method: "DELETE",
     })
 

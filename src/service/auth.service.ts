@@ -67,7 +67,7 @@ export const verifyCaptcha = async (props: IParamCaptchaVerify): Promise<IVerify
 
 export const createUser = async (payload: CreateUserForm): Promise<CreateUserResponse> => {
   const { data } = await API().request<CreateUserResponse>({
-    url: "/v1/user/public",
+    url: "/v1/public+register/user",
     method: "POST",
     data: payload,
   })

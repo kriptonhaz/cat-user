@@ -50,7 +50,24 @@ const JobForm: React.FC<FormJobProps> = (props) => {
 
   return (
     <>
-      <Stack direction="column" spacing={4}>
+      <Stack
+        direction="column"
+        spacing={4}
+        sx={{
+          height: "400px",
+          overflowY: "auto",
+          "&::-webkit-scrollbar": {
+            width: "8px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "#f1f1f1",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "#888",
+            borderRadius: "4px",
+          },
+        }}
+      >
         {userJobsQuery.isPending && (
           <Box sx={{ height: "400px" }}>
             <LoadingScreen />
