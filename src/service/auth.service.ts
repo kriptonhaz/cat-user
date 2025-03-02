@@ -7,7 +7,12 @@ import {
   LoginForm,
   LoginFormResponse,
 } from "@/interfaces/auth.interface"
-import { CreateUserForm, CreateUserResponse } from "@/interfaces/user.interface"
+import {
+  CreateUserForm,
+  CreateUserResponse,
+  ForgotPasswordParams,
+  ForgotPasswordResponse,
+} from "@/interfaces/user.interface"
 
 export const submitLoginForm = async (payload: LoginForm): Promise<LoginFormResponse> => {
   const { data } = await API().request<LoginFormResponse>({
@@ -68,6 +73,16 @@ export const verifyCaptcha = async (props: IParamCaptchaVerify): Promise<IVerify
 export const createUser = async (payload: CreateUserForm): Promise<CreateUserResponse> => {
   const { data } = await API().request<CreateUserResponse>({
     url: "/v1/public+register/user",
+    method: "POST",
+    data: payload,
+  })
+
+  return data
+}
+
+export const forgotUser = async (payload: ForgotPasswordParams): Promise<ForgotPasswordResponse> => {
+  const { data } = await API().request<ForgotPasswordResponse>({
+    url: "/v1/forgot+password",
     method: "POST",
     data: payload,
   })

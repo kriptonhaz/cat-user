@@ -5,6 +5,8 @@ import { useEffect, useState } from "react"
 import { getCaptcha, verifyCaptcha } from "@/service/auth.service"
 import { ArrowClockwise } from "phosphor-react"
 import { useNavigate } from "react-router-dom"
+import useAuthHook from "@/hooks/useAuthHooks"
+import ModalConfirm, { ModalConfirmProps } from "@/ui/modal/ModalConfirm"
 
 interface IForgotPasswordForm {
   username: string
@@ -24,11 +26,49 @@ const ForgotPasswordForm = () => {
   } = useForm<IForgotPasswordForm>()
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
+  const [modalConfirm, setModalConfirm] = useState<ModalConfirmProps>({
+    open: false,
+    title: "",
+    message: "",
+    onConfirm: () => {
+      return null
+    },
+    onClose: () => {
+      setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+    },
+    displayCancel: true,
+    onCancel: () => {
+      return null
+    },
+  })
+  const { forgotMutation } = useAuthHook()
+  const mutation = forgotMutation({
+    onSuccess: (data) => {
+      setModalConfirm({
+        ...modalConfirm,
+        open: true,
+        title: data.message,
+        onClose: () => {
+          navigate("/login")
+          setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+        },
+        onConfirm: () => {
+          navigate("/login")
+          setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+        },
+        displayCancel: true,
+        onCancel: () => {
+          navigate("/login")
+          setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+        },
+      })
+    },
+  })
 
   const onSubmit = handleSubmit((data) => {
     verifyCaptcha({ captcha: data.captcha, Token: data.headerToken })
       .then(() => {
-        // TODO: wiring forgot password
+        mutation.mutate({ email: data.email })
       })
       .catch(() => {
         setError("captcha", { message: "Captcha tidak sesuai silahkan coba lagi" })
@@ -54,13 +94,6 @@ const ForgotPasswordForm = () => {
 
   return (
     <form onSubmit={onSubmit}>
-      <InputGroup
-        label="NRP / NIP"
-        placeholder="Masukan NRP / NIP anda disini"
-        {...register("username")}
-        required
-        sx={{ width: "400px" }}
-      />
       <InputGroup
         label="Email"
         placeholder="Masukan Email anda disini"
@@ -105,6 +138,15 @@ const ForgotPasswordForm = () => {
       <Button sx={{ mt: 5 }} fullWidth variant="outlined" color="secondary" onClick={() => navigate("/login")}>
         Kembali ke Login
       </Button>
+      <ModalConfirm
+        open={!!modalConfirm.open}
+        onClose={() => setModalConfirm({ ...modalConfirm, open: false })}
+        title={modalConfirm.title}
+        message={modalConfirm.message}
+        onConfirm={modalConfirm.onConfirm}
+        displayCancel={false}
+        onCancel={modalConfirm.onCancel}
+      />
     </form>
   )
 }

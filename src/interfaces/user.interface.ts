@@ -231,3 +231,16 @@ export interface GetUserByUUIDParams {
 export interface GetUserByUUIDResponse extends ApiResponse {
   data: User
 }
+
+export interface ForgotPasswordParams {
+  email: string
+}
+export interface ForgotPasswordResponse extends ApiResponse {
+  code: 200
+  data: string
+  message: string
+}
+export interface ForgotPasswordMutationParams {
+  onSuccess?: ((data: ForgotPasswordResponse, variables: ForgotPasswordParams, context: unknown) => unknown) | undefined
+  onError?: ((error: Error, variables: ForgotPasswordParams, context: unknown) => unknown) | undefined
+}
