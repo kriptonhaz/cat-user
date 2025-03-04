@@ -43,6 +43,15 @@ function App() {
     return <Outlet />
   }
 
+  const LandingRoute: React.FC = () => {
+    const token = useTokenStore((state) => state.accessToken)
+    const isLogin = useTokenStore((state) => state.isLogin)
+
+    if (!!token && !!isLogin) return <Navigate to="/home" />
+
+    return <LandingLayoutRoute />
+  }
+
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>
@@ -58,7 +67,7 @@ function App() {
         </Render>
         <Layout>
           <Routes>
-            <Route element={<LandingLayoutRoute />}>
+            <Route element={<LandingRoute />}>
               <Route path={"/"} element={<LandingPage />} />
               <Route path={"/content/:contentId"} element={<ContentPage />} />
             </Route>
