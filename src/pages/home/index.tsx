@@ -150,11 +150,9 @@ const HomePage: React.FC = () => {
               </Typography>
               <Button
                 fullWidth
-                sx={
-                  {
-                    // display: dataProfile?.data.is_verified_by_user ? "none" : "block",
-                  }
-                }
+                sx={{
+                  display: dataProfile?.data.is_verified_by_user ? "none" : "block",
+                }}
                 onClick={() => {
                   setModalConfirm({
                     ...modalConfirm,
