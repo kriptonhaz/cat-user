@@ -13,9 +13,21 @@ export interface ModalConfirmProps {
   displayCancel?: boolean
   onCancel?: () => void
   cancelLabel?: string
+  isCustomCancel?: boolean
 }
 const ModalConfirm: React.FC<ModalConfirmProps> = (props) => {
-  const { onClose, open, title, message, onConfirm, loading, displayCancel = true, cancelLabel, onCancel } = props
+  const {
+    onClose,
+    open,
+    title,
+    message,
+    onConfirm,
+    loading,
+    displayCancel = true,
+    cancelLabel = "Batal",
+    isCustomCancel = false,
+    onCancel,
+  } = props
 
   useEffect(() => {
     if (!open && onCancel && displayCancel) {
@@ -37,7 +49,7 @@ const ModalConfirm: React.FC<ModalConfirmProps> = (props) => {
         <Typography variant="body2">{message}</Typography>
       </Modal.Body>
       <Modal.Footer onCancel={displayCancel ? onClose : undefined} divider cancelLabel={cancelLabel}>
-        {cancelLabel && (
+        {isCustomCancel && cancelLabel && (
           <Button color="error" onClick={onCancel} disabled={loading} startIcon={!!loading && <CircularProgress />}>
             {cancelLabel}
           </Button>

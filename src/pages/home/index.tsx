@@ -224,6 +224,7 @@ const HomePage: React.FC = () => {
         onConfirm={modalConfirm.onConfirm}
         displayCancel={false}
         cancelLabel="Tidak"
+        isCustomCancel={true}
         onCancel={modalConfirm.onCancel}
       />
     </>
