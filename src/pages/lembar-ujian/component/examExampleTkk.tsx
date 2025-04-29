@@ -195,6 +195,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
           sx={{
             fontSize: fontSize,
             "& p": { margin: 0 },
+            "& img": { maxWidth: "50vw", maxHeight: "22vh", margin: "0 auto", display: "block" },
             marginLeft:
               (question as SoalExamLS1).subtest_model_uuid ===
               ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
