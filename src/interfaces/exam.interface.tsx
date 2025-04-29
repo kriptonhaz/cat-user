@@ -315,6 +315,9 @@ export interface SoalExamLS1 {
   timer: number
   is_has_answer: boolean
   create_by: string
+  image_interval_timer: number
+  is_image_interval: boolean
+  question_interval_timer: number
   answer_data: {
     ID: number
     CreatedAt: string

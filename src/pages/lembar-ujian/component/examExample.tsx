@@ -1,5 +1,5 @@
 import { SoalExamLS1 } from "@/interfaces/exam.interface"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Cancel, Check, TextIncrease, TextDecrease } from "@mui/icons-material" // Import icons from Material-UI
 import { Box, Button, Card, Divider, Typography } from "@mui/material"
 import { formatTime } from "@/utils/timer"
@@ -13,6 +13,7 @@ interface ExamExampleProps {
   subtestName?: string
   fontSize: number
   setFontSize: (fontSize: number) => void
+  displayImage?: boolean
 }
 
 const ExamExample: React.FC<ExamExampleProps> = ({
@@ -23,6 +24,7 @@ const ExamExample: React.FC<ExamExampleProps> = ({
   subtestName,
   fontSize,
   setFontSize,
+  displayImage = false,
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
@@ -78,33 +80,58 @@ const ExamExample: React.FC<ExamExampleProps> = ({
           Contoh Soal
         </Typography>
       )}
-      <h3
-        dangerouslySetInnerHTML={{ __html: question.question_content }}
-        style={{ fontSize: fontSize, marginLeft: 40 }}
-      />
-      <div className="answer-options">
-        {question.answer_data.map((answer, index) => (
-          <div
-            key={index}
-            style={{ display: "flex", alignItems: "center", height: "40px", marginLeft: 40 }}
-            onClick={() => onAnswerSelect(answer.Uuid, answer.is_question_answer)}
-          >
-            <CheckboxManual isChecked={selectedAnswer === answer.Uuid} />
-            <label
-              htmlFor={`question-${question.ID}-answer-${index}`}
-              style={{ display: "flex", alignItems: "center" }}
-            >
-              <span dangerouslySetInnerHTML={{ __html: answer.content }} style={{ fontSize: fontSize }} />
-              {selectedAnswer === answer.Uuid &&
-                (isCorrect ? (
-                  <Check style={{ marginLeft: "5px", color: "green" }} />
-                ) : (
-                  <Cancel style={{ marginLeft: "5px", color: "red" }} />
-                ))}
-            </label>
+      {question.image_path_cat && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src={import.meta.env.VITE_API_URL + question.image_path_cat}
+            alt="Question Image"
+            style={{
+              marginLeft: "40px",
+              maxHeight: "30vh",
+              objectFit: "contain",
+              marginTop: "20px",
+              display: displayImage ? "block" : "none",
+            }}
+          />
+        </div>
+      )}
+      {(!question.is_image_interval || !displayImage) && (
+        <>
+          <h3
+            dangerouslySetInnerHTML={{ __html: question.question_content }}
+            style={{ fontSize: fontSize, marginLeft: 40 }}
+          />
+          <div className="answer-options">
+            {question.answer_data.map((answer, index) => (
+              <div
+                key={index}
+                style={{ display: "flex", alignItems: "center", height: "40px", marginLeft: 40 }}
+                onClick={() => onAnswerSelect(answer.Uuid, answer.is_question_answer)}
+              >
+                <CheckboxManual isChecked={selectedAnswer === answer.Uuid} />
+                <label
+                  htmlFor={`question-${question.ID}-answer-${index}`}
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <span dangerouslySetInnerHTML={{ __html: answer.content }} style={{ fontSize: fontSize }} />
+                  {selectedAnswer === answer.Uuid &&
+                    (isCorrect ? (
+                      <Check style={{ marginLeft: "5px", color: "green" }} />
+                    ) : (
+                      <Cancel style={{ marginLeft: "5px", color: "red" }} />
+                    ))}
+                </label>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </Card>
   )
 }

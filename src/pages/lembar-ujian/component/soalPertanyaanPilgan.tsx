@@ -22,6 +22,7 @@ const SoalPertanyaanPilgan = ({
   showInstruction,
   fontSize,
   setFontSize,
+  displayImage,
 }: {
   soal: SoalExam | SoalExamLS1 | SoalExamPPI
   isFinalQuestion: boolean
@@ -33,6 +34,7 @@ const SoalPertanyaanPilgan = ({
   showInstruction: () => void
   fontSize: number
   setFontSize: (fontSize: number) => void
+  displayImage?: boolean
 }) => {
   const { finishExamMutation } = useExamMutation()
   const examMutation = finishExamMutation()
@@ -153,32 +155,31 @@ const SoalPertanyaanPilgan = ({
               </Typography>
             ) : (
               <Box>
-                <Typography
-                  variant="h6"
-                  dangerouslySetInnerHTML={{ __html: soal.question_content }}
-                  sx={{
-                    "& p": { margin: 0, fontSize: fontSize },
-                    fontSize: fontSize,
-                    minHeight: "10px",
-                    height: "auto",
-                    textWrap: "wrap",
-                  }}
-                />
+                {(!(soal as SoalExamLS1).is_image_interval || !displayImage) && (
+                  <Typography
+                    variant="h6"
+                    dangerouslySetInnerHTML={{ __html: soal.question_content }}
+                    sx={{
+                      "& p": { margin: 0, fontSize: fontSize },
+                      fontSize: fontSize,
+                      minHeight: "10px",
+                      height: "auto",
+                      textWrap: "wrap",
+                    }}
+                  />
+                )}
                 <br />
                 {(soal as SoalExamLS1).image_path_cat && (
-                  <div
-                    style={{
-                      width: "100%",
-                      maxWidth: "500px",
-                      height: "100px",
-                      maxHeight: "200px",
-                      marginBottom: 4,
-                    }}
-                  >
+                  <div>
                     <img
                       src={import.meta.env.VITE_API_URL + (soal as SoalExamLS1).image_path_cat}
                       alt={"Answer image"}
-                      style={{ marginTop: "8px", width: "auto", height: "100%" }}
+                      style={{
+                        marginTop: "8px",
+                        width: "auto",
+                        maxHeight: "30vh",
+                        display: displayImage ? "block" : "none",
+                      }}
                     />
                   </div>
                 )}
@@ -228,6 +229,7 @@ const SoalPertanyaanPilgan = ({
                   />
                 ))
               ) : questionType === "SoalExamLS1" ? (
+                (!(soal as SoalExamLS1).is_image_interval || !displayImage) &&
                 (soal as SoalExamLS1).answer_data.map((answer, index) => (
                   <FormControlLabel
                     key={index}

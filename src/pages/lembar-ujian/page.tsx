@@ -25,6 +25,7 @@ const LembarUjian = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<{ content: string; value: number } | null>(null)
   const [remainingTime, setRemainingTime] = useState(0)
   const [timerSoal, setTimerSoal] = useState(0)
+  const [isDisplayImageInterval, setIsDisplayImageInterval] = useState(false)
   const [modalInstruction, setModalInstruction] = useState({
     open: false,
     onClose: () => null,
@@ -85,6 +86,8 @@ const LembarUjian = () => {
   }, [currentQuestionIndex])
 
   useEffect(() => {
+    let isInterval = false
+    let timerImageInterval = 0
     if (soalExamAvailable?.data && soalExamAvailable.data.length > 0 && currentQuestionIndex === 0 && timerUjian) {
       if (activityExam?.data) {
         if (activityExam?.data.last_question_filled === 0) {
@@ -94,16 +97,34 @@ const LembarUjian = () => {
           if (soalExamAvailable.data.length > activityExam?.data.last_question_filled) {
             setSoal(soalExamAvailable.data[activityExam?.data.last_question_filled])
             setCurrentQuestionIndex(activityExam?.data.last_question_filled)
+            setIsDisplayImageInterval(
+              (soalExamAvailable.data[activityExam?.data.last_question_filled] as SoalExamLS1).is_image_interval
+            )
+            isInterval = (soalExamAvailable.data[activityExam?.data.last_question_filled] as SoalExamLS1)
+              .is_image_interval
+            timerImageInterval = (soalExamAvailable.data[activityExam?.data.last_question_filled] as SoalExamLS1)
+              .image_interval_timer
           } else {
             setSoal(soalExamAvailable.data[activityExam?.data.last_question_filled - 1])
             setCurrentQuestionIndex(activityExam?.data.last_question_filled - 1)
+            setIsDisplayImageInterval(
+              (soalExamAvailable.data[activityExam?.data.last_question_filled - 1] as SoalExamLS1).is_image_interval
+            )
+            isInterval = (soalExamAvailable.data[activityExam?.data.last_question_filled - 1] as SoalExamLS1)
+              .is_image_interval
+            timerImageInterval = (soalExamAvailable.data[activityExam?.data.last_question_filled - 1] as SoalExamLS1)
+              .image_interval_timer
           }
         }
       }
       setFinalQuestion(false)
 
       if (timerUjian.data.timer_type === 1) {
-        setTimer(soalExamAvailable.data[0].timer)
+        if (isInterval) {
+          setTimer(timerImageInterval)
+        } else {
+          setTimer(soalExamAvailable.data[0].timer)
+        }
       } else {
         setTimer(timerUjian?.data.total_time - (activityExam?.data.total_consume_time || 0))
       }
@@ -163,13 +184,12 @@ const LembarUjian = () => {
       const timerSoal = setInterval(() => {
         setTimerSoal((prevSeconds) => prevSeconds + 1)
       }, 1000)
-
       return () => clearInterval(timerSoal)
     }
   }, [isLoadingTimer])
 
   useEffect(() => {
-    if (!isLoadingTimer && timer > 0) {
+    if (!isLoadingTimer && timer > 0 && isDisplayImageInterval === false) {
       setRemainingTime(timer)
       const countdownTimer = setInterval(() => {
         setRemainingTime((prevTime) => {
@@ -184,10 +204,28 @@ const LembarUjian = () => {
           return prevTime - 1
         })
       }, 1000)
-
       return () => clearInterval(countdownTimer)
     }
-  }, [isLoadingTimer, timer, timerUjian?.data.timer_type])
+  }, [isLoadingTimer, timer, timerUjian?.data.timer_type, isDisplayImageInterval])
+
+  useEffect(() => {
+    if (!isLoadingTimer && timer > 0 && isDisplayImageInterval === true) {
+      setRemainingTime(timer)
+      const countdownTimer = setInterval(() => {
+        setRemainingTime((prevTime) => {
+          if (prevTime <= 0) {
+            setIsDisplayImageInterval(false)
+            if (soalExamAvailable) {
+              setTimer((soalExamAvailable.data[currentQuestionIndex] as SoalExamLS1).timer)
+            }
+            return timer
+          }
+          return prevTime - 1
+        })
+      }, 1000)
+      return () => clearInterval(countdownTimer)
+    }
+  }, [isLoadingTimer, timer, timerUjian?.data.timer_type, isDisplayImageInterval])
 
   const handleNextQuestion = () => {
     if (selectedAnswer) {
@@ -234,7 +272,12 @@ const LembarUjian = () => {
           setCurrentQuestionIndex(nextIndex)
           setFinalQuestion(nextIndex === soalExamAvailable.data.length - 1)
           if (timerUjian?.data.timer_type === 1) {
-            setTimer(soalExamAvailable.data[nextIndex].timer)
+            if ((soalExamAvailable.data[nextIndex] as SoalExamLS1).is_image_interval === true) {
+              setTimer((soalExamAvailable.data[nextIndex] as SoalExamLS1).image_interval_timer)
+              setIsDisplayImageInterval(true)
+            } else {
+              setTimer(soalExamAvailable.data[nextIndex].timer)
+            }
           }
           // Refetch after updating the state
           refetchQuestionResponseByActivity()
@@ -361,6 +404,7 @@ const LembarUjian = () => {
                       }
                       fontSize={configStore.fontSize}
                       setFontSize={configStore.setFontSize}
+                      displayImage={isDisplayImageInterval}
                     />
                   </>
                 ) : soal.question_type === 2 ? (
@@ -369,6 +413,7 @@ const LembarUjian = () => {
                     remainingTime={remainingTime}
                     fontSize={configStore.fontSize}
                     setFontSize={configStore.setFontSize}
+                    displayImage={isDisplayImageInterval}
                   />
                 ) : (
                   <ExamInstruction
