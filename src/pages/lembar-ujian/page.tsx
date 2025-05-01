@@ -592,12 +592,12 @@ const LembarUjian = () => {
                         let backgroundColor = "white"
                         let color = "#4828A3"
 
-                        if (thisIndex === currentIndex) {
-                          backgroundColor = "white" // current question — always white
-                          color = "#4828A3"
-                        } else if (isAnswered) {
+                        if (isAnswered) {
                           backgroundColor = "#4828A3" // answered — purple
                           color = "white"
+                        } else if (thisIndex === currentIndex) {
+                          backgroundColor = "white" // current question — always white
+                          color = "#4828A3"
                         } else if (thisIndex <= maxVisitedIndex) {
                           backgroundColor = "red" // passed but unanswered — red
                           color = "white"

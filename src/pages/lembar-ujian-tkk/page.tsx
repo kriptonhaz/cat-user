@@ -354,11 +354,11 @@ const LembarUjianTkk: React.FC = () => {
           setIndexSubtestActiveTkk(0)
           setCurrentQuestionIndex(0)
         } else {
-          checkQuestionAvailable()
+          // checkQuestionAvailable()
 
           // NOTE: only for testing
-          // setIndexSubtestActiveTkk(10)
-          // setCurrentQuestionIndex(0)
+          setIndexSubtestActiveTkk(0)
+          setCurrentQuestionIndex(0)
         }
       }
       checkActivity()
@@ -1198,12 +1198,12 @@ const LembarUjianTkk: React.FC = () => {
                           let backgroundColor = "white"
                           let color = "#4828A3"
 
-                          if (thisIndex === currentIndex) {
-                            backgroundColor = "white" // current question — always white
-                            color = "#4828A3"
-                          } else if (isAnswered) {
+                          if (isAnswered) {
                             backgroundColor = "#4828A3" // answered — purple
                             color = "white"
+                          } else if (thisIndex === currentIndex) {
+                            backgroundColor = "white" // current but unanswered — white
+                            color = "#4828A3"
                           } else if (thisIndex <= maxVisitedIndex) {
                             backgroundColor = "red" // passed but unanswered — red
                             color = "white"
