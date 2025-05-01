@@ -55,6 +55,7 @@ const LembarUjianTkk: React.FC = () => {
   const [selectedMultipleAnswer, setSelectedMultipleAnswer] = useState<string[]>([])
   const [disabledNextButton, setDisabledNextButton] = useState(false)
   const [selectedQuestionNumber, setSelectedQuestionNumber] = useState<string | null>(null)
+  const [maxVisitedIndex, setMaxVisitedIndex] = useState<number>(0)
 
   const { leftExamBeforeFinishMutation, updateExamActivityMutation, finishExamMutation, submitJawabanMutation } =
     useExamMutation()
@@ -83,6 +84,19 @@ const LembarUjianTkk: React.FC = () => {
       refetchSoal()
     }
   }, [indexSubtestActiveTkk])
+
+  useEffect(() => {
+    if (soalExamAvailable) {
+      const currentIndex = soalExamAvailable.data.findIndex(
+        (item) => (item as SoalExamLS1).uuid === (soal as SoalExamLS1)?.uuid
+      )
+      setMaxVisitedIndex((prev) => Math.max(prev, currentIndex))
+    }
+  }, [soal])
+
+  useEffect(() => {
+    setMaxVisitedIndex((prev) => Math.max(prev, currentQuestionIndex))
+  }, [currentQuestionIndex])
 
   useEffect(() => {
     if (soal && questionResponseByActivity) {
@@ -1173,6 +1187,28 @@ const LembarUjianTkk: React.FC = () => {
                             (ar) =>
                               ar.subtest_uuid === dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid
                           )
+                          const isAnswered = answeredExam?.some((ar) => ar.question_uuid === (item as SoalExamLS1).uuid)
+                          const currentIndex = soalExamAvailable.data.findIndex(
+                            (ar) => (ar as SoalExamLS1).uuid === (soal as SoalExamLS1)?.uuid
+                          )
+                          const thisIndex = soalExamAvailable.data.findIndex(
+                            (ar) => (ar as SoalExamLS1).uuid === (item as SoalExamLS1).uuid
+                          )
+
+                          let backgroundColor = "white"
+                          let color = "#4828A3"
+
+                          if (thisIndex === currentIndex) {
+                            backgroundColor = "white" // current question — always white
+                            color = "#4828A3"
+                          } else if (isAnswered) {
+                            backgroundColor = "#4828A3" // answered — purple
+                            color = "white"
+                          } else if (thisIndex <= maxVisitedIndex) {
+                            backgroundColor = "red" // passed but unanswered — red
+                            color = "white"
+                          }
+
                           return (
                             <Grid item key={index} xs={2} sm={1}>
                               <Button
@@ -1188,36 +1224,8 @@ const LembarUjianTkk: React.FC = () => {
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
-                                  backgroundColor:
-                                    answeredExam &&
-                                    answeredExam.filter((ar) => ar.question_uuid === (item as SoalExamLS1).uuid)
-                                      .length > 0
-                                      ? "#4828A3" //answered exam
-                                      : (item as SoalExamLS1).uuid === (soal as SoalExamLS1)?.uuid
-                                      ? "white" //current index
-                                      : soalExamAvailable.data
-                                          .filter((ar) => ar.question_type === 1)
-                                          .findIndex((ar) => (ar as SoalExamLS1).uuid === (item as SoalExamLS1).uuid) <
-                                        soalExamAvailable.data
-                                          .filter((ar) => ar.question_type === 1)
-                                          .findIndex((ar) => (ar as SoalExamLS1).uuid === (soal as SoalExamLS1).uuid)
-                                      ? "red" //the exam that still not answered yet but already pass,
-                                      : "white",
-                                  color:
-                                    answeredExam &&
-                                    answeredExam.filter((ar) => ar.question_uuid === (item as SoalExamLS1).uuid)
-                                      .length > 0
-                                      ? "white" //answered exam
-                                      : (item as SoalExamLS1).uuid === (soal as SoalExamLS1)?.uuid
-                                      ? "#4828A3" //current index
-                                      : soalExamAvailable.data
-                                          .filter((ar) => ar.question_type === 1)
-                                          .findIndex((ar) => (ar as SoalExamLS1).uuid === (item as SoalExamLS1).uuid) <
-                                        soalExamAvailable.data
-                                          .filter((ar) => ar.question_type === 1)
-                                          .findIndex((ar) => (ar as SoalExamLS1).uuid === (soal as SoalExamLS1).uuid)
-                                      ? "white" //the exam that still not answered yet but already pass,
-                                      : "#4828A3",
+                                  backgroundColor: backgroundColor,
+                                  color: color,
                                   border: "1px solid #4828A3",
                                 }}
                                 onClick={() => {

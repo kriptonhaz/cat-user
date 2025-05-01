@@ -26,6 +26,7 @@ const LembarUjian = () => {
   const [remainingTime, setRemainingTime] = useState(0)
   const [timerSoal, setTimerSoal] = useState(0)
   const [isDisplayImageInterval, setIsDisplayImageInterval] = useState(false)
+  const [maxVisitedIndex, setMaxVisitedIndex] = useState<number>(0)
   const [modalInstruction, setModalInstruction] = useState({
     open: false,
     onClose: () => null,
@@ -83,6 +84,19 @@ const LembarUjian = () => {
 
   useEffect(() => {
     refetchQuestionResponseByActivity()
+  }, [currentQuestionIndex])
+
+  useEffect(() => {
+    if (soalExamAvailable) {
+      const currentIndex = soalExamAvailable.data.findIndex(
+        (item) => (item as SoalExamLS1).uuid === (soal as SoalExamLS1)?.uuid
+      )
+      setMaxVisitedIndex((prev) => Math.max(prev, currentIndex))
+    }
+  }, [soal])
+
+  useEffect(() => {
+    setMaxVisitedIndex((prev) => Math.max(prev, currentQuestionIndex))
   }, [currentQuestionIndex])
 
   useEffect(() => {
@@ -571,6 +585,23 @@ const LembarUjian = () => {
                       // @ts-ignore
                       .map((item, index) => {
                         const answeredExam = questionResponseByActivity
+                        const isAnswered = answeredExam?.data.some((ar) => ar.question_uuid === item.Uuid)
+                        const currentIndex = soalExamAvailable.data.findIndex((ar) => ar.Uuid === soal?.Uuid)
+                        const thisIndex = soalExamAvailable.data.findIndex((ar) => ar.Uuid === item.Uuid)
+
+                        let backgroundColor = "white"
+                        let color = "#4828A3"
+
+                        if (thisIndex === currentIndex) {
+                          backgroundColor = "white" // current question — always white
+                          color = "#4828A3"
+                        } else if (isAnswered) {
+                          backgroundColor = "#4828A3" // answered — purple
+                          color = "white"
+                        } else if (thisIndex <= maxVisitedIndex) {
+                          backgroundColor = "red" // passed but unanswered — red
+                          color = "white"
+                        }
                         return (
                           <Grid item key={index} xs={2} sm={1}>
                             <Button
@@ -586,40 +617,8 @@ const LembarUjian = () => {
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                backgroundColor:
-                                  questionType === "SoalExam" || questionType === "SoalExamPPI"
-                                    ? answeredExam &&
-                                      answeredExam?.data.filter((ar) => ar.question_order === item.question_order)
-                                        .length > 0
-                                      ? "#4828A3" //answered exam
-                                      : currentQuestionIndex + 1 <= item.question_order
-                                      ? "white" //the exam that still not answered yet
-                                      : "red" //the exam that's not being answered item but already getting pass through
-                                    : answeredExam &&
-                                      answeredExam?.data.filter(
-                                        (ar) => ar.question_order === (item as SoalExamLS1).showing_order
-                                      ).length > 0
-                                    ? "#4828A3" //answered exam LS1
-                                    : currentQuestionIndex + 1 <= (item as SoalExamLS1).showing_order
-                                    ? "white" //the exam that still not answered yet LS1
-                                    : "red", //the exam that's not being answered item but already getting pass through LS1
-                                color:
-                                  questionType === "SoalExam" || questionType === "SoalExamPPI"
-                                    ? answeredExam &&
-                                      answeredExam?.data.filter((ar) => ar.question_order === item.question_order)
-                                        .length > 0
-                                      ? "white" //answered exam
-                                      : currentQuestionIndex + 1 <= item.question_order
-                                      ? "#4828A3" //the exam that still not answered yet
-                                      : "white" //the exam that's not being answered item but already getting pass through
-                                    : answeredExam &&
-                                      answeredExam?.data.filter(
-                                        (ar) => ar.question_order === (item as SoalExamLS1).showing_order
-                                      ).length > 0
-                                    ? "white" //answered exam LS1
-                                    : currentQuestionIndex + 1 <= (item as SoalExamLS1).showing_order
-                                    ? "#4828A3" //the exam that still not answered yet LS1
-                                    : "white", //the exam that's not being answered item but already getting pass through LS1
+                                backgroundColor: backgroundColor,
+                                color: color,
                                 border: "1px solid #4828A3",
                               }}
                               onClick={() => {
