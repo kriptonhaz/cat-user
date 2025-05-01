@@ -378,7 +378,12 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                       sx={{
                         "& p": { margin: 0, fontSize: fontSize },
                         "& figure": { margin: 0, marginRight: "0px" },
-                        "& img": { width: "100%", height: "auto", maxHeight: "30vh" },
+                        "& img": {
+                          width: "100%",
+                          height: "auto",
+                          maxHeight: "30vh",
+                          transform: `scale(${(1 * fontSize) / 22})`,
+                        },
                         fontSize: fontSize,
                         minHeight: "10px",
                         height: "auto",
@@ -665,14 +670,20 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                     <Typography
                                       dangerouslySetInnerHTML={{ __html: answer.content }}
                                       sx={{
-                                        "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                        "& img": {
+                                          width: "100%",
+                                          height: "100%",
+                                          fontSize: fontSize,
+                                          margin: 0,
+                                          transform: `scale(${(1 * fontSize) / 22})`,
+                                        },
                                         "& p": { margin: 0 },
                                         "& figure": { margin: 0, marginRight: "0px", maxWidth: "100px" },
                                         fontSize: fontSize,
                                       }}
                                     />
                                     {(soal as SoalExamLS1).is_need_answer_label && (
-                                      <Typography>{answer.label}</Typography>
+                                      <Typography sx={{ fontSize: fontSize }}>{answer.label}</Typography>
                                     )}
                                   </Box>
                                 ) : (
