@@ -14,6 +14,7 @@ export interface ModalConfirmProps {
   onCancel?: () => void
   cancelLabel?: string
   isCustomCancel?: boolean
+  overrideClose?: boolean
 }
 const ModalConfirm: React.FC<ModalConfirmProps> = (props) => {
   const {
@@ -27,6 +28,7 @@ const ModalConfirm: React.FC<ModalConfirmProps> = (props) => {
     cancelLabel = "Batal",
     isCustomCancel = false,
     onCancel,
+    overrideClose = true,
   } = props
 
   useEffect(() => {
@@ -39,7 +41,7 @@ const ModalConfirm: React.FC<ModalConfirmProps> = (props) => {
     <Modal
       containerProps={{ sx: { maxWidth: "400px !important", minHeight: "230px !important" } }}
       open={open}
-      onClose={displayCancel ? onClose : () => (onConfirm(), onClose())}
+      onClose={displayCancel || overrideClose ? onClose : () => (onConfirm(), onClose())}
     >
       <Modal.Header icon={{ icon: <Warning weight="bold" />, color: "warning", variant: "contained" }} />
       <Modal.Body>
