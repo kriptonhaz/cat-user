@@ -98,7 +98,7 @@ const LembarUjianTkk: React.FC = () => {
     setMaxVisitedIndex((prev) => Math.max(prev, currentQuestionIndex))
   }, [currentQuestionIndex])
 
-  useEffect(() => {
+  const setAnswerActivity = () => {
     if (soal && questionResponseByActivity) {
       const responseSoal = questionResponseByActivity.data.filter(
         (ar) => ar.question_uuid === (soal as SoalExamLS1).uuid
@@ -122,6 +122,12 @@ const LembarUjianTkk: React.FC = () => {
           }
         }
       }
+    }
+  }
+
+  useEffect(() => {
+    if (soal && questionResponseByActivity) {
+      setAnswerActivity()
     }
   }, [soal, questionResponseByActivity])
 
@@ -354,11 +360,11 @@ const LembarUjianTkk: React.FC = () => {
           setIndexSubtestActiveTkk(0)
           setCurrentQuestionIndex(0)
         } else {
-          // checkQuestionAvailable()
+          checkQuestionAvailable()
 
           // NOTE: only for testing
-          setIndexSubtestActiveTkk(0)
-          setCurrentQuestionIndex(0)
+          // setIndexSubtestActiveTkk(2)
+          // setCurrentQuestionIndex(0)
         }
       }
       checkActivity()
@@ -493,8 +499,14 @@ const LembarUjianTkk: React.FC = () => {
                 title: "",
               })
               checkQuestionAvailable()
+              setMaxVisitedIndex(0)
+              setFinalQuestion(false)
+            },
+            onClose() {
+              setAnswerActivity()
             },
             displayCancel: false,
+            overrideClose: true,
           })
         }
       }
@@ -1281,11 +1293,21 @@ const LembarUjianTkk: React.FC = () => {
       </Grid>
       <ModalConfirm
         open={!!modalConfirm.open}
-        onClose={() => setModalConfirm({ ...modalConfirm, open: false })}
+        onClose={() => {
+          modalConfirm.onClose && modalConfirm.onClose()
+          setModalConfirm({
+            ...modalConfirm,
+            open: false,
+            onClose: () => {
+              modalConfirm.onClose && modalConfirm.onClose()
+            },
+          })
+        }}
         title={modalConfirm.title}
         message={modalConfirm.message}
         onConfirm={modalConfirm.onConfirm}
         displayCancel={modalConfirm.displayCancel}
+        overrideClose={modalConfirm.overrideClose}
       />
     </>
   )
