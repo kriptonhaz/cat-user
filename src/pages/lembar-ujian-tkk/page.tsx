@@ -96,6 +96,7 @@ const LembarUjianTkk: React.FC = () => {
 
   useEffect(() => {
     setMaxVisitedIndex((prev) => Math.max(prev, currentQuestionIndex))
+    setSelectedMultipleAnswer([])
   }, [currentQuestionIndex])
 
   const setAnswerActivity = () => {
@@ -112,6 +113,7 @@ const LembarUjianTkk: React.FC = () => {
         } else {
           try {
             const parsedContent = JSON.parse(responseSoal[0].user_response_content)
+            console.log("parsedContent", parsedContent)
             if (Array.isArray(parsedContent)) {
               setSelectedMultipleAnswer(parsedContent)
             } else {
@@ -360,11 +362,11 @@ const LembarUjianTkk: React.FC = () => {
           setIndexSubtestActiveTkk(0)
           setCurrentQuestionIndex(0)
         } else {
-          checkQuestionAvailable()
+          // checkQuestionAvailable()
 
           // NOTE: only for testing
-          // setIndexSubtestActiveTkk(2)
-          // setCurrentQuestionIndex(0)
+          setIndexSubtestActiveTkk(6)
+          setCurrentQuestionIndex(0)
         }
       }
       checkActivity()
