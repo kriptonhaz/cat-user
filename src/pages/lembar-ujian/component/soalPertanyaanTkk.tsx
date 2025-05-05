@@ -86,10 +86,14 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
       if ((soal as SoalExamLS1).answer_type === 3) {
         setTimerMemorySpan((soal as SoalExamLS1).intro_data[indexMemorySpan].timer)
         setStartTimer(true)
+        const maxMemory = (soal as SoalExamLS1).intro_data.length
+        if (indexMemorySpan === maxMemory - 1 && startAnswer === true) {
+          setIndexMemorySpan(0)
+          setStartAnswer(false)
+        }
         const timerSoal = setInterval(() => {
           setTimerMemorySpan((prevSeconds) => prevSeconds - 1)
         }, 1000)
-
         return () => {
           clearInterval(timerSoal)
         }
@@ -126,7 +130,14 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                     title: "",
                     message: "",
                     onClose: () => {
-                      setModalConfirm((prev) => ({ ...prev, open: false, title: "", message: "", displayCancel: true }))
+                      setModalConfirm((prev) => ({
+                        ...prev,
+                        open: false,
+                        title: "",
+                        message: "",
+                        displayCancel: true,
+                        overrideClose: true,
+                      }))
                     },
                   })
                   if (submitAnswer) {
@@ -138,9 +149,9 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                   setIndexMemorySpan(0)
                   setStartAnswer(false)
                   setTimerMemorySpan((soal as SoalExamLS1).intro_data[indexMemorySpan + 1].timer)
-                  // setDisableNextButton && setDisableNextButton(true)
                 },
                 displayCancel: false,
+                overrideClose: false,
               })
             } else {
               if (submitAnswer) {
@@ -223,7 +234,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
       const workingMemoryUuid = ExamData.filter((ar) => ar.examName === "Working Memory")[0].examUuid
       if (currentUuid === memorySpanUuid || currentUuid === workingMemoryUuid) {
         const formattedAnswer = answerMemorySpan.sort((a, b) => a.order - b.order)
-        setAnswer({ content: formattedAnswer.map((ar) => ar.content).join(""), value: 0 })
+        setAnswer({ content: formattedAnswer.map((ar) => ar.content).join(" "), value: 0 })
       }
     }, [soal, answerMemorySpan])
 
@@ -831,11 +842,14 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
 
         <ModalConfirm
           open={!!modalConfirm.open}
-          onClose={() => setModalConfirm({ ...modalConfirm, open: false })}
+          onClose={() => {
+            setModalConfirm({ ...modalConfirm, open: false, overrideClose: true })
+          }}
           title={modalConfirm.title}
           message={modalConfirm.message}
           onConfirm={modalConfirm.onConfirm}
           displayCancel={modalConfirm.displayCancel}
+          overrideClose={modalConfirm.overrideClose}
         />
       </div>
     )
