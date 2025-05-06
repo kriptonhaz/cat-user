@@ -296,23 +296,6 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               </Box>
             )}
 
-            {((soal as SoalExamLS1).narrow_data.Uuid !==
-              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
-              (soal as SoalExamLS1).narrow_data.Uuid !==
-                ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) && (
-              <Divider sx={{ my: 3 }} />
-            )}
-
-            {((soal as SoalExamLS1).narrow_data.Uuid !==
-              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
-              (soal as SoalExamLS1).narrow_data.Uuid !==
-                ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) &&
-              subtestNumber !== undefined &&
-              subtestName !== undefined && (
-                <Typography variant="h6" sx={{ fontSize: fontSize, mb: 3 }}>
-                  {subtestNumber}
-                </Typography>
-              )}
             <Box
               sx={{
                 display: "flex",
