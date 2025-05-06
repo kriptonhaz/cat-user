@@ -34,7 +34,7 @@ const CardTimer = ({
         mb: 5,
         position: "sticky",
         top: "80px",
-        zIndex: 9999,
+        zIndex: 10,
       }}
     >
       <CardContent sx={{ padding: 0, paddingBottom: "0px !important" }}>
