@@ -22,7 +22,7 @@ const LembarUjianTkk: React.FC = () => {
   const params = useParams()
   const ref = useRef<HTMLDivElement>(null)
   const configStore = useConfigStore((state) => state)
-  
+
   // Add this to prevent page reload during exam
   usePreventReload(true, "Anda sedang dalam ujian. Merefresh halaman akan menghentikan ujian.")
   const { queryActivityExam, queryGetSoalExamByModule, queryGetDataTkk, queryGetQuestionResponseByActivity } =
