@@ -197,18 +197,18 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
             "& p": { margin: 0 },
             "& img": { maxWidth: "50vw", maxHeight: "22vh", margin: "0 auto", display: "block" },
             marginLeft:
-              (question as SoalExamLS1).subtest_model_uuid ===
+              (question as SoalExamLS1).narrow_data.Uuid ===
               ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
                 ? 0
                 : "40px",
             display: "flex",
             flexDirection:
-              (question as SoalExamLS1).subtest_model_uuid ===
+              (question as SoalExamLS1).narrow_data.Uuid ===
               ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
                 ? "row"
                 : "column",
             justifyContent:
-              (question as SoalExamLS1).subtest_model_uuid ===
+              (question as SoalExamLS1).narrow_data.Uuid ===
               ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
                 ? "center"
                 : "flex-start",
@@ -301,7 +301,6 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                       flexDirection: "column",
                       cursor: "pointer",
                       minHeight: "27vh",
-                      backgroundColor: selectedAnswer === answer.uuid ? "#c5e89e" : undefined,
                     }}
                     onClick={() => {
                       setSelectedAnswer(answer.uuid)
@@ -340,7 +339,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
               display: "flex",
               flexDirection: "column",
               alignItems:
-                (question as SoalExamLS1).subtest_model_uuid ===
+                (question as SoalExamLS1).narrow_data.Uuid ===
                 ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
                   ? "center"
                   : "flex-start",
@@ -361,7 +360,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                       key={index}
                       value={answer.uuid}
                       control={
-                        (question as SoalExamLS1).subtest_model_uuid ===
+                        (question as SoalExamLS1).narrow_data.Uuid ===
                         ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
                           <></>
                         ) : (
@@ -377,14 +376,13 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                         <>
                           <Box flexDirection={"row"} display={"flex"}>
                             <>
-                              {(question as SoalExamLS1).subtest_model_uuid ===
+                              {(question as SoalExamLS1).narrow_data.Uuid ===
                               ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid ? (
                                 <Box
                                   flexDirection={"column"}
                                   display={"flex"}
                                   justifyContent={"space-between"}
                                   alignItems={"center"}
-                                  sx={{ backgroundColor: selectedAnswer === answer.uuid ? "#c5e89e" : undefined }}
                                   width={"12vw"}
                                   height={"20vh"}
                                   onClick={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
@@ -405,9 +403,18 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                                     alignItems={"center"}
                                     height={"30%"}
                                   >
-                                    {(question as SoalExamLS1).is_need_answer_label && (
-                                      <Typography>{answer.label}</Typography>
-                                    )}
+                                    <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                      <CheckboxManual
+                                        isChecked={
+                                          question.total_answer_should_have_for_true === 1 &&
+                                          selectedAnswer === answer.uuid
+                                        }
+                                      />
+                                      {(question as SoalExamLS1).is_need_answer_label && (
+                                        <Typography>{answer.label}</Typography>
+                                      )}
+                                    </Box>
+
                                     {question.total_answer_should_have_for_true === 1 &&
                                       selectedAnswer === answer.uuid &&
                                       (isCorrect ? (
@@ -447,7 +454,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                                 />
                               )}
                             </>
-                            {(question as SoalExamLS1).subtest_model_uuid !==
+                            {(question as SoalExamLS1).narrow_data.Uuid !==
                               ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid &&
                               question.total_answer_should_have_for_true === 1 &&
                               selectedAnswer === answer.uuid &&
@@ -486,7 +493,21 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                       <FormControlLabel
                         key={answer.uuid}
                         value={answer.uuid}
-                        control={<Checkbox size="small" />}
+                        control={
+                          (question as SoalExamLS1).narrow_data?.Uuid ===
+                          ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid ? (
+                            <Box
+                              sx={{
+                                width: 20,
+                                height: 20,
+                                cursor: "pointer",
+                                opacity: 0, // Make it invisible but still clickable
+                              }}
+                            />
+                          ) : (
+                            <Checkbox size="small" />
+                          )
+                        }
                         onChange={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
                         disabled={isDisabled}
                         label={
@@ -530,11 +551,22 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                                   />
                                 </>
                               ) : (
-                                <>
+                                <Box
+                                  onClick={() =>
+                                    isDisabled ? null : onAnswerSelect(answer.uuid, answer.is_question_answer)
+                                  }
+                                  width={"100%"}
+                                >
                                   {answer.image_path_cat ? (
                                     <img
                                       src={import.meta.env.VITE_API_URL + answer.image_path_cat}
-                                      style={{ width: "100%", height: "100%", fontSize: fontSize, margin: 0 }}
+                                      style={{
+                                        width: "100%",
+                                        height: `${9 * ((1 * fontSize) / 22)}vh`,
+                                        transform: `scale(${(1 * fontSize) / 22})`,
+                                        margin: 0,
+                                        objectFit: "contain",
+                                      }}
                                     />
                                   ) : (
                                     <Typography
@@ -547,10 +579,21 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                                       }}
                                     />
                                   )}
-                                  {(question as SoalExamLS1).is_need_answer_label && (
-                                    <Typography>{answer.label}</Typography>
-                                  )}
-                                </>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      flexDirection: "row",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      mt: 2,
+                                    }}
+                                  >
+                                    <CheckboxManual isChecked={isChecked} />
+                                    {(question as SoalExamLS1).is_need_answer_label && (
+                                      <Typography>{answer.label}</Typography>
+                                    )}
+                                  </Box>
+                                </Box>
                               )}
                             </Box>
                             {question.total_answer_should_have_for_true === 2 &&
