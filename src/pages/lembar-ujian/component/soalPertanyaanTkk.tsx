@@ -484,7 +484,6 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                             flexDirection: "column",
                             cursor: "pointer",
                             // minHeight: "27vh",
-                            backgroundColor: selectedAnswer?.content === answer.uuid ? "#c5e89e" : undefined,
                           }}
                           onClick={() => {
                             selectAnswerInduction(answer.uuid)
@@ -650,11 +649,8 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                   <Box
                                     flexDirection={"column"}
                                     display={"flex"}
-                                    justifyContent={"space-between"}
+                                    justifyContent={"center"}
                                     alignItems={"center"}
-                                    sx={{
-                                      backgroundColor: selectedAnswer?.content === answer.uuid ? "#c5e89e" : undefined,
-                                    }}
                                     width={"12vw"}
                                     height={"16vh"}
                                     onClick={() => {
@@ -676,9 +672,12 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                         fontSize: fontSize,
                                       }}
                                     />
-                                    {(soal as SoalExamLS1).is_need_answer_label && (
-                                      <Typography sx={{ fontSize: fontSize }}>{answer.label}</Typography>
-                                    )}
+                                    <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                      <CheckboxManual isChecked={selectedAnswer?.content === answer.uuid} />
+                                      {(soal as SoalExamLS1).is_need_answer_label && (
+                                        <Typography sx={{ fontSize: fontSize }}>{answer.label}</Typography>
+                                      )}
+                                    </Box>
                                   </Box>
                                 ) : (
                                   <Typography
