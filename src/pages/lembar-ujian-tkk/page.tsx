@@ -15,12 +15,16 @@ import ModalConfirm, { ModalConfirmProps } from "@/ui/modal/ModalConfirm"
 import useConfigStore from "@/store/config.store"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
+import usePreventReload from "@/hooks/usePreventReload"
 
 const LembarUjianTkk: React.FC = () => {
   const location = useLocation()
   const params = useParams()
   const ref = useRef<HTMLDivElement>(null)
   const configStore = useConfigStore((state) => state)
+  
+  // Add this to prevent page reload during exam
+  usePreventReload(true, "Anda sedang dalam ujian. Merefresh halaman akan menghentikan ujian.")
   const { queryActivityExam, queryGetSoalExamByModule, queryGetDataTkk, queryGetQuestionResponseByActivity } =
     useExamHooks()
   const { data: activityExam } = queryActivityExam(params.examId, params.moduleId)
