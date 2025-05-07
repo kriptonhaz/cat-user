@@ -1201,7 +1201,23 @@ const LembarUjianTkk: React.FC = () => {
                             (ar) =>
                               ar.subtest_uuid === dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_uuid
                           )
-                          const isAnswered = answeredExam?.some((ar) => ar.question_uuid === (item as SoalExamLS1).uuid)
+                          const isAnswered =
+                            (item as SoalExamLS1).total_answer_should_have_for_true === 1
+                              ? answeredExam?.some((ar) => ar.question_uuid === (item as SoalExamLS1).uuid)
+                              : answeredExam?.some((ar) => {
+                                  if (ar.question_uuid === (item as SoalExamLS1).uuid) {
+                                    try {
+                                      const parsedContent = JSON.parse(ar.user_response_content)
+                                      return (
+                                        Array.isArray(parsedContent) &&
+                                        parsedContent.length === (item as SoalExamLS1).total_answer_should_have_for_true
+                                      )
+                                    } catch (e) {
+                                      return false
+                                    }
+                                  }
+                                  return false
+                                })
                           const currentIndex = soalExamAvailable.data.findIndex(
                             (ar) => (ar as SoalExamLS1).uuid === (soal as SoalExamLS1)?.uuid
                           )
@@ -1212,12 +1228,12 @@ const LembarUjianTkk: React.FC = () => {
                           let backgroundColor = "white"
                           let color = "#4828A3"
 
-                          if (isAnswered) {
+                          if (thisIndex === currentIndex) {
+                            backgroundColor = "#FFC107" // current but unanswered — yellowiss
+                            color = "#000"
+                          } else if (isAnswered) {
                             backgroundColor = "#4828A3" // answered — purple
                             color = "white"
-                          } else if (thisIndex === currentIndex) {
-                            backgroundColor = "white" // current but unanswered — white
-                            color = "#4828A3"
                           } else if (thisIndex <= maxVisitedIndex) {
                             backgroundColor = "red" // passed but unanswered — red
                             color = "white"
