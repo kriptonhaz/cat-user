@@ -271,13 +271,18 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
               (soal as SoalExamLS1).narrow_data.Uuid !==
                 ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid) && (
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                 {showTimer && (
                   <Typography variant="h6">
                     Sisa Waktu: {formatTime((soal as SoalExamLS1).answer_type === 3 ? timerMemorySpan : remainingTime)}
                   </Typography>
                 )}
-                <Box sx={timerType === 2 ? { width: "250px", display: "flex", justifyContent: "space-between" } : {}}>
+                <Box
+                  sx={{
+                    ...(timerType === 2 ? { width: "250px", display: "flex", justifyContent: "space-between" } : {}),
+                    marginLeft: "auto", // This ensures the box stays on the right
+                  }}
+                >
                   <Box display={isScrolling ? "none" : "flex"} justifyContent={"space-between"} width={140}>
                     <Button
                       color="primary"

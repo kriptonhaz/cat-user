@@ -50,9 +50,13 @@ const ExamExample: React.FC<ExamExampleProps> = ({
         paddingBottom: 10,
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
         <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
-        <Box>
+        <Box
+          sx={{
+            marginLeft: "auto", // This ensures the box stays on the right
+          }}
+        >
           <Box display={"flex"} justifyContent={"space-between"} width={140}>
             <Button
               color="primary"

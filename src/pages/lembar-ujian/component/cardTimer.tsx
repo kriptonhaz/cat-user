@@ -38,13 +38,18 @@ const CardTimer = ({
       }}
     >
       <CardContent sx={{ padding: 0, paddingBottom: "0px !important" }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
           {showTimer && (
             <Typography variant="h6" sx={{ fontSize: fontSize }}>
               Sisa Waktu: {formatTime(remainingTime)}
             </Typography>
           )}
-          <Box sx={timerType === 2 ? { width: "250px", display: "flex", justifyContent: "space-between" } : {}}>
+          <Box
+            sx={{
+              ...(timerType === 2 ? { width: "250px", display: "flex", justifyContent: "space-between" } : {}),
+              marginLeft: "auto", // This ensures the box stays on the right
+            }}
+          >
             <Box display={"flex"} justifyContent={"space-between"} width={140}>
               <Button
                 color="primary"

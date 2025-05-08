@@ -113,14 +113,15 @@ const SoalPertanyaanPilgan = ({
         }}
       >
         <CardContent>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
             <Typography variant="h6">Sisa Waktu: {formatTime(remainingTime)}</Typography>
             <Box
-              sx={
-                timerUjian?.data.timer_type === 2
+              sx={{
+                ...(timerUjian?.data.timer_type === 2
                   ? { width: "250px", display: "flex", justifyContent: "space-between" }
-                  : {}
-              }
+                  : {}),
+                marginLeft: "auto",
+              }}
             >
               {timerUjian?.data.timer_type === 2 && (
                 <Button color="warning" onClick={showInstruction}>
