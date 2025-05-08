@@ -29,14 +29,17 @@ const Navbar = () => {
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
-                fontFamily: "monospace",
+                flexDirection: "column",
                 fontWeight: 700,
-                letterSpacing: ".3rem",
                 color: "inherit",
                 textDecoration: "none",
+                fontSize: "1.2rem",
               }}
             >
-              CAT
+              Assesstment and Development Center
+              <Typography variant="subtitle2" sx={{ mt: -2, fontSize: "1 rem" }}>
+                Kementrian Pertahanan RI
+              </Typography>
             </Typography>
             {/* Navigation Menu */}
             {localStorage.getItem("name") &&
