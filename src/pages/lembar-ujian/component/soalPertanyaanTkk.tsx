@@ -743,7 +743,14 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                             <FormControlLabel
                               key={answer.uuid}
                               value={answer.uuid}
-                              control={<Checkbox size="small" checked={selectedMultipleAnswer.includes(answer.uuid)} />}
+                              control={
+                                (soal as SoalExamLS1).narrow_data.Uuid ===
+                                ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid ? (
+                                  <></>
+                                ) : (
+                                  <Checkbox size="small" checked={selectedMultipleAnswer.includes(answer.uuid)} />
+                                )
+                              }
                               // checked={true}
                               // @ts-ignore
                               onChange={handleChoose}
@@ -760,6 +767,17 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                         : "column"
                                     }
                                     alignItems={"center"}
+                                    onClick={() => {
+                                      const uuid = (soal as SoalExamLS1).narrow_data.Uuid
+                                      const targetUuid = ExamData.find(
+                                        (ar) => ar.examName === "Lexical Knowledge"
+                                      )?.examUuid
+                                      if (uuid === targetUuid || isDisabled) return
+                                      setAnswer({
+                                        content: answer?.uuid || "",
+                                        value: 0,
+                                      })
+                                    }}
                                   >
                                     {(soal as SoalExamLS1).narrow_data.Uuid ===
                                     ExamData.filter((ar) => ar.examName === "Lexical Knowledge")[0].examUuid ? (
@@ -790,7 +808,13 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                         {answer.image_path_cat ? (
                                           <img
                                             src={import.meta.env.VITE_API_URL + answer.image_path_cat}
-                                            style={{ width: "100%", height: "100%", fontSize: fontSize, margin: 0 }}
+                                            style={{
+                                              width: "100%",
+                                              height: `${15 * ((1 * fontSize) / 22)}vh`,
+                                              transform: `scale(${(1 * fontSize) / 22})`,
+                                              margin: 0,
+                                              objectFit: "contain",
+                                            }}
                                           />
                                         ) : (
                                           <Typography
@@ -803,9 +827,20 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                             }}
                                           />
                                         )}
-                                        {(soal as SoalExamLS1).is_need_answer_label && (
-                                          <Typography>{answer.label}</Typography>
-                                        )}
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            mt: 2,
+                                          }}
+                                        >
+                                          <CheckboxManual isChecked={isChecked} />
+                                          {(soal as SoalExamLS1).is_need_answer_label && (
+                                            <Typography>{answer.label}</Typography>
+                                          )}
+                                        </Box>
                                       </>
                                     )}
                                   </Box>
