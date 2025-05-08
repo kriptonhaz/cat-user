@@ -1,6 +1,6 @@
 import { SoalExamLS1 } from "@/interfaces/exam.interface"
 import React, { useEffect, useState } from "react"
-import { Cancel, Check, TextIncrease, TextDecrease } from "@mui/icons-material" // Import icons from Material-UI
+import { Cancel, TextIncrease, TextDecrease, CheckCircle } from "@mui/icons-material" // Import icons from Material-UI
 import {
   Box,
   Button,
@@ -143,6 +143,10 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
     }
   }, [answerMemory])
 
+  useEffect(() => {
+    console.log("selectedAnswer", selectedAnswer)
+  }, [selectedAnswer])
+
   return (
     <Card
       sx={{
@@ -163,6 +167,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
             ? "82vh"
             : undefined,
         overflow: "auto !important",
+        position: "relative",
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -311,7 +316,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                       {(question as SoalExamLS1).is_need_answer_label && <Typography>{answer.label}</Typography>}
                       {question.total_answer_should_have_for_true === 1 &&
                         selectedAnswer === answer.uuid &&
-                        (isCorrect ? <Check style={{ color: "green" }} /> : <Cancel style={{ color: "red" }} />)}
+                        (isCorrect ? <CheckCircle style={{ color: "green" }} /> : <Cancel style={{ color: "red" }} />)}
                     </Box>
 
                     <img
@@ -418,7 +423,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                                     {question.total_answer_should_have_for_true === 1 &&
                                       selectedAnswer === answer.uuid &&
                                       (isCorrect ? (
-                                        <Check style={{ color: "green" }} />
+                                        <CheckCircle style={{ color: "green" }} />
                                       ) : (
                                         <Cancel style={{ color: "red" }} />
                                       ))}
@@ -456,10 +461,14 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                             </>
                             {(question as SoalExamLS1).narrow_data.Uuid !==
                               ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid &&
+                              (question as SoalExamLS1).narrow_data.Uuid !==
+                                ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid &&
+                              (question as SoalExamLS1).narrow_data.Uuid !==
+                                ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid &&
                               question.total_answer_should_have_for_true === 1 &&
                               selectedAnswer === answer.uuid &&
                               (isCorrect ? (
-                                <Check style={{ marginLeft: "5px", color: "green" }} />
+                                <CheckCircle style={{ marginLeft: "5px", color: "green" }} />
                               ) : (
                                 <Cancel style={{ marginLeft: "5px", color: "red" }} />
                               ))}
@@ -599,7 +608,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                             {question.total_answer_should_have_for_true === 2 &&
                               ((selectedAnswerMultiple.filter(
                                 (ar) => ar.uuid === answer.uuid && ar.isCorrectAnswer === true
-                              ).length > 0 && <Check style={{ marginLeft: "5px", color: "green" }} />) ||
+                              ).length > 0 && <CheckCircle style={{ marginLeft: "5px", color: "green" }} />) ||
                                 (selectedAnswerMultiple.filter(
                                   (ar) => ar.uuid === answer.uuid && ar.isCorrectAnswer === false
                                 ).length > 0 && <Cancel style={{ marginLeft: "5px", color: "red" }} />))}
@@ -686,6 +695,41 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
           </Box>
         </>
       )}
+      {((question as SoalExamLS1).narrow_data.Uuid ===
+        ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid ||
+        (question as SoalExamLS1).narrow_data.Uuid ===
+          ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid) &&
+        question.total_answer_should_have_for_true === 1 &&
+        selectedAnswer &&
+        (isCorrect ? (
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: "20px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <CheckCircle style={{ marginRight: "5px", color: "green", fontSize: "40px" }} />
+            <Typography sx={{ color: "green", fontSize: "24px" }} variant="body2">
+              BENAR
+            </Typography>
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: "20px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Cancel style={{ marginRight: "5px", color: "red", fontSize: "40px" }} />
+            <Typography sx={{ color: "red", fontSize: "24px" }} variant="body2">
+              SALAH
+            </Typography>
+          </Box>
+        ))}
     </Card>
   )
 }
