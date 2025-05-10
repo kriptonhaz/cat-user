@@ -815,6 +815,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                             src={import.meta.env.VITE_API_URL + answer.image_path_cat}
                                             style={{
                                               width: "100%",
+                                              maxWidth: `${5 * ((1 * fontSize) / 22)}vw`,
                                               height: `${15 * ((1 * fontSize) / 22)}vh`,
                                               transform: `scale(${(1 * fontSize) / 22})`,
                                               margin: 0,
