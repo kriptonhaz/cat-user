@@ -148,6 +148,12 @@ const LembarUjianTkk: React.FC = () => {
       selectedMultipleAnswer.filter((ar) => ar !== "").length < 2
     ) {
       setDisabledNextButton(true)
+    } else if (currentUuid === workingMemoryUuid || currentUuid === memorySpanUuid) {
+      if (soal && soal.question_type === 3) {
+        setDisabledNextButton(false)
+      } else {
+        setDisabledNextButton(true)
+      }
     } else if (currentUuid !== memorySpanUuid && currentUuid !== workingMemoryUuid) {
       setDisabledNextButton(false)
     }
