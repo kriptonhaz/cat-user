@@ -33,12 +33,15 @@ const Navbar = () => {
                 fontWeight: 700,
                 color: "inherit",
                 textDecoration: "none",
-                fontSize: "1.2rem",
+                fontSize: "1.1rem",
+                lineHeight: 1.2,
+                ml: 1,
+                whiteSpace: "normal"
               }}
             >
-              Assesstment and Development Center
-              <Typography variant="subtitle2" sx={{ mt: -2, fontSize: "1 rem" }}>
-                Kementrian Pertahanan RI
+              Assessment and Development Center
+              <Typography variant="subtitle2" sx={{ mt: 0.5, fontSize: "0.9rem", lineHeight: 1.2 }}>
+                Kementerian Pertahanan RI
               </Typography>
             </Typography>
             {/* Navigation Menu */}
