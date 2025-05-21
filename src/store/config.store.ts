@@ -9,7 +9,7 @@ interface ConfigStoreType {
 const useConfigStore = create<ConfigStoreType>()(
   persist(
     (set) => ({
-      fontSize: 22,
+      fontSize: 20,
       setFontSize: (fontSize: number) => {
         set({ fontSize })
       },
