@@ -480,7 +480,10 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                   {(soal as SoalExamLS1).answer_data.map((answer, index) => (
                     <Grid key={index} item xs={12} md={6 * (fontSize / 22)} lg={3.5 * (fontSize / 22)}>
                       <Stack direction="row" alignItems="flex-start">
-                        <CheckboxManual isChecked={selectedAnswer?.content === answer.uuid} />
+                        <CheckboxManual
+                          isChecked={selectedAnswer?.content === answer.uuid}
+                          onClick={() => selectAnswerInduction(answer.uuid)}
+                        />
                         <Box
                           sx={{
                             width: "100%",

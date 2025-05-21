@@ -4,6 +4,7 @@ import CheckIcon from "@mui/icons-material/Check"
 
 type CheckboxManualProps = {
   isChecked: boolean
+  onClick?: () => void
 }
 export const CheckboxManual = (props: CheckboxManualProps) => {
   return (
@@ -22,6 +23,7 @@ export const CheckboxManual = (props: CheckboxManualProps) => {
         marginRight: "8px",
         transition: "background-color 0.2s, border-color 0.2s",
       }}
+      onClick={props.onClick}
     >
       {props.isChecked && <CheckIcon sx={{ color: "white" }} />}
     </Box>
