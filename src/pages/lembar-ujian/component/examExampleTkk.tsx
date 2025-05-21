@@ -434,25 +434,34 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                                   </Box>
                                 </Box>
                               ) : (
-                                <Typography
-                                  dangerouslySetInnerHTML={{ __html: answer.content }}
-                                  sx={{
-                                    "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
-                                    "& p": {
-                                      margin: 0,
-                                      marginRight:
-                                        (question as SoalExamLS1).narrow_data.Uuid ===
-                                          ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
-                                        (question as SoalExamLS1).narrow_data.Uuid ===
-                                          ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0]
-                                            .examUuid
-                                          ? 8
-                                          : 0,
-                                    },
-                                    "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
-                                    fontSize: fontSize,
-                                  }}
-                                />
+                                <Box
+                                  display={"flex"}
+                                  onClick={() => onAnswerSelect(answer.uuid, answer.is_question_answer)}
+                                >
+                                  {(question as SoalExamLS1).is_need_answer_label && (
+                                    <Typography sx={{ fontSize: fontSize }}>{answer.label}.&nbsp;</Typography>
+                                  )}
+                                  <Typography
+                                    dangerouslySetInnerHTML={{ __html: answer.content }}
+                                    sx={{
+                                      display: "inline",
+                                      "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                      "& p": {
+                                        margin: 0,
+                                        marginRight:
+                                          (question as SoalExamLS1).narrow_data.Uuid ===
+                                            ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+                                          (question as SoalExamLS1).narrow_data.Uuid ===
+                                            ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0]
+                                              .examUuid
+                                            ? 8
+                                            : 0,
+                                      },
+                                      "& figure": { margin: 0, marginRight: "20px", maxWidth: "100px" },
+                                      fontSize: fontSize,
+                                    }}
+                                  />
+                                </Box>
                               )}
 
                               {answer.image_path_cat && (
