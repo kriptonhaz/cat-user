@@ -60,6 +60,7 @@ const LembarUjianTkk: React.FC = () => {
   const [disabledNextButton, setDisabledNextButton] = useState(false)
   const [selectedQuestionNumber, setSelectedQuestionNumber] = useState<string | null>(null)
   const [maxVisitedIndex, setMaxVisitedIndex] = useState<number>(0)
+  const [lastAnswerQuestionScrollNumber, setLastAnswerQuestionScrollNumber] = useState<number>(0)
 
   const { leftExamBeforeFinishMutation, updateExamActivityMutation, finishExamMutation, submitJawabanMutation } =
     useExamMutation()
@@ -228,6 +229,7 @@ const LembarUjianTkk: React.FC = () => {
   }
 
   const submitWithoutNextScrolling = (props: { answer: answer; question: SoalExamLS1; source: string }) => {
+    setLastAnswerQuestionScrollNumber(props.question.question_order)
     const { answer, question } = props
     if (answer && activityExam && soal && soal.question_type === 1 && answer.content !== "") {
       const body = {
@@ -322,7 +324,9 @@ const LembarUjianTkk: React.FC = () => {
       try {
         if (activityExamDirect?.data.last_question_subtest !== "") {
           const dataSubtestQuestion = await getSoalExamByModule(activityExamDirect?.data.last_question_subtest)
+          // if last question filled is equal to total question
           if (activityExamDirect?.data.last_question_filled >= dataSubtestQuestion.data.length) {
+            // check if current subtest index is last subtest index
             if (currentSubtestIndexTkkActivity >= dataTkk?.data.detail_data.length - 1) {
               if (params.activityId) {
                 setModalConfirm({
@@ -513,6 +517,21 @@ const LembarUjianTkk: React.FC = () => {
               checkQuestionAvailable()
               setMaxVisitedIndex(0)
               setFinalQuestion(false)
+              // TODO: add exam activity mutation to next subtest first index
+              // examActivityMutation.mutate({
+              //   last_question_filled: 0,
+              //   last_question_subtest: dataTkk
+              //     ? dataTkk?.data.detail_data[Number(indexSubtestActiveTkk) + 1].subtest_model_uuid
+              //     : "",
+              //   uuidActivity: activityExam?.data.Uuid || "",
+              //   onSuccess: () => {
+              //     setIndexSubtestActiveTkk(Number(indexSubtestActiveTkk) + 1 + 1)
+              //     setCurrentQuestionIndex(0)
+              //     checkQuestionAvailable()
+              //     setMaxVisitedIndex(0)
+              //     setFinalQuestion(false)
+              //   },
+              // })
             },
             onClose() {
               setAnswerActivity()
@@ -544,6 +563,8 @@ const LembarUjianTkk: React.FC = () => {
           uuidActivity: activityExam?.data.Uuid || "",
           onSuccess: () => {
             checkQuestionAvailable()
+            setMaxVisitedIndex(0)
+            setFinalQuestion(false)
           },
         })
       },
@@ -655,6 +676,7 @@ const LembarUjianTkk: React.FC = () => {
                           last_question_subtest: (soal as SoalExamLS1).subtest_model_uuid,
                           uuidActivity: activityExam?.data.Uuid,
                           onSuccess: () => {
+                            setLastAnswerQuestionScrollNumber(0)
                             checkQuestionAvailable()
                           },
                         })
@@ -669,7 +691,6 @@ const LembarUjianTkk: React.FC = () => {
         }
       )
     } else {
-      // console.log("next question line 467")
       nextQuestionAfterSubmit()
     }
   }
@@ -715,7 +736,7 @@ const LembarUjianTkk: React.FC = () => {
                     <ExamExampleTkk
                       question={soal as SoalExamLS1}
                       remainingTime={remainingTime}
-                      showExampleLabel
+                      showExampleLabel={(soal as SoalExamLS1).is_need_answer_label}
                       subtestNumber={
                         (typeof indexSubtestActiveTkk === "number" &&
                           dataTkk?.data.detail_data[indexSubtestActiveTkk].name) ||
@@ -1238,7 +1259,20 @@ const LembarUjianTkk: React.FC = () => {
                           let backgroundColor = "white"
                           let color = "#4828A3"
 
-                          if (thisIndex === currentIndex) {
+                          if (
+                            (soal as SoalExamLS1).narrow_data.Uuid ===
+                              ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid ||
+                            (soal as SoalExamLS1).narrow_data.Uuid ===
+                              ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid
+                          ) {
+                            if (index + 1 === lastAnswerQuestionScrollNumber) {
+                              backgroundColor = "#FFC107" // current but unanswered — yellowiss
+                              color = "#000"
+                            } else if (isAnswered) {
+                              backgroundColor = "#4828A3" // answered — purple
+                              color = "white"
+                            }
+                          } else if (thisIndex === currentIndex) {
                             backgroundColor = "#FFC107" // current but unanswered — yellowiss
                             color = "#000"
                           } else if (isAnswered) {
