@@ -1,5 +1,5 @@
 import { SoalExamLS1 } from "@/interfaces/exam.interface"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { Cancel, TextIncrease, TextDecrease, CheckCircle } from "@mui/icons-material" // Import icons from Material-UI
 import {
   Box,
@@ -43,6 +43,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
   fontSize,
   setFontSize,
 }) => {
+  const initialFocusRef = useRef(false)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [selectedAnswerMultiple, setSelectedAnswerMultiple] = useState<
     Array<{ uuid: string; isCorrectAnswer: boolean }>
@@ -193,11 +194,11 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
           {subtestNumber}
         </Typography>
       )}
-      {showExampleLabel && (
-        <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: fontSize, my: 3 }}>
-          Contoh Soal
-        </Typography>
-      )}
+      {/* {showExampleLabel && ( */}
+      <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: fontSize, my: 3 }}>
+        Contoh Soal
+      </Typography>
+      {/* )} */}
       {question.answer_type !== 3 && (
         <Typography
           dangerouslySetInnerHTML={{ __html: question.question_content }}
@@ -672,6 +673,13 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                                   style: { textTransform: "uppercase" },
                                 }}
                                 autoComplete="off"
+                                inputRef={(input) => {
+                                  // Only focus the first text field when startAnswer initially becomes true
+                                  if (input && startAnswer && index === 0 && !initialFocusRef.current) {
+                                    input.focus()
+                                    initialFocusRef.current = true
+                                  }
+                                }}
                                 onKeyUp={(e) => {
                                   const input = e.target as HTMLInputElement
                                   const cursorPosition = input.selectionStart

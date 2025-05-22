@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import {
   Box,
   Card,
@@ -64,6 +64,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
       soalExamAvailable,
       submitAnswer,
     } = props
+    const initialFocusRef = useRef(false)
     const [answerMemorySpan, setAnswerMemorySpan] = useState<Array<{ order: number; content: string }>>([])
     const [startTimer, setStartTimer] = useState(false)
     const [indexMemorySpan, setIndexMemorySpan] = useState(0)
@@ -567,6 +568,13 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                   inputProps={{
                                     "data-state": answer.showing_order,
                                     style: { textTransform: "uppercase" },
+                                  }}
+                                  inputRef={(input) => {
+                                    // Only focus the first text field when startAnswer initially becomes true
+                                    if (input && startAnswer && index === 0 && !initialFocusRef.current) {
+                                      input.focus()
+                                      initialFocusRef.current = true
+                                    }
                                   }}
                                   onKeyUp={(e) => {
                                     const input = e.target as HTMLInputElement
