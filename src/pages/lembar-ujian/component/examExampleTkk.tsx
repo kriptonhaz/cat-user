@@ -144,8 +144,8 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
   }, [answerMemory])
 
   useEffect(() => {
-    console.log("selectedAnswer", selectedAnswer)
-  }, [selectedAnswer])
+    setIsCorrect(null)
+  }, [question])
 
   return (
     <Card
@@ -714,7 +714,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
           ExamData.filter((ar) => ar.examName === "Number Facility")[0].examUuid) &&
         question.total_answer_should_have_for_true === 1 &&
         selectedAnswer &&
-        (isCorrect ? (
+        (isCorrect !== null && isCorrect === true ? (
           <Box
             sx={{
               position: "absolute",
@@ -728,7 +728,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
               BENAR
             </Typography>
           </Box>
-        ) : (
+        ) : isCorrect !== null && isCorrect === false ? (
           <Box
             sx={{
               position: "absolute",
@@ -742,7 +742,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
               SALAH
             </Typography>
           </Box>
-        ))}
+        ) : null)}
     </Card>
   )
 }
