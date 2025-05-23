@@ -302,7 +302,13 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
             {(question as SoalExamLS1).answer_data.map((answer, index) => (
               <Grid key={index} item xs={12} md={6} lg={3.5 * (fontSize / 22)}>
                 <Stack direction="row" alignItems="flex-start">
-                  <CheckboxManual isChecked={selectedAnswer === answer.uuid} />
+                  <CheckboxManual
+                    isChecked={selectedAnswer === answer.uuid}
+                    onClick={() => {
+                      setSelectedAnswer(answer.uuid)
+                      setIsCorrect(answer.is_question_answer)
+                    }}
+                  />
                   <Box
                     sx={{
                       width: "100%",
