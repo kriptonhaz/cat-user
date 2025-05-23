@@ -282,6 +282,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                   sx={{
                     ...(timerType === 2 ? { width: "250px", display: "flex", justifyContent: "space-between" } : {}),
                     marginLeft: "auto", // This ensures the box stays on the right
+                    marginBottom: 5,
                   }}
                 >
                   <Box display={isScrolling ? "none" : "flex"} justifyContent={"space-between"} width={140}>

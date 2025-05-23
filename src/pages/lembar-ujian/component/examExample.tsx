@@ -55,6 +55,7 @@ const ExamExample: React.FC<ExamExampleProps> = ({
         <Box
           sx={{
             marginLeft: "auto", // This ensures the box stays on the right
+            marginBottom: 5,
           }}
         >
           <Box display={"flex"} justifyContent={"space-between"} width={140}>

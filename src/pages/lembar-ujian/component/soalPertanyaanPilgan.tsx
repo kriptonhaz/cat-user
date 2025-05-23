@@ -128,7 +128,7 @@ const SoalPertanyaanPilgan = ({
                   Instruksi
                 </Button>
               )}
-              <Box display={"flex"} justifyContent={"space-between"} width={140}>
+              <Box display={"flex"} justifyContent={"space-between"} width={140} sx={{ marginBottom: 5 }}>
                 <Button
                   color="primary"
                   startIcon={<TextDecrease />}
