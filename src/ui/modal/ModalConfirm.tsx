@@ -1,7 +1,7 @@
 import { Modal } from "@/ui/layouts/Modal"
 import { Button, CircularProgress, Typography } from "@mui/material"
 import { Warning } from "phosphor-react"
-import React, { useEffect } from "react"
+import React, { useEffect, useRef } from "react"
 
 export interface ModalConfirmProps {
   open: boolean
@@ -31,11 +31,31 @@ const ModalConfirm: React.FC<ModalConfirmProps> = (props) => {
     overrideClose = true,
   } = props
 
+  // Track previous open state to prevent onCancel from firing during transitions
+  const prevOpenRef = useRef(open)
+  // Track if the modal is being closed by the confirm button
+  const isConfirmCloseRef = useRef(false)
+
   useEffect(() => {
-    if (!open && onCancel && displayCancel) {
+    // Only call onCancel when transitioning from open to closed AND it's not from a confirmation action
+    if (!open && prevOpenRef.current && onCancel && displayCancel && !isConfirmCloseRef.current) {
       onCancel()
     }
-  }, [open, onCancel])
+
+    // Reset the confirm close flag when modal is closed
+    if (!open) {
+      isConfirmCloseRef.current = false
+    }
+
+    // Update the ref with current open state
+    prevOpenRef.current = open
+  }, [open, onCancel, displayCancel])
+
+  // Wrapper for onConfirm to set the flag before calling the original function
+  const handleConfirm = () => {
+    isConfirmCloseRef.current = true
+    onConfirm()
+  }
 
   return (
     <Modal
@@ -56,7 +76,12 @@ const ModalConfirm: React.FC<ModalConfirmProps> = (props) => {
             {cancelLabel}
           </Button>
         )}
-        <Button color="warning" onClick={onConfirm} disabled={loading} startIcon={!!loading && <CircularProgress />}>
+        <Button
+          color="warning"
+          onClick={handleConfirm}
+          disabled={loading}
+          startIcon={!!loading && <CircularProgress />}
+        >
           Ya
         </Button>
       </Modal.Footer>
