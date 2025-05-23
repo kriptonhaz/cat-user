@@ -84,6 +84,11 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
     })
 
     useEffect(() => {
+      // Reset the focus ref whenever the exam (soal) changes
+      initialFocusRef.current = false
+    }, [soal])
+
+    useEffect(() => {
       if ((soal as SoalExamLS1).answer_type === 3) {
         setTimerMemorySpan((soal as SoalExamLS1).intro_data[indexMemorySpan].timer)
         setStartTimer(true)
