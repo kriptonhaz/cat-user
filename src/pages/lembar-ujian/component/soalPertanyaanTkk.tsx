@@ -19,7 +19,6 @@ import { formatTime } from "@/utils/timer"
 import { ExamData } from "./exam-data"
 import ModalConfirm, { ModalConfirmProps } from "@/ui/modal/ModalConfirm"
 import { CheckboxManual } from "@/components/checkbox"
-import useMemorySpanTimerStore from "@/store/memory-span-timer.store"
 
 export interface answer {
   content: string
@@ -67,22 +66,10 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
     } = props
     const initialFocusRef = useRef(false)
     const [answerMemorySpan, setAnswerMemorySpan] = useState<Array<{ order: number; content: string }>>([])
-
-    const {
-      setStartAnswer: setStateStartAnswer,
-      getMemorySpanData,
-      setMemorySpanData,
-      getStartAnswer,
-    } = useMemorySpanTimerStore()
-    const startAnswer = getStartAnswer(soal)
-
-    const setStartAnswer = (val: boolean) => {
-      setStateStartAnswer(soal, val)
-    }
-
     const [startTimer, setStartTimer] = useState(false)
     const [indexMemorySpan, setIndexMemorySpan] = useState(0)
     const [timerMemorySpan, setTimerMemorySpan] = useState(0)
+    const [startAnswer, setStartAnswer] = useState(false)
     const [modalConfirm, setModalConfirm] = useState<ModalConfirmProps>({
       open: false,
       title: "",
@@ -95,18 +82,6 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
       },
       displayCancel: true,
     })
-
-    useEffect(() => {
-      return () => {
-        const savedSoal = getMemorySpanData(soal)
-        if (!savedSoal) {
-          setMemorySpanData({
-            soal,
-            startAnswer: false,
-          })
-        }
-      }
-    }, [])
 
     useEffect(() => {
       // Reset the focus ref whenever the exam (soal) changes
@@ -124,7 +99,6 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
         }
         const timerSoal = setInterval(() => {
           setTimerMemorySpan((prevSeconds) => prevSeconds - 1)
-          // setTimerMemorySpan(timerMemorySpan - 1)
         }, 1000)
         return () => {
           clearInterval(timerSoal)
