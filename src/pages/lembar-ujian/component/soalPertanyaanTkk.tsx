@@ -457,6 +457,8 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                         marginBottom: 4,
                         display: "flex",
                         borderRight: "1px solid #ccc",
+                        paddingRight: 4,
+                        marginRight: 2,
                         justifyContent:
                           (soal as SoalExamLS1).narrow_data.Uuid ===
                           ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
@@ -518,6 +520,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                               alignSelf: "center",
                               marginBottom: "8px",
                               objectFit: "contain",
+                              transform: `scale(${(1 * (fontSize + 2)) / 22})`,
                             }}
                           />
                         </Box>

@@ -270,6 +270,8 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                   marginBottom: 4,
                   display: "flex",
                   borderRight: "1px solid #ccc",
+                  paddingRight: 4,
+                  marginRight: 2,
                   justifyContent:
                     (question as SoalExamLS1).narrow_data.Uuid ===
                     ExamData.filter((ar) => ar.examName === "Flexibility of Closure")[0].examUuid
@@ -281,8 +283,8 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                   src={import.meta.env.VITE_API_URL + (question as SoalExamLS1).image_path_cat}
                   alt={"Answer image"}
                   style={{
-                    width: "80%",
-                    margin: "8px auto",
+                    width: "100%",
+                    objectFit: "contain",
                     height: "100%",
                     transform: `scale(${(1 * fontSize) / 22})`,
                   }}
@@ -340,6 +342,7 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                         height: "90%",
                         alignSelf: "center",
                         marginBottom: "8px",
+                        transform: `scale(${(1 * (fontSize + 2)) / 22})`,
                       }}
                     />
                   </Box>
