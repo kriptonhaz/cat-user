@@ -263,6 +263,9 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
               (soal as SoalExamLS1).narrow_data.Uuid ===
                 ExamData.filter((ar) => ar.examName === "Perceptual Speed – comparison")[0].examUuid
                 ? "10vh"
+                : (soal as SoalExamLS1).narrow_data.Uuid ===
+                  ExamData.filter((ar) => ar.examName === "Induction")[0].examUuid
+                ? "620px"
                 : "525px",
             maxHeight:
               (soal as SoalExamLS1).narrow_data.Uuid ===
@@ -687,11 +690,13 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                           height: "100%",
                                           fontSize: fontSize,
                                           margin: 0,
-                                          transform: `scale(${(1 * fontSize) / 22})`,
+                                          transform: `scale(${(1 * (fontSize + 10)) / 22})`,
                                         },
                                         "& p": { margin: 0 },
                                         "& figure": { margin: 0, marginRight: "0px", maxWidth: "100px" },
                                         fontSize: fontSize,
+                                        mt: 12,
+                                        mb: 5,
                                       }}
                                     />
                                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
@@ -731,7 +736,12 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                   <img
                                     src={import.meta.env.VITE_API_URL + answer.image_path_cat}
                                     alt={`Answer ${index + 1} image`}
-                                    style={{ maxWidth: "50%", marginTop: "8px", width: "50%", height: "50%" }}
+                                    style={{
+                                      maxWidth: "50%",
+                                      marginTop: "8px",
+                                      width: "50%",
+                                      height: "50%",
+                                    }}
                                   />
                                 )}
                               </>
@@ -832,9 +842,9 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                             src={import.meta.env.VITE_API_URL + answer.image_path_cat}
                                             style={{
                                               width: "100%",
-                                              maxWidth: `${5 * ((1 * fontSize) / 22)}vw`,
-                                              height: `${15 * ((1 * fontSize) / 22)}vh`,
-                                              transform: `scale(${(1 * fontSize) / 22})`,
+                                              maxWidth: `${5 * ((1 * (fontSize + 11)) / 22)}vw`,
+                                              height: `${15 * ((1 * (fontSize + 11)) / 22)}vh`,
+                                              transform: `scale(${(1 * (fontSize + 11)) / 22})`,
                                               margin: 0,
                                               objectFit: "contain",
                                             }}

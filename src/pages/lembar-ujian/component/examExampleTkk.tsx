@@ -407,10 +407,18 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                                   <Typography
                                     dangerouslySetInnerHTML={{ __html: answer.content }}
                                     sx={{
-                                      "& img": { width: "100%", height: "100%", fontSize: fontSize, margin: 0 },
+                                      "& img": {
+                                        width: "100%",
+                                        height: "100%",
+                                        fontSize: fontSize,
+                                        margin: 0,
+                                        transform: `scale(${(1 * (fontSize + 10)) / 22})`,
+                                      },
                                       "& p": { margin: 0 },
                                       "& figure": { margin: 0, marginRight: "0px", maxWidth: "100px" },
                                       fontSize: fontSize,
+                                      mt: 5,
+                                      mb: 5,
                                     }}
                                   />
                                   <Box
@@ -592,8 +600,9 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
                                       src={import.meta.env.VITE_API_URL + answer.image_path_cat}
                                       style={{
                                         width: "100%",
-                                        height: `${9 * ((1 * fontSize) / 22)}vh`,
-                                        transform: `scale(${(1 * fontSize) / 22})`,
+                                        maxWidth: `${5 * ((1 * (fontSize + 11)) / 22)}vw`,
+                                        height: `${9 * ((1 * (fontSize + 11)) / 22)}vh`,
+                                        transform: `scale(${(1 * (fontSize + 11)) / 22})`,
                                         margin: 0,
                                         objectFit: "contain",
                                       }}
