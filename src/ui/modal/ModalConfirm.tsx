@@ -54,7 +54,14 @@ const ModalConfirm: React.FC<ModalConfirmProps> = (props) => {
   // Wrapper for onConfirm to set the flag before calling the original function
   const handleConfirm = () => {
     isConfirmCloseRef.current = true
-    onConfirm()
+    // Close the modal immediately before calling onConfirm to prevent flashing
+    if (onClose) {
+      onClose()
+    }
+    // Call onConfirm after a small delay to ensure the modal is closed
+    setTimeout(() => {
+      onConfirm()
+    }, 0)
   }
 
   return (
