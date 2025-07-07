@@ -84,34 +84,47 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
     })
 
     useEffect(() => {
-      // Reset the focus ref whenever the exam (soal) changes
+      // Reset the focus ref and memory span states whenever the exam (soal) changes
       initialFocusRef.current = false
+      setIndexMemorySpan(0)
+      setStartAnswer(false)
+      setAnswerMemorySpan([])
     }, [soal])
 
     useEffect(() => {
       if ((soal as SoalExamLS1).answer_type === 3) {
-        setTimerMemorySpan((soal as SoalExamLS1).intro_data[indexMemorySpan].timer)
-        setStartTimer(true)
-        const maxMemory = (soal as SoalExamLS1).intro_data.length
-        if (indexMemorySpan === maxMemory - 1 && startAnswer === true) {
-          setIndexMemorySpan(0)
-          setStartAnswer(false)
-        }
-        const timerSoal = setInterval(() => {
-          setTimerMemorySpan((prevSeconds) => prevSeconds - 1)
-        }, 1000)
-        return () => {
-          clearInterval(timerSoal)
+        // Check if indexMemorySpan is within bounds before accessing intro_data
+        const introData = (soal as SoalExamLS1).intro_data
+        if (introData && indexMemorySpan < introData.length && introData[indexMemorySpan]) {
+          setTimerMemorySpan(introData[indexMemorySpan].timer)
+          setStartTimer(true)
+          const maxMemory = introData.length
+          if (indexMemorySpan === maxMemory - 1 && startAnswer === true) {
+            setIndexMemorySpan(0)
+            setStartAnswer(false)
+          }
+          const timerSoal = setInterval(() => {
+            setTimerMemorySpan((prevSeconds) => prevSeconds - 1)
+          }, 1000)
+          return () => {
+            clearInterval(timerSoal)
+          }
         }
       }
     }, [indexMemorySpan, soal])
 
     useEffect(() => {
       if ((soal as SoalExamLS1).answer_type === 3 && timerMemorySpan === 0 && startTimer) {
-        const maxMemory = (soal as SoalExamLS1).intro_data.length
+        const introData = (soal as SoalExamLS1).intro_data
+        if (!introData || introData.length === 0) return
+        
+        const maxMemory = introData.length
         if (indexMemorySpan < maxMemory - 1) {
           setIndexMemorySpan(indexMemorySpan + 1)
-          setTimerMemorySpan((soal as SoalExamLS1).intro_data[indexMemorySpan + 1].timer)
+          // Check bounds before accessing intro_data
+          if (indexMemorySpan + 1 < introData.length && introData[indexMemorySpan + 1]) {
+            setTimerMemorySpan(introData[indexMemorySpan + 1].timer)
+          }
         } else if (startAnswer === false) {
           setStartAnswer(true)
           setTimerMemorySpan(soal.timer)
@@ -154,7 +167,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                   }
                   setIndexMemorySpan(0)
                   setStartAnswer(false)
-                  setTimerMemorySpan((soal as SoalExamLS1).intro_data[indexMemorySpan + 1].timer)
+                  // Remove the problematic timer access since we're resetting
                 },
                 displayCancel: false,
                 overrideClose: false,
@@ -560,19 +573,24 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                     <>
                       <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} gap={3}>
                         {startAnswer === false ? (
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html:
-                                (soal as SoalExamLS1).intro_data[indexMemorySpan].intro_type !== 2
-                                  ? (soal as SoalExamLS1).intro_data[indexMemorySpan].question_content
-                                  : (soal as SoalExamLS1).intro_data[indexMemorySpan].instruction,
-                            }}
-                            style={{ fontSize: fontSize + 5, fontWeight: "bold", alignSelf: "center" }}
-                          />
+                          (soal as SoalExamLS1).intro_data && 
+                          indexMemorySpan < (soal as SoalExamLS1).intro_data.length && 
+                          (soal as SoalExamLS1).intro_data[indexMemorySpan] ? (
+                            <span
+                              dangerouslySetInnerHTML={{
+                                __html:
+                                  (soal as SoalExamLS1).intro_data[indexMemorySpan].intro_type !== 2
+                                    ? (soal as SoalExamLS1).intro_data[indexMemorySpan].question_content
+                                    : (soal as SoalExamLS1).intro_data[indexMemorySpan].instruction,
+                              }}
+                              style={{ fontSize: fontSize + 5, fontWeight: "bold", alignSelf: "center" }}
+                            />
+                          ) : null
                         ) : (
-                          (soal as SoalExamLS1).intro_data
-                            .filter((ar) => ar.intro_type !== 2)
-                            .map((answer, index) => (
+                          (soal as SoalExamLS1).intro_data && (soal as SoalExamLS1).intro_data.length > 0 ?
+                            (soal as SoalExamLS1).intro_data
+                              .filter((ar) => ar.intro_type !== 2)
+                              .map((answer, index) => (
                               <Grid item sx={{ display: "flex", alignItems: "center" }} key={index}>
                                 <TextField
                                   variant="filled"
@@ -613,7 +631,7 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                   onChange={handleEditMemorySpan}
                                 />
                               </Grid>
-                            ))
+                            )) : null
                         )}
                       </Grid>
                     </>
