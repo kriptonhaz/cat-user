@@ -146,6 +146,13 @@ const ExamExampleTkk: React.FC<ExamExampleTkkProps> = ({
 
   useEffect(() => {
     setIsCorrect(null)
+    setSelectedAnswer(null)
+    setSelectedAnswerMultiple([])
+    setIndexMemorySpan(0)
+    setStartAnswer(false)
+    setDisplayAnswerMemory(false)
+    setAnswerMemory([])
+    initialFocusRef.current = false
   }, [question])
 
   return (
