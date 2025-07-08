@@ -37,11 +37,7 @@ const FAQ: React.FC<FAQProps> = (props: FAQProps) => {
       </Typography>
       <Stack direction="column" gap={2}>
         {props.faqItem.map((item) => (
-          <AccordionItem
-            key={item.question}
-            question={`Pertanyaan ${item.question}`}
-            answer={`Jawaban ${item.answer}`}
-          />
+          <AccordionItem key={item.question} question={`${item.question}`} answer={`${item.answer}`} />
         ))}
       </Stack>
     </Container>
