@@ -66,10 +66,55 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
     } = props
     const initialFocusRef = useRef(false)
     const [answerMemorySpan, setAnswerMemorySpan] = useState<Array<{ order: number; content: string }>>([])
+    const processedQuestionRef = useRef<string | null>(null)
     const [startTimer, setStartTimer] = useState(false)
     const [indexMemorySpan, setIndexMemorySpan] = useState(0)
     const [timerMemorySpan, setTimerMemorySpan] = useState(0)
     const [startAnswer, setStartAnswer] = useState(false)
+
+    // Helper functions for localStorage persistence
+    const getMemorySpanStorageKey = (questionUuid: string) => `memorySpan_${questionUuid}`
+
+    const saveMemorySpanState = (
+      questionUuid: string,
+      state: {
+        indexMemorySpan: number
+        startAnswer: boolean
+        answerMemorySpan: Array<{ order: number; content: string }>
+        timestamp: number
+      }
+    ) => {
+      try {
+        localStorage.setItem(getMemorySpanStorageKey(questionUuid), JSON.stringify(state))
+      } catch (error) {
+        console.warn("Failed to save memory span state:", error)
+      }
+    }
+
+    const loadMemorySpanState = (questionUuid: string) => {
+      try {
+        const saved = localStorage.getItem(getMemorySpanStorageKey(questionUuid))
+        return saved ? JSON.parse(saved) : null
+      } catch (error) {
+        console.warn("Failed to load memory span state:", error)
+        return null
+      }
+    }
+
+    const clearMemorySpanState = (questionUuid: string) => {
+      try {
+        localStorage.removeItem(getMemorySpanStorageKey(questionUuid))
+      } catch (error) {
+        console.warn("Failed to clear memory span state:", error)
+      }
+    }
+
+    const isMemorySpanExam = () => {
+      const currentUuid = (soal as SoalExamLS1)?.narrow_data?.Uuid
+      const memorySpanUuid = ExamData.find((ar) => ar.examName === "Memory Span")?.examUuid
+      const workingMemoryUuid = ExamData.find((ar) => ar.examName === "Working Memory")?.examUuid
+      return currentUuid === memorySpanUuid || currentUuid === workingMemoryUuid
+    }
     const [modalConfirm, setModalConfirm] = useState<ModalConfirmProps>({
       open: false,
       title: "",
@@ -86,10 +131,70 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
     useEffect(() => {
       // Reset the focus ref and memory span states whenever the exam (soal) changes
       initialFocusRef.current = false
-      setIndexMemorySpan(0)
-      setStartAnswer(false)
-      setAnswerMemorySpan([])
+
+      const currentQuestionUuid = (soal as SoalExamLS1).uuid
+
+      // Prevent double execution by checking if this question has already been processed
+      if (processedQuestionRef.current === currentQuestionUuid) {
+        return
+      }
+
+      // Mark this question as processed
+      processedQuestionRef.current = currentQuestionUuid
+
+      // For memory span exams, try to restore saved state
+      if (isMemorySpanExam() && (soal as SoalExamLS1).answer_type === 3) {
+        const savedState = loadMemorySpanState((soal as SoalExamLS1).uuid)
+        console.log("savedState", savedState)
+
+        if (savedState) {
+          const introData = (soal as SoalExamLS1).intro_data
+          // Validate that saved state is still valid for current question structure
+          if (introData && savedState.indexMemorySpan <= introData.length) {
+            // Restore saved state exactly as it was
+            setIndexMemorySpan(savedState.indexMemorySpan)
+            setStartAnswer(savedState.startAnswer)
+            setAnswerMemorySpan(savedState.answerMemorySpan || [])
+
+            // Only advance to next word if user was in the middle of viewing words
+            // If user was already in answering phase, keep them there
+            if (!savedState.startAnswer && savedState.indexMemorySpan < introData.length - 1) {
+              setIndexMemorySpan(savedState.indexMemorySpan + 1)
+            }
+            // If startAnswer was true, don't change anything - user stays in answering phase
+          } else {
+            // Invalid saved state, clear it and reset
+            clearMemorySpanState((soal as SoalExamLS1).uuid)
+            setIndexMemorySpan(0)
+            setStartAnswer(false)
+            setAnswerMemorySpan([])
+          }
+        } else {
+          // No saved state, start fresh
+          setIndexMemorySpan(0)
+          setStartAnswer(false)
+          setAnswerMemorySpan([])
+        }
+      } else {
+        // Not a memory span exam, reset normally
+        setIndexMemorySpan(0)
+        setStartAnswer(false)
+        setAnswerMemorySpan([])
+      }
     }, [soal])
+
+    // Save state whenever memory span exam state changes
+    useEffect(() => {
+      if (isMemorySpanExam() && (soal as SoalExamLS1).answer_type === 3) {
+        const state = {
+          indexMemorySpan,
+          startAnswer,
+          answerMemorySpan,
+          timestamp: Date.now(),
+        }
+        saveMemorySpanState((soal as SoalExamLS1).uuid, state)
+      }
+    }, [indexMemorySpan, startAnswer, answerMemorySpan, soal])
 
     useEffect(() => {
       if ((soal as SoalExamLS1).answer_type === 3) {
@@ -98,26 +203,25 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
         if (introData && indexMemorySpan < introData.length && introData[indexMemorySpan]) {
           setTimerMemorySpan(introData[indexMemorySpan].timer)
           setStartTimer(true)
-          const maxMemory = introData.length
-          if (indexMemorySpan === maxMemory - 1 && startAnswer === true) {
-            setIndexMemorySpan(0)
-            setStartAnswer(false)
-          }
           const timerSoal = setInterval(() => {
             setTimerMemorySpan((prevSeconds) => prevSeconds - 1)
           }, 1000)
           return () => {
             clearInterval(timerSoal)
           }
+        } else if (startAnswer && introData) {
+          // User is in answering phase, set the exam timer
+          setTimerMemorySpan(soal.timer)
+          setStartTimer(true)
         }
       }
-    }, [indexMemorySpan, soal])
+    }, [indexMemorySpan, soal, startAnswer])
 
     useEffect(() => {
       if ((soal as SoalExamLS1).answer_type === 3 && timerMemorySpan === 0 && startTimer) {
         const introData = (soal as SoalExamLS1).intro_data
         if (!introData || introData.length === 0) return
-        
+
         const maxMemory = introData.length
         if (indexMemorySpan < maxMemory - 1) {
           setIndexMemorySpan(indexMemorySpan + 1)
@@ -159,6 +263,12 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                       }))
                     },
                   })
+                  // Clear saved state when moving to next question
+                  if (isMemorySpanExam()) {
+                    clearMemorySpanState((soal as SoalExamLS1).uuid)
+                  }
+                  // Reset processed question ref for next question
+                  processedQuestionRef.current = null
                   if (submitAnswer) {
                     submitAnswer()
                   }
@@ -173,6 +283,12 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                 overrideClose: false,
               })
             } else {
+              // Clear saved state when exam is completed
+              if (isMemorySpanExam()) {
+                clearMemorySpanState((soal as SoalExamLS1).uuid)
+              }
+              // Reset processed question ref when exam is completed
+              processedQuestionRef.current = null
               if (submitAnswer) {
                 submitAnswer()
               }
@@ -256,6 +372,17 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
         setAnswer({ content: formattedAnswer.map((ar) => ar.content).join(" "), value: 0 })
       }
     }, [soal, answerMemorySpan])
+
+    // Cleanup effect to clear saved state when component unmounts
+    useEffect(() => {
+      return () => {
+        // Only clear if this is a memory span exam to avoid affecting other exam types
+        if (isMemorySpanExam() && (soal as SoalExamLS1).answer_type === 3) {
+          // Don't clear on unmount during normal navigation, only on actual page unload
+          // The state should persist for page reloads but be cleared when exam is completed
+        }
+      }
+    }, [])
 
     return (
       <div ref={ref}>
@@ -573,8 +700,8 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                     <>
                       <Grid container sx={{ display: "flex", alignItems: "center", justifyContent: "center" }} gap={3}>
                         {startAnswer === false ? (
-                          (soal as SoalExamLS1).intro_data && 
-                          indexMemorySpan < (soal as SoalExamLS1).intro_data.length && 
+                          (soal as SoalExamLS1).intro_data &&
+                          indexMemorySpan < (soal as SoalExamLS1).intro_data.length &&
                           (soal as SoalExamLS1).intro_data[indexMemorySpan] ? (
                             <span
                               dangerouslySetInnerHTML={{
@@ -586,11 +713,10 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                               style={{ fontSize: fontSize + 5, fontWeight: "bold", alignSelf: "center" }}
                             />
                           ) : null
-                        ) : (
-                          (soal as SoalExamLS1).intro_data && (soal as SoalExamLS1).intro_data.length > 0 ?
-                            (soal as SoalExamLS1).intro_data
-                              .filter((ar) => ar.intro_type !== 2)
-                              .map((answer, index) => (
+                        ) : (soal as SoalExamLS1).intro_data && (soal as SoalExamLS1).intro_data.length > 0 ? (
+                          (soal as SoalExamLS1).intro_data
+                            .filter((ar) => ar.intro_type !== 2)
+                            .map((answer, index) => (
                               <Grid item sx={{ display: "flex", alignItems: "center" }} key={index}>
                                 <TextField
                                   variant="filled"
@@ -631,8 +757,8 @@ const SoalPertanyaanTkk: React.FC<ISoalPertanyaanTkk> = React.forwardRef<HTMLDiv
                                   onChange={handleEditMemorySpan}
                                 />
                               </Grid>
-                            )) : null
-                        )}
+                            ))
+                        ) : null}
                       </Grid>
                     </>
                   )}
