@@ -377,8 +377,7 @@ const LembarUjianTkk: React.FC = () => {
                 },
               })
             } else {
-              // TODO: should finish the test
-              console.log("do this to finish the test")
+              finishMutation.mutate({ activityUuid: params.activityId || "" })
             }
             setModalConfirm({
               ...modalConfirm,
@@ -396,7 +395,10 @@ const LembarUjianTkk: React.FC = () => {
           setModalConfirm({
             ...modalConfirm,
             open: true,
-            title: "Waktu habis, Anda diarahkan ke subtes berikutnya",
+            title:
+              indexSubtestActiveTkk < dataTkk?.data.detail_data.length - 1
+                ? "Waktu habis, Anda diarahkan ke subtes berikutnya"
+                : "Waktu habis, ujian selesai",
             onConfirm: () => {
               moveToNextSubtest()
             },
