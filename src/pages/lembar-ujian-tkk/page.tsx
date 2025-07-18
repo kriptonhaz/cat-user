@@ -49,6 +49,7 @@ const LembarUjianTkk: React.FC = () => {
   const [timer, setTimer] = useState(0)
   const [timerSoal, setTimerSoal] = useState(0)
   const [remainingTime, setRemainingTime] = useState(0)
+  const [isAddedTime, setIsAddedTime] = useState(false)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0) // Add state to track current question index
   const [soal, setSoal] = useState<SoalExam | SoalExamLS1 | SoalExamPPI | null>(null)
   const [finalQuestion, setFinalQuestion] = useState(false)
@@ -272,8 +273,7 @@ const LembarUjianTkk: React.FC = () => {
   }, [isLoadingTimer])
 
   useEffect(() => {
-    if (!isLoadingTimer && timer > 0 && dataTkk?.data) {
-      setRemainingTime(timer)
+    if (!isLoadingTimer && remainingTime > 0 && dataTkk?.data) {
       const countdownTimer = setInterval(() => {
         setRemainingTime((prevTime) => {
           if (prevTime <= 0) {
@@ -285,6 +285,13 @@ const LembarUjianTkk: React.FC = () => {
       }, 1000)
 
       return () => clearInterval(countdownTimer)
+    }
+  }, [isLoadingTimer, remainingTime, dataTkk])
+
+  // Separate useEffect to set initial timer value
+  useEffect(() => {
+    if (!isLoadingTimer && timer > 0 && dataTkk?.data) {
+      setRemainingTime(timer)
     }
   }, [isLoadingTimer, timer, dataTkk])
 
@@ -309,8 +316,97 @@ const LembarUjianTkk: React.FC = () => {
         setTimeout(() => {
           handleJawab({ source: "timeout" })
         }, 300)
-      } else {
-        // TODO: handle timer type 2
+      } else if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 2 && soal) {
+        if (
+          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.added_time > 0 &&
+          isAddedTime === false
+        ) {
+          const addMoreTime = () => {
+            setRemainingTime(dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.added_time)
+            setIsAddedTime(true)
+            setModalConfirm({
+              ...modalConfirm,
+              open: false,
+              title: "",
+              onConfirm: () => {
+                setModalConfirm({
+                  ...modalConfirm,
+                  open: false,
+                  title: "",
+                })
+              },
+            })
+          }
+          setModalConfirm({
+            ...modalConfirm,
+            open: true,
+            title:
+              "Waktu Anda telah habis. Silahkan selesaikan subtes ini dalam " +
+              Math.floor(dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.added_time / 60) +
+              " menit",
+            onConfirm: () => {
+              addMoreTime()
+            },
+            displayCancel: false,
+            overrideClose: true,
+            onClose: () => {
+              addMoreTime()
+            },
+          })
+        } else if (
+          dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.added_time > 0 &&
+          isAddedTime === true
+        ) {
+          const moveToNextSubtest = () => {
+            if (indexSubtestActiveTkk < dataTkk?.data.detail_data.length - 1) {
+              // go to next subtest
+              examActivityMutation.mutate({
+                last_question_filled: 0,
+                last_question_subtest: dataTkk?.data.detail_data[indexSubtestActiveTkk + 1].subtest_model_uuid,
+                uuidActivity: activityExam?.data.Uuid || "",
+                onSuccess: () => {
+                  checkQuestionAvailable()
+                  setLastAnswerQuestionScrollNumber(0)
+                  setFinalQuestion(false)
+                  setIsAddedTime(false)
+                  setTimer(dataTkk?.data.detail_data[indexSubtestActiveTkk + 1].subtest_model_data.total_time)
+                  setSelectedAnswer(null)
+                  setSelectedMultipleAnswer([])
+                  setMaxVisitedIndex(0)
+                  setFinalQuestion(false)
+                },
+              })
+            } else {
+              // TODO: should finish the test
+              console.log("do this to finish the test")
+            }
+            setModalConfirm({
+              ...modalConfirm,
+              open: false,
+              title: "",
+              onConfirm: () => {
+                setModalConfirm({
+                  ...modalConfirm,
+                  open: false,
+                  title: "",
+                })
+              },
+            })
+          }
+          setModalConfirm({
+            ...modalConfirm,
+            open: true,
+            title: "Waktu habis, Anda diarahkan ke subtes berikutnya",
+            onConfirm: () => {
+              moveToNextSubtest()
+            },
+            displayCancel: false,
+            onClose: () => {
+              moveToNextSubtest()
+            },
+            overrideClose: true,
+          })
+        }
       }
     }
   }, [remainingTime, dataTkk, indexSubtestActiveTkk])
@@ -370,7 +466,7 @@ const LembarUjianTkk: React.FC = () => {
       const checkActivity = async () => {
         const activityExamDirect = await getExamActivityByModule(params.examId, params.moduleId)
         if (
-          activityExamDirect?.data.last_question_filled === 0 ||
+          activityExamDirect?.data.last_question_filled === 0 &&
           activityExamDirect?.data.last_question_subtest === ""
         ) {
           setIndexSubtestActiveTkk(0)
@@ -384,29 +480,6 @@ const LembarUjianTkk: React.FC = () => {
         }
       }
       checkActivity()
-      // setFinalQuestion(false)
-
-      // if (dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.timer_type === 1) {
-      //   setTimer(soalExamAvailable.data[0].timer)
-      // } else {
-      //   // setTimer(timerUjian?.data.total_time - (activityExam?.data.total_consume_time || 0))
-      // }
-
-      // // Set the initial selectedAnswer based on questionResponseByActivity
-      // if (questionResponseByActivity?.data) {
-      //   const currentResponse = questionResponseByActivity.data.find(
-      //     (response) => response.question_order === currentQuestionIndex + 1
-      //   )
-      //   // TODO: handle multiple choice
-      //   // if (currentResponse) {
-      //   //   setSelectedAnswer({
-      //   //     content: currentResponse.user_response_content,
-      //   //     value: currentResponse.user_response_value,
-      //   //   })
-      //   // } else {
-      //   //   setSelectedAnswer(null)
-      //   // }
-      // }
     }
 
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
