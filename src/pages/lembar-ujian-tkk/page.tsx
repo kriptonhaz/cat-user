@@ -468,7 +468,8 @@ const LembarUjianTkk: React.FC = () => {
       const checkActivity = async () => {
         const activityExamDirect = await getExamActivityByModule(params.examId, params.moduleId)
         if (
-          activityExamDirect?.data.last_question_filled === 0 &&
+          (activityExamDirect?.data.last_question_filled === 0 ||
+            activityExamDirect?.data.last_question_filled === null) &&
           activityExamDirect?.data.last_question_subtest === ""
         ) {
           setIndexSubtestActiveTkk(0)
@@ -941,10 +942,7 @@ const LembarUjianTkk: React.FC = () => {
                               setDisableNextButton={(val) => {
                                 setDisabledNextButton(val)
                               }}
-                              showTimer={
-                                typeof indexSubtestActiveTkk === "number" &&
-                                dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_countdown_timer
-                              }
+                              showTimer={false}
                             />
                           </>
                         )
@@ -1036,10 +1034,7 @@ const LembarUjianTkk: React.FC = () => {
                               setDisableNextButton={(val) => {
                                 setDisabledNextButton(val)
                               }}
-                              showTimer={
-                                typeof indexSubtestActiveTkk === "number" &&
-                                dataTkk?.data.detail_data[indexSubtestActiveTkk].subtest_model_data.show_countdown_timer
-                              }
+                              showTimer={false}
                             />
                           </>
                         )
